@@ -49,7 +49,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	cout << diceRoll(20, 86) << "\n";
 
-	cout << "Welcome to Zoro\n";
+	cout << "Welcome to Zorcan\n";
 
 	cout << "Please Select a Race:\n";
 	cout << "[H]uman [E]lf [D]ark elf [A]ngel [M]ongrel [S]hamani [N]ibelung [U]ndead\n";
