@@ -47,8 +47,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	char inputs; // The input to choose the race.
 	ATTRIBUTES tempStats; // The stats the player gets by random.
 
-	cout << diceRoll(20, 86) << "\n";
-
 	cout << "Welcome to Zorcan\n";
 
 	cout << "Please Select a Race:\n";
@@ -102,6 +100,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		default:
 			break;
 	}
+
+	tempStats.focus = rollDice(5, 6);
 
 	return 0;
 }
