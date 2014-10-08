@@ -70,6 +70,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	ATTRIBUTES tempStats; // The stats the player gets by random.
 	bool reroll = true; // The bool for rerolling.
 	OCC inputClass; // The class that is chosen.
+	bool retry = true;
 
 	system("cls");
 
@@ -83,100 +84,105 @@ int _tmain(int argc, _TCHAR* argv[])
 		// The input for the chosen race.
 		cin >> inputs;
 
-		switch (inputs)
+		while (retry == true)
 		{
-			case 'h':
-			case 'H':
-				cout << "Human\n";
-				inputRace = HUMAN;
-				tempStats.strength = diceRoll(3, 6);
-				tempStats.faith = diceRoll(3, 6);
-				tempStats.dexterity = diceRoll(3, 6);
-				tempStats.insperation = diceRoll(3, 6);
-				tempStats.cleverness = diceRoll(3, 6);
-				tempStats.focus = diceRoll(3, 6);
-				break;
-			case 'e':
-			case 'E':
-				cout << "Elf\n";
-				inputRace = ELF;
-				tempStats.strength = diceRoll(3, 6);
-				tempStats.faith = diceRoll(3, 6);
-				tempStats.dexterity = diceRoll(3, 6);
-				tempStats.insperation = diceRoll(3, 6);
-				tempStats.cleverness = diceRoll(2, 6);
-				tempStats.focus = diceRoll(4, 6);
-				break;
-			case 'd':
-			case 'D':
-				cout << "Dark Elf\n";
-				inputRace = DARKELF;
-				tempStats.strength = diceRoll(3, 6);
-				tempStats.faith = diceRoll(3, 6);
-				tempStats.dexterity = diceRoll(4, 6);
-				tempStats.insperation = diceRoll(2, 6);
-				tempStats.cleverness = diceRoll(3, 6);
-				tempStats.focus = diceRoll(3, 6);
-				break;
-			case 'a':
-			case 'A':
-				cout << "Angel\n";
-				inputRace = ANGEL;
-				tempStats.strength = diceRoll(3, 6);
-				tempStats.faith = diceRoll(4, 6);
-				tempStats.dexterity = diceRoll(3, 6);
-				tempStats.insperation = diceRoll(3, 6);
-				tempStats.cleverness = diceRoll(3, 6);
-				tempStats.focus = diceRoll(3, 6);
-				break;
-			case 'm':
-			case 'M':
-				cout << "Mongrel\n";
-				inputRace = MONGREL;
-				tempStats.strength = diceRoll(4, 6);
-				tempStats.faith = diceRoll(3, 6);
-				tempStats.dexterity = diceRoll(3, 6);
-				tempStats.insperation = diceRoll(3, 6);
-				tempStats.cleverness = diceRoll(3, 6);
-				tempStats.focus = diceRoll(2, 6);
-				break;
-			case 's':
-			case 'S':
-				cout << "Shamani\n";
-				inputRace = SHAMANI;
-				tempStats.strength = diceRoll(2, 6);
-				tempStats.faith = diceRoll(4, 6);
-				tempStats.dexterity = diceRoll(3, 6);
-				tempStats.insperation = diceRoll(3, 6);
-				tempStats.cleverness = diceRoll(3, 6);
-				tempStats.focus = diceRoll(3, 6);
-				break;
-			case 'n':
-			case 'N':
-				cout << "Nibelung\n";
-				inputRace = NIBELUNG;
-				tempStats.strength = diceRoll(3, 6);
-				tempStats.faith = diceRoll(3, 6);
-				tempStats.dexterity = diceRoll(2, 6);
-				tempStats.insperation = diceRoll(3, 6);
-				tempStats.cleverness = diceRoll(4, 6);
-				tempStats.focus = diceRoll(3, 6);
-				break;
-			case 'u':
-			case 'U':
-				cout << "Undead\n";
-				inputRace = UNDEAD;
-				tempStats.strength = diceRoll(3, 6);
-				tempStats.faith = diceRoll(3, 6);
-				tempStats.dexterity = diceRoll(3, 6);
-				tempStats.insperation = diceRoll(3, 6);
-				tempStats.cleverness = diceRoll(2, 6);
-				tempStats.focus = diceRoll(3, 6);
-				break;
-			default:
-				cout << "Please input a vaild race.\n";
-				reroll = true;
-				break;
+			retry == false
+
+			switch (inputs)
+			{
+				case 'h':
+				case 'H':
+					cout << "Human\n";
+					inputRace = HUMAN;
+					tempStats.strength = diceRoll(3, 6);
+					tempStats.faith = diceRoll(3, 6);
+					tempStats.dexterity = diceRoll(3, 6);
+					tempStats.insperation = diceRoll(3, 6);
+					tempStats.cleverness = diceRoll(3, 6);
+					tempStats.focus = diceRoll(3, 6);
+					break;
+				case 'e':
+				case 'E':
+					cout << "Elf\n";
+					inputRace = ELF;
+					tempStats.strength = diceRoll(3, 6);
+					tempStats.faith = diceRoll(3, 6);
+					tempStats.dexterity = diceRoll(3, 6);
+					tempStats.insperation = diceRoll(3, 6);
+					tempStats.cleverness = diceRoll(2, 6);
+					tempStats.focus = diceRoll(4, 6);
+					break;
+				case 'd':
+				case 'D':
+					cout << "Dark Elf\n";
+					inputRace = DARKELF;
+					tempStats.strength = diceRoll(3, 6);
+					tempStats.faith = diceRoll(3, 6);
+					tempStats.dexterity = diceRoll(4, 6);
+					tempStats.insperation = diceRoll(2, 6);
+					tempStats.cleverness = diceRoll(3, 6);
+					tempStats.focus = diceRoll(3, 6);
+					break;
+				case 'a':
+				case 'A':
+					cout << "Angel\n";
+					inputRace = ANGEL;
+					tempStats.strength = diceRoll(3, 6);
+					tempStats.faith = diceRoll(4, 6);
+					tempStats.dexterity = diceRoll(3, 6);
+					tempStats.insperation = diceRoll(3, 6);
+					tempStats.cleverness = diceRoll(3, 6);
+					tempStats.focus = diceRoll(3, 6);
+					break;
+				case 'm':
+				case 'M':
+					cout << "Mongrel\n";
+					inputRace = MONGREL;
+					tempStats.strength = diceRoll(4, 6);
+					tempStats.faith = diceRoll(3, 6);
+					tempStats.dexterity = diceRoll(3, 6);
+					tempStats.insperation = diceRoll(3, 6);
+					tempStats.cleverness = diceRoll(3, 6);
+					tempStats.focus = diceRoll(2, 6);
+					break;
+				case 's':
+				case 'S':
+					cout << "Shamani\n";
+					inputRace = SHAMANI;
+					tempStats.strength = diceRoll(2, 6);
+					tempStats.faith = diceRoll(4, 6);
+					tempStats.dexterity = diceRoll(3, 6);
+					tempStats.insperation = diceRoll(3, 6);
+					tempStats.cleverness = diceRoll(3, 6);
+					tempStats.focus = diceRoll(3, 6);
+					break;
+				case 'n':
+				case 'N':
+					cout << "Nibelung\n";
+					inputRace = NIBELUNG;
+					tempStats.strength = diceRoll(3, 6);
+					tempStats.faith = diceRoll(3, 6);
+					tempStats.dexterity = diceRoll(2, 6);
+					tempStats.insperation = diceRoll(3, 6);
+					tempStats.cleverness = diceRoll(4, 6);
+					tempStats.focus = diceRoll(3, 6);
+					break;
+				case 'u':
+				case 'U':
+					cout << "Undead\n";
+					inputRace = UNDEAD;
+					tempStats.strength = diceRoll(3, 6);
+					tempStats.faith = diceRoll(3, 6);
+					tempStats.dexterity = diceRoll(3, 6);
+					tempStats.insperation = diceRoll(3, 6);
+					tempStats.cleverness = diceRoll(2, 6);
+					tempStats.focus = diceRoll(3, 6);
+					break;
+				default:
+					cout << "Please input a vaild race.\n";
+					retry = true;
+					break;
+			}
 		}
 
 		displayStats(tempStats);
