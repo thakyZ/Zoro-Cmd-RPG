@@ -59,6 +59,17 @@ void displayStats(ATTRIBUTES atts)
 	cout << "\n\n";
 }
 
+// Class for the character.
+class character
+{
+	protected:
+		ATTRIBUTES atts;
+		int copper;
+		OCC charClass;
+		RACE charRace;
+
+};
+
 // Startup
 int _tmain(int argc, _TCHAR* argv[])
 {
