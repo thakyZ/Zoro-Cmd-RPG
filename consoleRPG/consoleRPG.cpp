@@ -100,6 +100,7 @@ int _tmain(int argc, _TCHAR* argv[])
 					tempStats.insperation = diceRoll(3, 6);
 					tempStats.cleverness = diceRoll(3, 6);
 					tempStats.focus = diceRoll(3, 6);
+					retry = false;
 					break;
 				case 'e':
 				case 'E':
