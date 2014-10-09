@@ -39,12 +39,10 @@ struct ATTRIBUTES
 	unsigned int insperation;
 	unsigned int cleverness;
 	unsigned int focus;
-	unsigned int hp, hpMax;
-	unsigned int mp, mpMax;
 };
 
 // Display the stats of the roll.
-void displayStats(ATTRIBUTES atts)
+void displayStats(ATTRIBUTES atts, bool split)
 {
 	cout << " +---------------------+ \n";
 	cout << " | Attributes:         | \n";
@@ -56,7 +54,11 @@ void displayStats(ATTRIBUTES atts)
 	cout << "   Insperation:   " << atts.insperation << "\n";
 	cout << "   Cleverness:    " << atts.cleverness << "\n";
 	cout << "   Focus:         " << atts.focus << "\n";
-	cout << "\n\n";
+
+	if (split == true)
+	{
+		cout << "\n\n";
+	}
 }
 
 // Class for the character.
@@ -64,14 +66,40 @@ class character
 {
 	protected:
 		ATTRIBUTES atts;
-		int copper;
+		int copper; // Money var.
 		OCC charClass;
 		RACE charRace;
+		unsigned int hp, hpMax;
+		unsigned int mp, mpMax;
 
 	public:
+		// Constructors
 		character()
 		{
 			copper = 50000;
+		}
+
+		// Accessors
+		void setAtts(ATTRIBUTES tmpAtts)
+		{
+			atts = tmpAtts;
+		}
+
+		ATTRIBUTES getAtts()
+		{
+			return atts;
+		}
+
+		void displayAllStats()
+		{
+			cout << " +---------------------+\n";
+			cout << " | " << charRace << "          |\n";
+			cout << " | " << charClass << "          |\n";
+			displayStats(atts, false);
+
+			cout << "   Hitpoints:     " << hp << "/" << hpMax << "\n";
+			cout << "   Mana:          " << mp << "/" << mpMax << "\n";
+			cout << "\n\n";
 		}
 };
 
@@ -83,10 +111,8 @@ class fighter : public character
 		{
 			cout << "Fighter Created.\n";
 
-			atts.hpMax = atts.hp = diceRoll(10, 6);
-			atts.mpMax = atts.mp = 20;
-
-
+			hpMax = hp = diceRoll(10, 6);
+			mpMax = mp = 20;
 		}
 };
 
@@ -98,10 +124,8 @@ class cleric : public character
 		{
 			cout << "Cleric Created.\n";
 
-			atts.hpMax = atts.hp = diceRoll(7, 6);
-			atts.mpMax = atts.mp = 50;
-
-
+			hpMax = hp = diceRoll(7, 6);
+			mpMax = mp = 50;
 		}
 };
 
@@ -113,10 +137,8 @@ class rouge : public character
 		{
 			cout << "Rouge Created.\n";
 
-			atts.hpMax = atts.hp = diceRoll(7, 6);
-			atts.mpMax = atts.mp = 20;
-
-
+			hpMax = hp = diceRoll(7, 6);
+			mpMax = mp = 20;
 		}
 };
 
@@ -128,10 +150,8 @@ class bard : public character
 		{
 			cout << "Bard Created.\n";
 
-			atts.hpMax = atts.hp = diceRoll(5, 6);
-			atts.mpMax = atts.mp = 50;
-
-
+			hpMax = hp = diceRoll(5, 6);
+			mpMax = mp = 50;
 		}
 };
 
@@ -143,10 +163,8 @@ class tinker : public character
 		{
 			cout << "Tinker Created.\n";
 
-			atts.hpMax = atts.hp = diceRoll(5, 6);
-			atts.mpMax = atts.mp = 20;
-
-
+			hpMax = hp = diceRoll(5, 6);
+			mpMax = mp = 20;
 		}
 };
 
@@ -158,10 +176,8 @@ class mage : public character
 		{
 			cout << "Mage Created.\n";
 
-			atts.hpMax = atts.hp = diceRoll(3, 6);
-			atts.mpMax = atts.mp = 50;
-
-
+			hpMax = hp = diceRoll(3, 6);
+			mpMax = mp = 50;
 		}
 };
 
@@ -172,11 +188,12 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	RACE inputRace; // The race that is chosen.
 	char inputs; // The inputs.
-	ATTRIBUTES tempStats; // The stats the player gets by random.
+	ATTRIBUTES tmpStats; // The stats the player gets by random.
 	bool reroll = true; // The bool for rerolling.
 	OCC inputClass; // The class that is chosen.
 	bool retry = true; // The fix for the race chooser.
 
+	// Set the character to pointer var.
 	character *player1;
 
 	// Clear the console.
@@ -187,6 +204,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	// Check for the reroll
 	while (reroll == true)
 	{
+		// End the reroll;
+		reroll = false;
+
 		cout << "Please Select a Race:\n";
 		cout << "[H]uman [E]lf [D]ark elf [A]ngel [M]ongrel [S]hamani [N]ibelung [U]ndead\n";
 
@@ -196,112 +216,113 @@ int _tmain(int argc, _TCHAR* argv[])
 			// The input for the chosen race.
 			cin >> inputs;
 
-			// Reset the retry var.
-			retry == false;
+			// End the retry.
+			retry = false;
 
 			switch (inputs)
 			{
 				case 'h':
 				case 'H':
-					cout << "Human\n";
+					cout << "\nHuman!\n";
 					inputRace = HUMAN;
-					tempStats.strength = diceRoll(3, 6);
-					tempStats.faith = diceRoll(3, 6);
-					tempStats.dexterity = diceRoll(3, 6);
-					tempStats.insperation = diceRoll(3, 6);
-					tempStats.cleverness = diceRoll(3, 6);
-					tempStats.focus = diceRoll(3, 6);
+					tmpStats.strength = diceRoll(3, 6);
+					tmpStats.faith = diceRoll(3, 6);
+					tmpStats.dexterity = diceRoll(3, 6);
+					tmpStats.insperation = diceRoll(3, 6);
+					tmpStats.cleverness = diceRoll(3, 6);
+					tmpStats.focus = diceRoll(3, 6);
 					retry = false; // End the retry.
 					break;
 				case 'e':
 				case 'E':
-					cout << "Elf\n";
+					cout << "\nElf!\n";
 					inputRace = ELF;
-					tempStats.strength = diceRoll(3, 6);
-					tempStats.faith = diceRoll(3, 6);
-					tempStats.dexterity = diceRoll(3, 6);
-					tempStats.insperation = diceRoll(3, 6);
-					tempStats.cleverness = diceRoll(2, 6);
-					tempStats.focus = diceRoll(4, 6);
+					tmpStats.strength = diceRoll(3, 6);
+					tmpStats.faith = diceRoll(3, 6);
+					tmpStats.dexterity = diceRoll(3, 6);
+					tmpStats.insperation = diceRoll(3, 6);
+					tmpStats.cleverness = diceRoll(2, 6);
+					tmpStats.focus = diceRoll(4, 6);
 					break;
 				case 'd':
 				case 'D':
-					cout << "Dark Elf\n";
+					cout << "\nDark Elf!\n";
 					inputRace = DARKELF;
-					tempStats.strength = diceRoll(3, 6);
-					tempStats.faith = diceRoll(3, 6);
-					tempStats.dexterity = diceRoll(4, 6);
-					tempStats.insperation = diceRoll(2, 6);
-					tempStats.cleverness = diceRoll(3, 6);
-					tempStats.focus = diceRoll(3, 6);
+					tmpStats.strength = diceRoll(3, 6);
+					tmpStats.faith = diceRoll(3, 6);
+					tmpStats.dexterity = diceRoll(4, 6);
+					tmpStats.insperation = diceRoll(2, 6);
+					tmpStats.cleverness = diceRoll(3, 6);
+					tmpStats.focus = diceRoll(3, 6);
 					break;
 				case 'a':
 				case 'A':
-					cout << "Angel\n";
+					cout << "Angel!\n";
 					inputRace = ANGEL;
-					tempStats.strength = diceRoll(3, 6);
-					tempStats.faith = diceRoll(4, 6);
-					tempStats.dexterity = diceRoll(3, 6);
-					tempStats.insperation = diceRoll(3, 6);
-					tempStats.cleverness = diceRoll(3, 6);
-					tempStats.focus = diceRoll(3, 6);
+					tmpStats.strength = diceRoll(3, 6);
+					tmpStats.faith = diceRoll(4, 6);
+					tmpStats.dexterity = diceRoll(3, 6);
+					tmpStats.insperation = diceRoll(3, 6);
+					tmpStats.cleverness = diceRoll(3, 6);
+					tmpStats.focus = diceRoll(3, 6);
 					break;
 				case 'm':
 				case 'M':
-					cout << "Mongrel\n";
+					cout << "\nMongrel!\n";
 					inputRace = MONGREL;
-					tempStats.strength = diceRoll(4, 6);
-					tempStats.faith = diceRoll(3, 6);
-					tempStats.dexterity = diceRoll(3, 6);
-					tempStats.insperation = diceRoll(3, 6);
-					tempStats.cleverness = diceRoll(3, 6);
-					tempStats.focus = diceRoll(2, 6);
+					tmpStats.strength = diceRoll(4, 6);
+					tmpStats.faith = diceRoll(3, 6);
+					tmpStats.dexterity = diceRoll(3, 6);
+					tmpStats.insperation = diceRoll(3, 6);
+					tmpStats.cleverness = diceRoll(3, 6);
+					tmpStats.focus = diceRoll(2, 6);
 					break;
 				case 's':
 				case 'S':
-					cout << "Shamani\n";
+					cout << "\nShamani!\n";
 					inputRace = SHAMANI;
-					tempStats.strength = diceRoll(2, 6);
-					tempStats.faith = diceRoll(4, 6);
-					tempStats.dexterity = diceRoll(3, 6);
-					tempStats.insperation = diceRoll(3, 6);
-					tempStats.cleverness = diceRoll(3, 6);
-					tempStats.focus = diceRoll(3, 6);
+					tmpStats.strength = diceRoll(2, 6);
+					tmpStats.faith = diceRoll(4, 6);
+					tmpStats.dexterity = diceRoll(3, 6);
+					tmpStats.insperation = diceRoll(3, 6);
+					tmpStats.cleverness = diceRoll(3, 6);
+					tmpStats.focus = diceRoll(3, 6);
 					break;
 				case 'n':
 				case 'N':
-					cout << "Nibelung\n";
+					cout << "\nNibelung!\n";
 					inputRace = NIBELUNG;
-					tempStats.strength = diceRoll(3, 6);
-					tempStats.faith = diceRoll(3, 6);
-					tempStats.dexterity = diceRoll(2, 6);
-					tempStats.insperation = diceRoll(3, 6);
-					tempStats.cleverness = diceRoll(4, 6);
-					tempStats.focus = diceRoll(3, 6);
+					tmpStats.strength = diceRoll(3, 6);
+					tmpStats.faith = diceRoll(3, 6);
+					tmpStats.dexterity = diceRoll(2, 6);
+					tmpStats.insperation = diceRoll(3, 6);
+					tmpStats.cleverness = diceRoll(4, 6);
+					tmpStats.focus = diceRoll(3, 6);
 					break;
 				case 'u':
 				case 'U':
-					cout << "Undead\n";
+					cout << "\nUndead!\n";
 					inputRace = UNDEAD;
-					tempStats.strength = diceRoll(3, 6);
-					tempStats.faith = diceRoll(3, 6);
-					tempStats.dexterity = diceRoll(3, 6);
-					tempStats.insperation = diceRoll(3, 6);
-					tempStats.cleverness = diceRoll(2, 6);
-					tempStats.focus = diceRoll(3, 6);
-
+					tmpStats.strength = diceRoll(3, 6);
+					tmpStats.faith = diceRoll(3, 6);
+					tmpStats.dexterity = diceRoll(3, 6);
+					tmpStats.insperation = diceRoll(3, 6);
+					tmpStats.cleverness = diceRoll(2, 6);
+					tmpStats.focus = diceRoll(3, 6);
 					break;
 				default:
-					cout << "Please input a vaild race.\n";
+					cout << "\nPlease input a vaild race.\n";
 					retry = true; // Set the retry to default
 					break;
 			}
 		}
 
-		// Display the stats
-		displayStats(tempStats);
+		cout << "\n";
 
-		cout << "Reroll? [Y]es [N]o\n";
+		// Display the stats
+		displayStats(tmpStats, true);
+
+		cout << "Reroll? [Y]es [N]o\n\n";
 
 		// Input for the reroll.
 		cin >> inputs;
@@ -311,6 +332,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		if (inputs == 'y' || inputs == 'Y')
 		{
+			cout << inputs;
 			// Reset the reroll to default.
 			reroll = true;
 		}
@@ -336,37 +358,37 @@ int _tmain(int argc, _TCHAR* argv[])
 			case 'f':
 			case 'F':
 				inputClass = FIGHTER;
-				cout << "Fighter\n";
+				cout << "Fighter!\n";
 				player1 = new fighter;
 				break;
 			case 'c':
 			case 'C':
 				inputClass = CLERIC;
-				cout << "Cleric\n";
+				cout << "Cleric!\n";
 				player1 = new fighter;
 				break;
 			case 't':
 			case 'T':
 				inputClass = THEIF;
-				cout << "Theif\n";
+				cout << "Theif!\n";
 				player1 = new rouge;
 				break;
 			case 'b':
 			case 'B':
 				inputClass = BARD;
-				cout << "Bard\n";
+				cout << "Bard!\n";
 				player1 = new bard;
 				break;
 			case 'r':
 			case 'R':
 				inputClass = ROUGE;
-				cout << "Rouge\n";
+				cout << "Rouge!\n";
 				player1 = new rouge;
 				break;
 			case 'm':
 			case 'M':
 				inputClass = MAGE;
-				cout << "Mage\n";
+				cout << "Mage!\n";
 				player1 = new mage;
 				break;
 			default:
@@ -375,6 +397,12 @@ int _tmain(int argc, _TCHAR* argv[])
 				break;
 		}
 	}
+
+	// Set the attributes as they are at this point.
+	player1->setAtts(tmpStats);
+
+	// Display the displayAllStats function.
+	player1->displayAllStats();
 
 	return 0;
 }
