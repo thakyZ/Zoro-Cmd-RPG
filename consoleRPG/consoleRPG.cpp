@@ -24,8 +24,6 @@ int diceRoll(int qty, int sides)
 	return subTotal;
 }
 
-
-
 // Race Choices
 enum RACE { HUMAN, ELF, DARKELF, ANGEL, MONGREL, SHAMANI, NIBELUNG, UNDEAD };
 
@@ -45,6 +43,7 @@ struct ATTRIBUTES
 	unsigned int mp, mpMax;
 };
 
+// Display the stats of the roll.
 void displayStats(ATTRIBUTES atts)
 {
 	cout << " +---------------------+ \n";
@@ -70,22 +69,26 @@ int _tmain(int argc, _TCHAR* argv[])
 	ATTRIBUTES tempStats; // The stats the player gets by random.
 	bool reroll = true; // The bool for rerolling.
 	OCC inputClass; // The class that is chosen.
-	bool retry = true;
+	bool retry = true; // The fix for the race chooser.
 
+	// Clear the console.
 	system("cls");
 
 	cout << "Welcome to Zoro\n";
 
+	// Check for the reroll
 	while (reroll == true)
 	{
 		cout << "Please Select a Race:\n";
 		cout << "[H]uman [E]lf [D]ark elf [A]ngel [M]ongrel [S]hamani [N]ibelung [U]ndead\n";
 
-		// The input for the chosen race.
-		cin >> inputs;
-
+		// Check for the retry
 		while (retry == true)
 		{
+			// The input for the chosen race.
+			cin >> inputs;
+
+			// Reset the retry var.
 			retry == false;
 
 			switch (inputs)
@@ -100,7 +103,7 @@ int _tmain(int argc, _TCHAR* argv[])
 					tempStats.insperation = diceRoll(3, 6);
 					tempStats.cleverness = diceRoll(3, 6);
 					tempStats.focus = diceRoll(3, 6);
-					retry = false;
+					retry = false; // End the retry.
 					break;
 				case 'e':
 				case 'E':
@@ -178,39 +181,48 @@ int _tmain(int argc, _TCHAR* argv[])
 					tempStats.insperation = diceRoll(3, 6);
 					tempStats.cleverness = diceRoll(2, 6);
 					tempStats.focus = diceRoll(3, 6);
+
 					break;
 				default:
 					cout << "Please input a vaild race.\n";
-					retry = true;
+					retry = true; // Set the retry to default
 					break;
 			}
 		}
 
+		// Display the stats
 		displayStats(tempStats);
 
 		cout << "Reroll? [Y]es [N]o\n";
 
+		// Input for the reroll.
 		cin >> inputs;
 
+		// End the reroll
 		reroll = false;
 
 		if (inputs == 'y' || inputs == 'Y')
 		{
+			// Reset the reroll to default.
 			reroll = true;
 		}
 	}
 
+	// Reset the reroll to default for the second reroll.
 	reroll = true;
 
 	while (reroll) // While reroll == true
 	{
+		// End the reroll for now
 		reroll = false;
 
 		cout << "Please select a class\n";
 		cout << "[F]ighter [C]leric [T]heif [B]ard [R]ouge [M]age\n";
 
+		// Check for inputs of which class.
 		cin >> inputs;
 
+		// Check for which class.
 		switch (inputs)
 		{
 			case 'f':
