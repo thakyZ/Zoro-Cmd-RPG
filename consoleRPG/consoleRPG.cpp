@@ -86,7 +86,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		while (retry == true)
 		{
-			retry == false
+			retry == false;
 
 			switch (inputs)
 			{
