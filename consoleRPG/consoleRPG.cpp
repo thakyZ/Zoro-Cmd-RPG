@@ -48,7 +48,7 @@ struct ATTRIBUTES
 void displayStats(ATTRIBUTES atts)
 {
 	cout << " +---------------------+ \n";
-	cout << " |  Attributes:        | \n";
+	cout << " | Attributes:         | \n";
 	cout << " +---------------------+ \n";
 	cout << "\n";
 	cout << "   Strength:      " << atts.strength << "\n";
