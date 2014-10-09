@@ -90,6 +90,81 @@ class fighter : public character
 		}
 };
 
+// Class for the Cleric.
+class cleric : public character
+{
+	public:
+		cleric()
+		{
+			cout << "Cleric Created.\n";
+
+			atts.hpMax = atts.hp = diceRoll(7, 6);
+			atts.mpMax = atts.mp = 50;
+
+
+		}
+};
+
+// Class for the Rouge.
+class rouge : public character
+{
+	public:
+		rouge()
+		{
+			cout << "Rouge Created.\n";
+
+			atts.hpMax = atts.hp = diceRoll(7, 6);
+			atts.mpMax = atts.mp = 20;
+
+
+		}
+};
+
+// Class for the Bard.
+class bard : public character
+{
+	public:
+		bard()
+		{
+			cout << "Bard Created.\n";
+
+			atts.hpMax = atts.hp = diceRoll(5, 6);
+			atts.mpMax = atts.mp = 50;
+
+
+		}
+};
+
+// Class for the Tinker.
+class tinker : public character
+{
+	public:
+		tinker()
+		{
+			cout << "Tinker Created.\n";
+
+			atts.hpMax = atts.hp = diceRoll(5, 6);
+			atts.mpMax = atts.mp = 20;
+
+
+		}
+};
+
+// Class for the Mage.
+class mage : public character
+{
+	public:
+		mage()
+		{
+			cout << "Mage Created.\n";
+
+			atts.hpMax = atts.hp = diceRoll(3, 6);
+			atts.mpMax = atts.mp = 50;
+
+
+		}
+};
+
 // Startup
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -260,31 +335,37 @@ int _tmain(int argc, _TCHAR* argv[])
 			case 'F':
 				inputClass = FIGHTER;
 				cout << "Fighter\n";
+				player1 = new fighter;
 				break;
 			case 'c':
 			case 'C':
 				inputClass = CLERIC;
 				cout << "Cleric\n";
+				player1 = new fighter;
 				break;
 			case 't':
 			case 'T':
 				inputClass = THEIF;
 				cout << "Theif\n";
+				player1 = new rouge;
 				break;
 			case 'b':
 			case 'B':
 				inputClass = BARD;
 				cout << "Bard\n";
+				player1 = new bard;
 				break;
 			case 'r':
 			case 'R':
 				inputClass = ROUGE;
 				cout << "Rouge\n";
+				player1 = new rouge;
 				break;
 			case 'm':
 			case 'M':
 				inputClass = MAGE;
 				cout << "Mage\n";
+				player1 = new mage;
 				break;
 			default:
 				cout << "Please input a valid class.\n";
