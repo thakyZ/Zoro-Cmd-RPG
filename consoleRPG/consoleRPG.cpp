@@ -177,6 +177,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	OCC inputClass; // The class that is chosen.
 	bool retry = true; // The fix for the race chooser.
 
+	character *player1;
+
 	// Clear the console.
 	system("cls");
 
