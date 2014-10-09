@@ -41,7 +41,7 @@ struct ATTRIBUTES
 	unsigned int focus;
 };
 
-// Display the stats of the roll.
+// - OLD - Display the stats of the roll.
 void displayStats(ATTRIBUTES atts, bool split)
 {
 	cout << " +---------------------+ \n";
@@ -71,6 +71,7 @@ class character
 		RACE charRace;
 		unsigned int hp, hpMax;
 		unsigned int mp, mpMax;
+		char *charClassChar = "";
 
 	public:
 		// Constructors
@@ -80,26 +81,109 @@ class character
 		}
 
 		// Accessors
+		// Set the attributes from outside this class.
 		void setAtts(ATTRIBUTES tmpAtts)
 		{
 			atts = tmpAtts;
 		}
 
+		// Get the attributes from outside this class.
 		ATTRIBUTES getAtts()
 		{
 			return atts;
 		}
 
-		void displayAllStats()
+		// To detect which class you are currently on.
+		char detectClass(OCC tempClass)
 		{
-			cout << " +---------------------+\n";
-			cout << " | " << charRace << "          |\n";
-			cout << " | " << charClass << "          |\n";
-			displayStats(atts, false);
+			switch(tempClass)
+			{
+				case FIGHTER:
+					charClassChar = "Fighter";
+					break;
+				case CLERIC:
+					charClassChar = "Cleric";
+					break;
+				case THEIF:
+					charClassChar = "Theif";
+					break;
+				case BARD:
+					charClassChar = "Bard";
+					break;
+				case ROUGE:
+					charClassChar = "Rouge";
+					break;
+				case TINKER:
+					charClassChar = "Tinker";
+					break;
+				case MAGE:
+					charClassChar = "Mage";
+					break;
+			}
+		}
 
-			cout << "   Hitpoints:     " << hp << "/" << hpMax << "\n";
-			cout << "   Mana:          " << mp << "/" << mpMax << "\n";
-			cout << "\n\n";
+		// To detect which race you are currently on.
+		char detectRace(RACE tempRace)
+		{
+			switch(tempRace)
+			{
+				case HUMAN:
+					charRaceChar = "Human";
+					break;
+				case ELF:
+					charRaceChar = "Elf";
+					break;
+				case DARKELF:
+					charRaceChar = "Dark Elf";
+					break;
+				case ANGEL:
+					charRaceChar = "Angel";
+					break;
+				case MONGREL:
+					charRaceChar = "Mongrel";
+					break;
+				case SHAMANI:
+					charRaceChar = "Shamani";
+					break;
+				case NIBELUNG:
+					charRaceChar = "Nibelung";
+					break;
+				case UNDEAD:
+					charRaceChar = "Undead";
+					break;
+			}
+		}
+
+		// The new displayStats
+		void displayStats(bool full)
+		{
+			cout << "\n";
+
+			if (full) // full == true
+			{
+				cout << " +---------------------+ \n";
+				cout << " | " << charClassChar(charClass) << "            | \n";
+				cout << " | " << charRaceChar(charRace) << "               | \n";
+			}
+
+			cout << " +---------------------+ \n";
+			cout << " | Attributes:         | \n";
+			cout << " +---------------------+ \n";
+			cout << "\n";
+			cout << "   Strength:      " << atts.strength << "\n";
+			cout << "   Faith:         " << atts.faith << "\n";
+			cout << "   Dexterity:     " << atts.dexterity << "\n";
+			cout << "   Insperation:   " << atts.insperation << "\n";
+			cout << "   Cleverness:    " << atts.cleverness << "\n";
+			cout << "   Focus:         " << atts.focus << "\n";
+
+			if (full) // full == true
+			{
+				cout << "   Hitpoints:     " << hp << "/" << hpMax << "\n";
+				cout << "   Hitpoints:     " << mp << "/" << mpMax << "\n";
+			}
+
+			cout << "\n\n"
 		}
 };
 
@@ -320,7 +404,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		cout << "\n";
 
 		// Display the stats
-		displayStats(tmpStats, true);
+		player1->displayStats(false);
 
 		cout << "Reroll? [Y]es [N]o\n\n";
 
@@ -402,7 +486,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	player1->setAtts(tmpStats);
 
 	// Display the displayAllStats function.
-	player1->displayAllStats();
+	player1->displayStats(true);
 
 	return 0;
 }
