@@ -68,6 +68,26 @@ class character
 		OCC charClass;
 		RACE charRace;
 
+	public:
+		character()
+		{
+			copper = 50000;
+		}
+};
+
+// Class for the fighter.
+class fighter : public character
+{
+	public:
+		fighter()
+		{
+			cout << "Fighter Created.\n";
+
+			atts.hpMax = atts.hp = diceRoll(10, 6);
+			atts.mpMax = atts.mp = 20;
+
+
+		}
 };
 
 // Startup
