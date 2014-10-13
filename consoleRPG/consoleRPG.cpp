@@ -44,7 +44,7 @@ struct ATTRIBUTES
 	unsigned int focus;
 };
 
-// - OLD - Display the stats of the roll.
+// Display the stats of the roll.
 void displayStats(ATTRIBUTES atts)
 {
 	cout << " +---------------------+ \n";
@@ -70,8 +70,6 @@ class character
 		RACE charRace;
 		unsigned int hp, hpMax;
 		unsigned int mp, mpMax;
-		char *charClassChar;
-		char *charRaceChar;
 		LOCATION location;
 
 	public:
@@ -99,6 +97,98 @@ class character
 		LOCATION getLoc()
 		{
 			return location;
+		}
+
+		// Locations
+		// Display stats.
+		void locStats()
+		{
+			bool reroll = true;
+			char menuItem;
+
+			while (reroll)
+			{
+				reroll = false;
+
+				cout << "\n";
+				cout << "You look yourself over...\n\n";
+
+				displayStats(atts);
+
+				cout << "   Hitpoints:     " << hp << "/" << hpMax << "\n";
+				cout << "   Mana:          " << mp << "/" << mpMax << "\n";
+				cout << "   Copper:        " << copper << "\n";
+
+				cout << "\n";
+				cout << "[G]o back to Town\n";
+				cin >> menuItem;
+
+				switch (menuItem)
+				{
+					case 'g':
+					case 'G':
+						location = TOWN;
+						break;
+					default:
+						reroll = true;
+						break;
+				}
+			}
+		}
+
+		//display town code.
+		void locTown()
+		{
+			bool reroll = true;
+			char menuItem;
+
+			// Repeat the menu
+			while (reroll)
+			{
+				// End the reroll.
+				reroll = false;
+
+				cout << "\n";
+
+				cout << "You find the small village of Zoro. This village is very small but strategic as it sits on the hotly contested bore bewteen Ipana and Seragul. You go to:\n";
+				cout << "[1] The Forest\t\t [5] The Weaponsmith\n";
+				cout << "[2] The Armorsmith\t [6] Chapel of the Void\n";
+				cout << "[3] The Tavern\t\t [7] The Money Lender\n";
+				cout << "[4] View your Stats\t [8] Quit\n";
+
+				cin >> menuItem;
+
+				switch (menuItem)
+				{
+					case '1':
+						location = FOREST;
+						break;
+					case '2':
+						// location = ARMORSMITH;
+						break;
+					case '3':
+						// location = TAVERN;
+						break;
+					case '4':
+						location = VIEWSTATS;
+						break;
+					case '5':
+						// location = WEAPONSMITH;
+						break;
+					case '6':
+						// location = CHAPEL;
+						break;
+					case '7':
+						// location = BANK;
+						break;
+					case '8':
+						location = QUIT;
+						break;
+					default:
+						reroll = true;
+						break;
+				}
+			}
 		}
 };
 
@@ -344,8 +434,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		// End the reroll for now
 		reroll = false;
 
-		cout << "Please select a class\n";
-		cout << "[F]ighter [C]leric [T]heif [B]ard [R]ouge [M]age\n";
+		cout << "\nPlease select a class\n\n";
+		cout << "[F]ighter [C]leric [T]heif [B]ard [R]ouge [M]age\n\n";
 
 		// Check for inputs of which class.
 		cin >> inputs;
@@ -356,41 +446,41 @@ int _tmain(int argc, _TCHAR* argv[])
 			case 'f':
 			case 'F':
 				inputClass = FIGHTER;
-				cout << "Fighter!\n";
+				cout << "\nFighter!\n";
 				player1 = new fighter;
 				break;
 			case 'c':
 			case 'C':
 				inputClass = CLERIC;
-				cout << "Cleric!\n";
+				cout << "\nCleric!\n";
 				player1 = new fighter;
 				break;
 			case 't':
 			case 'T':
 				inputClass = THEIF;
-				cout << "Theif!\n";
+				cout << "\nTheif!\n";
 				player1 = new rouge;
 				break;
 			case 'b':
 			case 'B':
 				inputClass = BARD;
-				cout << "Bard!\n";
+				cout << "\nBard!\n";
 				player1 = new bard;
 				break;
 			case 'r':
 			case 'R':
 				inputClass = ROUGE;
-				cout << "Rouge!\n";
+				cout << "\nRouge!\n";
 				player1 = new rouge;
 				break;
 			case 'm':
 			case 'M':
 				inputClass = MAGE;
-				cout << "Mage!\n";
+				cout << "\nMage!\n";
 				player1 = new mage;
 				break;
 			default:
-				cout << "Please input a valid class.\n";
+				cout << "\nPlease input a valid class.\n";
 				reroll = true;
 				break;
 		}
@@ -407,14 +497,14 @@ int _tmain(int argc, _TCHAR* argv[])
 		switch (player1->getLoc())
 		{
 			case QUIT:
-				break;
-			case TOWN:
-				break;
-			case FOREST:
+				iQuit = true;
 				break;
 			case VIEWSTATS:
+				player1->locStats();
 				break;
 			default:
+			case TOWN:
+				player1->locTown();
 				break;
 		}
 	}
