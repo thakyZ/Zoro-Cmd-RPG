@@ -31,7 +31,13 @@ enum RACE { HUMAN, ELF, DARKELF, ANGEL, MONGREL, SHAMANI, NIBELUNG, UNDEAD };
 enum OCC { FIGHTER, CLERIC, THEIF, BARD, ROUGE, TINKER, MAGE };
 
 // Loations
-enum LOCATION { QUIT, TOWN, FOREST, VIEWSTATS };
+enum LOCATION { QUIT, TOWN, FOREST, VIEWSTATS, MONSTER };
+
+// Armors.
+enum ARMOR { LOINCLOTH, CLOTHARMOR };
+
+// Weapons.
+enum WEAPON { FISTS, DAGGER };
 
 // Stats Tree
 struct ATTRIBUTES
@@ -60,23 +66,85 @@ void displayStats(ATTRIBUTES atts)
 	cout << "\n\n";
 }
 
+class monster
+{
+	public:
+		int hp, hpMax; // The var for hitpoints.
+		ATTRIBUTES atts; // The var for stats.
+		char *mName; // The name of the monster.
+		char *attackText; // The text when the monster attacks.
+		char *deathText; // The text when the monster dies.
+		char *winText; // The text when the player dies.
+		int masteries; // Unknown.
+		int copper; // The amout of money the monster drops.
+		ARMOR armor; // The armor the monster has.
+		WEAPON weapon; // The weapon the monster has.
+
+		monster()
+		{
+			masteries = 0; // Declare this for now to 0.
+
+			// Switch to figure out what monster the player will face.
+			switch (diceRoll(1, 2))
+			{
+				case 1:
+					mName = "A Small Goblin";
+					hp = hpMax = diceRoll(3, 6);
+					atts.strength = diceRoll(2, 6);
+					atts.focus = diceRoll(2, 6);
+					atts.cleverness = diceRoll(2, 6);
+					atts.dexterity = diceRoll(2, 6);
+					atts.faith = diceRoll(2, 6);
+					atts.insperation = diceRoll(2, 6);
+					copper = diceRoll(10, 5);
+					armor = LOINCLOTH;
+					weapon = FISTS;
+					attackText = "a moldy stick";
+					deathText = "the goblin cries out \"why use hits mes sos hards?\"";
+					winText = "the goblin celibrates its victory by dancing around with his moldy stick.";
+					break;
+				case 2:
+					mName = "A Giant Rat";
+					hp = hpMax = diceRoll(3, 6);
+					atts.strength = diceRoll(2, 6);
+					atts.focus = diceRoll(2, 6);
+					atts.cleverness = diceRoll(2, 6);
+					atts.dexterity = diceRoll(2, 6);
+					atts.faith = diceRoll(2, 6);
+					atts.insperation = diceRoll(2, 6);
+					copper = diceRoll(10, 5);
+					armor = LOINCLOTH;
+					weapon = FISTS;
+					attackText = "sharp pointy teeth";
+					deathText = "the rat goes squee and keels over dead.";
+					winText = "the rat starts eating your dead carcus.";
+					break;
+			}
+		}
+};
+
 // Class for the character.
 class character
 {
 	protected:
-		ATTRIBUTES atts;
-		int copper; // Money var.
-		OCC charClass;
-		RACE charRace;
-		unsigned int hp, hpMax;
-		unsigned int mp, mpMax;
-		LOCATION location;
+		ATTRIBUTES atts; // The stats that the player has.
+		int copper; // The amount of money the player has.
+		OCC charClass; // The characters class.
+		RACE charRace; // The characters race.
+		unsigned int hp, hpMax; // The hitpoints for the character.
+		unsigned int mp, mpMax; // The mana or stamina for the character.
+		LOCATION location; // The location the player is at.
+		WEAPON weapon; // The weapon the character has.
+		ARMOR armor; // The armor the character has.
 
 	public:
 		// Constructors
 		character()
 		{
+			// Set the default copper.
 			copper = 50000;
+
+			// Set the default location of the menu.
 			location = VIEWSTATS;
 		}
 
@@ -84,35 +152,43 @@ class character
 		// Get the attributes from outside this class.
 		ATTRIBUTES getAtts()
 		{
+			// Return the attributes because thats what we want to do.
 			return atts;
 		}
 
 		// Set the attributes from outside this class.
 		void setAtts(ATTRIBUTES tmpAtts)
 		{
+			// Set the attributes to the character.
 			atts = tmpAtts;
 		}
 
 		// Get the location
 		LOCATION getLoc()
 		{
+			// Return the location because thats what we want to do.
 			return location;
 		}
+
+		virtual void attack(monster* monster1) {}
 
 		// Locations
 		// Display stats.
 		void locStats()
 		{
-			bool reroll = true;
-			char menuItem;
+			bool reroll = true; // Check for the loop.
+			char menuItem; // The var for the menus.
 
+			// Start the loop.
 			while (reroll)
 			{
+				// End the reroll.
 				reroll = false;
 
 				cout << "\n";
 				cout << "You look yourself over...\n\n";
 
+				// Display the stats.
 				displayStats(atts);
 
 				cout << "   Hitpoints:     " << hp << "/" << hpMax << "\n";
@@ -121,6 +197,8 @@ class character
 
 				cout << "\n";
 				cout << "[G]o back to Town\n";
+
+				// Get the input for the menu.
 				cin >> menuItem;
 
 				switch (menuItem)
@@ -136,19 +214,19 @@ class character
 			}
 		}
 
-		//display town code.
+		// Display town code.
 		void locTown()
 		{
-			bool reroll = true;
-			char menuItem;
+			bool reroll = true; // Check for the menu.
+			char menuItem; // The var for the menus.
 
-			// Repeat the menu
+			// Start the loop.
 			while (reroll)
 			{
-				// End the reroll.
+				// End the loop.
 				reroll = false;
 
-				cout << "\n";
+				cout << "\n\n";
 
 				cout << "You find the small village of Zoro. This village is very small but strategic as it sits on the hotly contested bore bewteen Ipana and Seragul. You go to:\n";
 				cout << "[1] The Forest\t\t [5] The Weaponsmith\n";
@@ -156,6 +234,7 @@ class character
 				cout << "[3] The Tavern\t\t [7] The Money Lender\n";
 				cout << "[4] View your Stats\t [8] Quit\n";
 
+				// Get the menuItem.
 				cin >> menuItem;
 
 				switch (menuItem)
@@ -190,6 +269,65 @@ class character
 				}
 			}
 		}
+
+		// Display forest code.
+		void locForest()
+		{
+			bool reroll = true; // Check the loop
+			char menuItem; // The var for the menus.
+
+			// Repeat the menu
+			while (reroll)
+			{
+				// End the reroll.
+				reroll = false;
+
+				cout << "\n\n";
+
+				cout << "You enter the woods near Zoro. It's dark a spoopy, you think you hear some noise in the bushes. You:\n";
+				cout << "[1] Look for monsters\t [3] Visit the alchimest\n";
+				cout << "[2] Return To town\n";
+
+				// Input for the menu.
+				cin >> menuItem;
+
+				switch (menuItem)
+				{
+					case '1':
+						location = MONSTER;
+						break;
+					case '2':
+						location = TOWN;
+						break;
+					case '3':
+						// location = ALCHIMEST;
+						break;
+					default:
+						reroll = true;
+						break;
+				}
+			}
+		}
+
+		// Display monster locations.
+		void locMonster()
+		{
+			monster monster1; // Monster variable.
+
+			cout << "\n";
+			cout << "You hear a rustel in the bushes. " << monster1.mName << " jumps out at you\n";
+
+			// Start the loop.
+			while (hp > 0 && monster1.hp > 0)
+			{
+				cout << "\n\n";
+				cout << monster1.mName << ": " << monster1.hp << "/" << monster1.hpMax << "\n";
+				cout << "You: " << hp << "/" << hpMax << "\n\n";
+				cout << "Action?\n";
+
+				attack(&monster1);
+			}
+		}
 };
 
 // Class for the fighter.
@@ -202,6 +340,33 @@ class fighter : public character
 
 			hpMax = hp = diceRoll(10, 6);
 			mpMax = mp = 20;
+		}
+
+		virtual void attack(monster* monster1)
+		{
+			char inputs; // The var for the menus.
+			bool reroll = true; // Check for the loop.
+			int damage = 0; // Damage that is being done.
+
+			// Start the loop.
+			while (reroll)
+			{
+				reroll = false; // End the loop.
+
+				cout << "\n";
+				cout << "[A]ttack";
+
+				if (mp >= 1)
+				{
+					cout << "\t[F]renzy\n";
+				}
+				if (mp >= 5)
+				{
+					cout << "[D]eadly Strike\n";
+				}
+
+				cin >> inputs;
+			}
 		}
 };
 
@@ -216,6 +381,33 @@ class cleric : public character
 			hpMax = hp = diceRoll(7, 6);
 			mpMax = mp = 50;
 		}
+
+		virtual void attack(monster* monster1)
+		{
+			char inputs; // The var for the menus.
+			bool reroll = true; // Check for the loop.
+			int damage = 0; // Damage that is being done.
+
+			// Start the loop.
+			while (reroll)
+			{
+				reroll = false; // End the loop.
+
+				cout << "\n";
+				cout << "[A]ttack";
+
+				if (mp >= 1)
+				{
+					cout << "\t[F]renzy\n";
+				}
+				if (mp >= 5)
+				{
+					cout << "[D]eadly Strike\n";
+				}
+
+				cin >> inputs;
+			}
+		}
 };
 
 // Class for the Rouge.
@@ -228,6 +420,33 @@ class rouge : public character
 
 			hpMax = hp = diceRoll(7, 6);
 			mpMax = mp = 20;
+		}
+
+		virtual void attack(monster* monster1)
+		{
+			char inputs; // The var for the menus.
+			bool reroll = true; // Check for the loop.
+			int damage = 0; // Damage that is being done.
+
+			// Start the loop.
+			while (reroll)
+			{
+				reroll = false; // End the loop.
+
+				cout << "\n";
+				cout << "[A]ttack";
+
+				if (mp >= 1)
+				{
+					cout << "\t[F]renzy\n";
+				}
+				if (mp >= 5)
+				{
+					cout << "[D]eadly Strike\n";
+				}
+
+				cin >> inputs;
+			}
 		}
 };
 
@@ -242,6 +461,33 @@ class bard : public character
 			hpMax = hp = diceRoll(5, 6);
 			mpMax = mp = 50;
 		}
+
+		virtual void attack(monster* monster1)
+		{
+			char inputs; // The var for the menus.
+			bool reroll = true; // Check for the loop.
+			int damage = 0; // Damage that is being done.
+
+			// Start the loop.
+			while (reroll)
+			{
+				reroll = false; // End the loop.
+
+				cout << "\n";
+				cout << "[A]ttack";
+
+				if (mp >= 1)
+				{
+					cout << "\t[F]renzy\n";
+				}
+				if (mp >= 5)
+				{
+					cout << "[D]eadly Strike\n";
+				}
+
+				cin >> inputs;
+			}
+		}
 };
 
 // Class for the Tinker.
@@ -255,6 +501,33 @@ class tinker : public character
 			hpMax = hp = diceRoll(5, 6);
 			mpMax = mp = 20;
 		}
+
+		virtual void attack(monster* monster1)
+		{
+			char inputs; // The var for the menus.
+			bool reroll = true; // Check for the loop.
+			int damage = 0; // Damage that is being done.
+
+			// Start the loop.
+			while (reroll)
+			{
+				reroll = false; // End the loop.
+
+				cout << "\n";
+				cout << "[A]ttack";
+
+				if (mp >= 1)
+				{
+					cout << "\t[F]renzy\n";
+				}
+				if (mp >= 5)
+				{
+					cout << "[D]eadly Strike\n";
+				}
+
+				cin >> inputs;
+			}
+		}
 };
 
 // Class for the Mage.
@@ -267,6 +540,33 @@ class mage : public character
 
 			hpMax = hp = diceRoll(3, 6);
 			mpMax = mp = 50;
+		}
+
+		virtual void attack(monster* monster1)
+		{
+			char inputs; // The var for the menus.
+			bool reroll = true; // Check for the loop.
+			int damage = 0; // Damage that is being done.
+
+			// Start the loop.
+			while (reroll)
+			{
+				reroll = false; // End the loop.
+
+				cout << "\n";
+				cout << "[A]ttack";
+
+				if (mp >= 1)
+				{
+					cout << "\t[F]renzy\n";
+				}
+				if (mp >= 5)
+				{
+					cout << "[D]eadly Strike\n";
+				}
+
+				cin >> inputs;
+			}
 		}
 };
 
@@ -505,6 +805,12 @@ int _tmain(int argc, _TCHAR* argv[])
 			default:
 			case TOWN:
 				player1->locTown();
+				break;
+			case FOREST:
+				player1->locForest();
+				break;
+			case MONSTER:
+				player1->locMonster();
 				break;
 		}
 	}
