@@ -24,30 +24,33 @@ int diceRoll(int qty, int sides)
 	return subTotal;
 }
 
-// Race Choices
+// Race types.
 enum RACE { HUMAN, ELF, DARKELF, ANGEL, MONGREL, SHAMANI, NIBELUNG, UNDEAD };
 
-// Class Choices
+// Class types.
 enum OCC { FIGHTER, CLERIC, THEIF, BARD, ROUGE, TINKER, MAGE };
 
-// Loations
+// Loations types.
 enum LOCATION { QUIT, TOWN, FOREST, VIEWSTATS, MONSTER };
 
-// Armors.
-enum ARMOR { LOINCLOTH, CLOTHARMOR };
+// Armors types.
+enum ARMOR { LOINCLOTH, CLOTHARMOR, LEATHER };
 
-// Weapons.
-enum WEAPON { FISTS, DAGGER };
+// Weapons types.
+enum WEAPON { FISTS, DAGGER, STAFF, SWORD };
 
-// Stats Tree
+// Attacks types.
+enum ATTACK { REGULAR, FRENZY, DEADLY };
+
+// Stats Tree.
 struct ATTRIBUTES
 {
-	unsigned int strength;
-	unsigned int faith;
-	unsigned int dexterity;
-	unsigned int insperation;
-	unsigned int cleverness;
-	unsigned int focus;
+	unsigned int strength; // The strength stat of the class.
+	unsigned int faith; // The faith stat of the class.
+	unsigned int dexterity; // The dexterity stat of the class.
+	unsigned int insperation; // The insperation stat of the class.
+	unsigned int cleverness; // The cleverness stat of the class.
+	unsigned int focus; // The focus stat of the class.
 };
 
 // Display the stats of the roll.
@@ -68,7 +71,7 @@ void displayStats(ATTRIBUTES atts)
 
 class monster
 {
-	public:
+	protected:
 		int hp, hpMax; // The var for hitpoints.
 		ATTRIBUTES atts; // The var for stats.
 		char *mName; // The name of the monster.
@@ -80,6 +83,8 @@ class monster
 		ARMOR armor; // The armor the monster has.
 		WEAPON weapon; // The weapon the monster has.
 
+	public:
+		// Create the monster class.
 		monster()
 		{
 			masteries = 0; // Declare this for now to 0.
@@ -98,7 +103,7 @@ class monster
 					atts.insperation = diceRoll(2, 6);
 					copper = diceRoll(10, 5);
 					armor = LOINCLOTH;
-					weapon = FISTS;
+					weapon = DAGGER;
 					attackText = "a moldy stick";
 					deathText = "the goblin cries out \"why use hits mes sos hards?\"";
 					winText = "the goblin celibrates its victory by dancing around with his moldy stick.";
@@ -121,6 +126,73 @@ class monster
 					break;
 			}
 		}
+
+		// Get or set methods.
+		int getHealth ()
+		{
+			return hp;
+		}
+
+		int getMaxHealth ()
+		{
+			return hpMax;
+		}
+
+		// We do not need this right now...
+		/*int getMana ()
+		{
+			return mp;
+		}
+
+		int getMaxMana ()
+		{
+			return mpMax;
+		}*/
+
+		char *getName ()
+		{
+			return mName;
+		}
+
+		char *getAttackText ()
+		{
+			return attackText;
+		}
+
+		char *getDeathText ()
+		{
+			return deathText;
+		}
+
+		char *getWinText ()
+		{
+			return winText;
+		}
+
+		int getMasteries ()
+		{
+			return masteries;
+		}
+
+		int getCopper ()
+		{
+			return copper;
+		}
+
+		ARMOR getArmor ()
+		{
+			return armor;
+		}
+
+		WEAPON getWeapon ()
+		{
+			return weapon;
+		}
+
+		ATTRIBUTES getAtts ()
+		{
+			return atts;
+		}
 };
 
 // Class for the character.
@@ -136,9 +208,11 @@ class character
 		LOCATION location; // The location the player is at.
 		WEAPON weapon; // The weapon the character has.
 		ARMOR armor; // The armor the character has.
+		int masteries; // The skills level of the player.
 
 	public:
 		// Constructors
+		// Create the character class.
 		character()
 		{
 			// Set the default copper.
@@ -146,6 +220,15 @@ class character
 
 			// Set the default location of the menu.
 			location = VIEWSTATS;
+
+			// Set default masteries.
+			masteries = 1;
+
+			// Set the default weapon.
+			weapon = FISTS;
+
+			// Set the default armor.
+			armor = LOINCLOTH;
 		}
 
 		// Accessors
@@ -205,10 +288,10 @@ class character
 				{
 					case 'g':
 					case 'G':
-						location = TOWN;
+						location = TOWN; // Set the location town because after we display stats we want to go back to town.
 						break;
 					default:
-						reroll = true;
+						reroll = true; // If you do not type in the right input this will repeat.
 						break;
 				}
 			}
@@ -240,31 +323,31 @@ class character
 				switch (menuItem)
 				{
 					case '1':
-						location = FOREST;
+						location = FOREST; // Go to the forest.
 						break;
 					case '2':
-						// location = ARMORSMITH;
+						// location = ARMORSMITH; // Go to the armor smith.
 						break;
 					case '3':
-						// location = TAVERN;
+						// location = TAVERN; // Go to the tavern.
 						break;
 					case '4':
-						location = VIEWSTATS;
+						location = VIEWSTATS; // Go to the view stats screen.
 						break;
 					case '5':
-						// location = WEAPONSMITH;
+						// location = WEAPONSMITH; // Go to the weapon smith.
 						break;
 					case '6':
-						// location = CHAPEL;
+						// location = CHAPEL; // Go to the chapel.
 						break;
 					case '7':
-						// location = BANK;
+						// location = BANK; // Go to the bank.
 						break;
 					case '8':
-						location = QUIT;
+						location = QUIT; // Quit the game.
 						break;
 					default:
-						reroll = true;
+						reroll = true; // If you do not type in a correct input then loop.
 						break;
 				}
 			}
@@ -294,16 +377,16 @@ class character
 				switch (menuItem)
 				{
 					case '1':
-						location = MONSTER;
+						location = MONSTER; // Go find a monster.
 						break;
 					case '2':
-						location = TOWN;
+						location = TOWN; // Go to the town.
 						break;
 					case '3':
-						// location = ALCHIMEST;
+						// location = ALCHIMEST; // Go to the alchimest.
 						break;
 					default:
-						reroll = true;
+						reroll = true; // If you do not type in the right input then repeat.
 						break;
 				}
 			}
@@ -315,31 +398,40 @@ class character
 			monster monster1; // Monster variable.
 
 			cout << "\n";
-			cout << "You hear a rustel in the bushes. " << monster1.mName << " jumps out at you\n";
+			cout << "You hear a rustel in the bushes. " << monster1->getName() << " jumps out at you\n";
 
 			// Start the loop.
 			while (hp > 0 && monster1.hp > 0)
 			{
 				cout << "\n\n";
-				cout << monster1.mName << ": " << monster1.hp << "/" << monster1.hpMax << "\n";
+				cout << monster1->getName() << ": " << monster1->getHealth() << "/" << monster1->getMaxHeath() << "\n";
 				cout << "You: " << hp << "/" << hpMax << "\n\n";
 				cout << "Action?\n";
 
-				attack(&monster1);
+				attack(&monster1); // Start the battle.
 			}
 		}
+
+		// Attacks
 };
 
 // Class for the fighter.
 class fighter : public character
 {
 	public:
+		// Create the fighter class.
 		fighter()
 		{
 			cout << "Fighter Created.\n";
 
-			hpMax = hp = diceRoll(10, 6);
-			mpMax = mp = 20;
+			hpMax = hp = diceRoll(10, 6); // Set the default fighter's hitpoints.
+			mpMax = mp = 20; // Set the default fighter's mana.
+
+			masteries = 1; // Set the default fighter's skill level.
+
+			armor = LEATHER; // Set the default fighter's armor.
+
+			weapon = SWORD; // Set the default fighter's weapon.
 		}
 
 		virtual void attack(monster* monster1)
@@ -358,14 +450,89 @@ class fighter : public character
 
 				if (mp >= 1)
 				{
-					cout << "\t[F]renzy\n";
+					cout << "\t[F]renzy";
 				}
 				if (mp >= 5)
 				{
-					cout << "[D]eadly Strike\n";
+					cout << "\n[D]eadly Strike";
 				}
 
+				cout << "\n";
+
+				// Get the input of what attack to use.
 				cin >> inputs;
+
+				// Set the target roll
+				int targetRoll = 10 + (atts.dexterity + atts.strength) - (monster1->atts.dexterity + monster1->atts.strength);
+
+				// Make the maximum of target roll to 17.
+				if (targetRoll > 17)
+				{
+					targetRoll = 17;
+				}
+				// Make the minimum of target roll to 3.
+				if (targetRoll < 3)
+				{
+					targetRoll = 3;
+				}
+
+				// Get if the dice roll is the same as the target roll.
+				bool hit = targetRoll >= diceRoll(1, 20);
+
+				// If the dice roll doesn't equal the target roll.
+				if (!hit)
+				{
+					cout << "Missed!\n";
+				}
+
+				switch (inputs)
+				{
+					case 'a':
+					case 'A':
+						// If the dice roll matches the target roll or is higher than it.
+						if (hit)
+						{
+							// Set the damage pre-roll
+							int dice = atts.strength + weapon + masteries;
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 3) - dice;
+							// For now output the damage.
+							cout << "\nBasic Attack (F): " << damage;
+						}
+						break;
+					case 'f':
+					case 'F':
+						// If the dice roll matches the target roll or is higher than it
+						// and the player's mana is greater than or equal to one.
+						if (hit && mp >= 1)
+						{
+							// Set the damage pre-roll and since it is a higher damage attack
+							// then double the attack.
+							int dice = 2 * (atts.strength + weapon + masteries);
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 3) - dice;
+							// For now output the damage.
+							cout << "\nFrenzy Attack (F): " << damage;
+							// Since this is a special attack then remove some mana points.
+							mp -= 1;
+						}
+						break;
+					case 'd':
+					case 'D':
+						// If the dice roll matches the target roll or is higher than it
+						// and the player's mana is greater than or equal to five.
+						if (hit && mp >= 5)
+						{
+							// Set the damage pre-roll and since this is a deadly attack
+							int dice = 100 * (atts.strength + weapon + masteries);
+							damage = diceRoll(dice, 6) - dice;
+							cout << "\nDeadly Strike Attack (F): " << damage;
+							mp -= 5;
+						}
+						break;
+					default:
+						reroll = true; // If the input is not valid restart the loop.
+				}
 			}
 		}
 };
@@ -378,35 +545,8 @@ class cleric : public character
 		{
 			cout << "Cleric Created.\n";
 
-			hpMax = hp = diceRoll(7, 6);
-			mpMax = mp = 50;
-		}
-
-		virtual void attack(monster* monster1)
-		{
-			char inputs; // The var for the menus.
-			bool reroll = true; // Check for the loop.
-			int damage = 0; // Damage that is being done.
-
-			// Start the loop.
-			while (reroll)
-			{
-				reroll = false; // End the loop.
-
-				cout << "\n";
-				cout << "[A]ttack";
-
-				if (mp >= 1)
-				{
-					cout << "\t[F]renzy\n";
-				}
-				if (mp >= 5)
-				{
-					cout << "[D]eadly Strike\n";
-				}
-
-				cin >> inputs;
-			}
+			hpMax = hp = diceRoll(7, 6); // Set the default hitpoints for the cleric.
+			mpMax = mp = 50; // Set the default stamina for the cleric.
 		}
 };
 
@@ -414,39 +554,13 @@ class cleric : public character
 class rouge : public character
 {
 	public:
+		// Create the rogue class.
 		rouge()
 		{
 			cout << "Rouge Created.\n";
 
-			hpMax = hp = diceRoll(7, 6);
-			mpMax = mp = 20;
-		}
-
-		virtual void attack(monster* monster1)
-		{
-			char inputs; // The var for the menus.
-			bool reroll = true; // Check for the loop.
-			int damage = 0; // Damage that is being done.
-
-			// Start the loop.
-			while (reroll)
-			{
-				reroll = false; // End the loop.
-
-				cout << "\n";
-				cout << "[A]ttack";
-
-				if (mp >= 1)
-				{
-					cout << "\t[F]renzy\n";
-				}
-				if (mp >= 5)
-				{
-					cout << "[D]eadly Strike\n";
-				}
-
-				cin >> inputs;
-			}
+			hpMax = hp = diceRoll(7, 6); // Set the default hitpoints for the rouge.
+			mpMax = mp = 20; // Set the default stamina for the rouge.
 		}
 };
 
@@ -454,39 +568,13 @@ class rouge : public character
 class bard : public character
 {
 	public:
+		// Create the bard class.
 		bard()
 		{
 			cout << "Bard Created.\n";
 
-			hpMax = hp = diceRoll(5, 6);
-			mpMax = mp = 50;
-		}
-
-		virtual void attack(monster* monster1)
-		{
-			char inputs; // The var for the menus.
-			bool reroll = true; // Check for the loop.
-			int damage = 0; // Damage that is being done.
-
-			// Start the loop.
-			while (reroll)
-			{
-				reroll = false; // End the loop.
-
-				cout << "\n";
-				cout << "[A]ttack";
-
-				if (mp >= 1)
-				{
-					cout << "\t[F]renzy\n";
-				}
-				if (mp >= 5)
-				{
-					cout << "[D]eadly Strike\n";
-				}
-
-				cin >> inputs;
-			}
+			hpMax = hp = diceRoll(5, 6); // Set the default hitpoints for the bard.
+			mpMax = mp = 50; // Set the default stamina for the bard.
 		}
 };
 
@@ -496,37 +584,11 @@ class tinker : public character
 	public:
 		tinker()
 		{
+			// Create the tinker class.
 			cout << "Tinker Created.\n";
 
-			hpMax = hp = diceRoll(5, 6);
-			mpMax = mp = 20;
-		}
-
-		virtual void attack(monster* monster1)
-		{
-			char inputs; // The var for the menus.
-			bool reroll = true; // Check for the loop.
-			int damage = 0; // Damage that is being done.
-
-			// Start the loop.
-			while (reroll)
-			{
-				reroll = false; // End the loop.
-
-				cout << "\n";
-				cout << "[A]ttack";
-
-				if (mp >= 1)
-				{
-					cout << "\t[F]renzy\n";
-				}
-				if (mp >= 5)
-				{
-					cout << "[D]eadly Strike\n";
-				}
-
-				cin >> inputs;
-			}
+			hpMax = hp = diceRoll(5, 6); // Set the default hitpoints for the tinker.
+			mpMax = mp = 20; // Set the default stamina for the tinker.
 		}
 };
 
@@ -534,44 +596,28 @@ class tinker : public character
 class mage : public character
 {
 	public:
+		// Create the mage class.
 		mage()
 		{
 			cout << "Mage Created.\n";
 
-			hpMax = hp = diceRoll(3, 6);
-			mpMax = mp = 50;
-		}
-
-		virtual void attack(monster* monster1)
-		{
-			char inputs; // The var for the menus.
-			bool reroll = true; // Check for the loop.
-			int damage = 0; // Damage that is being done.
-
-			// Start the loop.
-			while (reroll)
-			{
-				reroll = false; // End the loop.
-
-				cout << "\n";
-				cout << "[A]ttack";
-
-				if (mp >= 1)
-				{
-					cout << "\t[F]renzy\n";
-				}
-				if (mp >= 5)
-				{
-					cout << "[D]eadly Strike\n";
-				}
-
-				cin >> inputs;
-			}
+			hpMax = hp = diceRoll(3, 6); // Set the default hitpoints for the mage.
+			mpMax = mp = 50; // Set the default mana for the mage.
 		}
 };
 
+void writeToFile ()
+{
+
+}
+
+void getFromFile ()
+{
+
+}
+
 // Startup
-int _tmain(int argc, _TCHAR* argv[])
+int _tmain (int argc, _TCHAR* argv[])
 {
 	srand(time(NULL));
 
