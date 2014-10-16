@@ -403,8 +403,8 @@ class character
 				{
 					case 'g':
 					case 'G':
-						location = TOWN; // Set the location town because after we display stats we want to go back to town.
-						break;
+						location = TOWN; // Set the location town because after we display
+						break;					 // stats we want to go back to town.
 					default:
 						reroll = true; // If you do not type in the right input this will repeat.
 						break;
