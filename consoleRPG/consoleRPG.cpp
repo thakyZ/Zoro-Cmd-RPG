@@ -7,6 +7,8 @@
 #include <cstdlib>
 #include "time.h"
 #include <fstream>
+#include <direct.h>
+#define GetCurrentDir _getcwd
 using namespace std;
 
 // Roll the dice.
@@ -32,7 +34,7 @@ enum RACE { HUMAN, ELF, DARKELF, ANGEL, MONGREL, SHAMANI, NIBELUNG, UNDEAD };
 enum OCC { FIGHTER, CLERIC, THEIF, BARD, ROUGE, TINKER, MAGE };
 
 // Loations types.
-enum LOCATION { QUIT, TOWN, FOREST, VIEWSTATS, MONSTER, SAVE, LOAD };
+enum LOCATION { QUIT, TOWN, FOREST, VIEWSTATS, MONSTER, SAVE };
 
 // Armors types.
 enum ARMOR { LOINCLOTH, CLOTHARMOR, LEATHER };
@@ -272,6 +274,47 @@ class character
 			return masteries;
 		}
 
+		// Set arguments.
+		void setHealth (int ph)
+		{
+			hp = ph;
+		}
+
+		void setMaxHealth (int maxHp)
+		{
+			hpMax = maxHp;
+		}
+
+		void setMana (int pm)
+		{
+			mp = pm;
+		}
+
+		void setMaxMana (int maxMp)
+		{
+			mpMax = maxMp;
+		}
+
+		void setCopper (int money)
+		{
+			copper = money;
+		}
+
+		void setClass (OCC classes)
+		{
+			charClass = classes;
+		}
+
+		void setRace (RACE race)
+		{
+			charRace = race;
+		}
+
+		void setMasteries (int master)
+		{
+			masteries = master;
+		}
+
 		// Get the attributes from outside this class.
 		ATTRIBUTES getAtts()
 		{
@@ -291,6 +334,11 @@ class character
 		{
 			// Return the location because thats what we want to do.
 			return location;
+		}
+
+		void setLoc (LOCATION loc)
+		{
+			location = loc;
 		}
 
 		virtual void attack(monster monster1) {}
@@ -352,10 +400,11 @@ class character
 				cout << "\n\n";
 
 				cout << "You find the small village of Zoro. This village is very small but strategic as it sits on the hotly contested bore bewteen Ipana and Seragul. You go to:\n";
-				cout << "[1] The Forest\t\t [5] The Weaponsmith\n";
-				cout << "[2] The Armorsmith\t [6] Chapel of the Void\n";
-				cout << "[3] The Tavern\t\t [7] The Money Lender\n";
-				cout << "[4] View your Stats\t [8] Quit\n";
+				cout << "[1] The Forest\t\t [6] The Weaponsmith\n";
+				cout << "[2] The Armorsmith\t [7] Chapel of the Void\n";
+				cout << "[3] The Tavern\t\t [8] The Money Lender\n";
+				cout << "[4] View your Stats\t [9] Quit\n";
+				cout << "[5] Save game\n";
 
 				// Get the menuItem.
 				cin >> menuItem;
@@ -375,15 +424,18 @@ class character
 						location = VIEWSTATS; // Go to the view stats screen.
 						break;
 					case '5':
-						// location = WEAPONSMITH; // Go to the weapon smith.
+						location = SAVE;
 						break;
 					case '6':
-						// location = CHAPEL; // Go to the chapel.
+						// location = WEAPONSMITH; // Go to the weapon smith.
 						break;
 					case '7':
-						// location = BANK; // Go to the bank.
+						// location = CHAPEL; // Go to the chapel.
 						break;
 					case '8':
+						// location = BANK; // Go to the bank.
+						break;
+					case '9':
 						location = QUIT; // Quit the game.
 						break;
 					default:
@@ -451,25 +503,62 @@ class character
 				attack(monster1); // Start the battle.
 			}
 		}
-
-		void locSave()
-		{
-			bool reroll = true;
-			char menuItem;
-
-			while (reroll)
-			{
-				reroll = false;
-
-				cout << "\n";
-			}
-		}
-
-		void locLoad()
-		{
-
-		}
 };
+
+char getFileDirectory()
+{
+	char cCurrentPath[FILENAME_MAX];
+
+	char *saveFilePath= "\save1.sav";
+
+	if (!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath)))
+	{
+		char *stuff = cCurrentPath;
+		*stuff += *saveFilePath;
+		return *stuff;
+	}
+}
+
+void writeToFile()
+{
+	character *player1;
+
+	ofstream myfile;
+
+
+
+	myfile.open(&getFileDirectory());
+
+	myfile.write((char *)&player1, sizeof(player1));
+
+	myfile.close();
+
+	cout << "File saved.";
+}
+
+void getFromFile(char *file)
+{
+	character *playerSave;
+
+	character *player1;
+
+	ifstream myfile(file, ios::binary);
+
+	myfile.read((char *)&playerSave, sizeof(playerSave));
+
+	player1->setAtts(playerSave->getAtts());
+	player1->setClass(playerSave->getClass());
+	player1->setCopper(playerSave->getCopper());
+	player1->setHealth(playerSave->getHealth());
+	player1->setLoc(playerSave->getLoc());
+	player1->setMana(playerSave->getMana());
+	player1->setMasteries(playerSave->getMasteries());
+	player1->setMaxHealth(playerSave->getMaxHealth());
+	player1->setMaxMana(playerSave->getMaxMana());
+	player1->setRace(playerSave->getRace());
+
+	cout << "Save loaded.";
+}
 
 // Class for the fighter.
 class fighter : public character
@@ -664,36 +753,6 @@ class mage : public character
 		}
 };
 
-void writeToFile ()
-{
-
-}
-
-void getFromFile (char *file)
-{
-	ifstream myfile (file, ifstream::binary);
-
-	myfile.seekg(0, myfile.end);
-	long size = myfile.tellg();
-	myfile.seekg(0);
-
-	char *buffer = new char[size];
-
-	if (myfile.is_open())
-	{
-		while (myfile.read(buffer, size))
-		{
-			cout << buffer << "\n";
-		}
-
-		myfile.close();
-	}
-	else
-	{
-		cout << "Unable to read file";
-	}
-}
-
 // Startup
 int _tmain (int argc, _TCHAR* argv[])
 {
@@ -882,7 +941,6 @@ int _tmain (int argc, _TCHAR* argv[])
 
 			// Reset the reroll to default for the second reroll.
 			reroll = true;
-		}
 
 			while (reroll) // While reroll == true
 			{
@@ -940,16 +998,17 @@ int _tmain (int argc, _TCHAR* argv[])
 						break;
 				}
 			}
+		}
 
-
-
-			// Set the attributes as they are at this point.
-			player1->setAtts(tmpStats);
+		// Set the attributes as they are at this point.
+		player1->setAtts(tmpStats);
 	}
 	else if (newGame == false)
 	{
 		getFromFile("save1.sav");
 	}
+
+	retry = true;
 
 	// Something or rather.
 	while (!iQuit)
@@ -971,6 +1030,32 @@ int _tmain (int argc, _TCHAR* argv[])
 				break;
 			case MONSTER:
 				player1->locMonster();
+				break;
+			case SAVE:
+				if (retry)
+				{
+					retry = false;
+
+					cout << "\n";
+					cout << "Are you sure you want to save? [Y]es [N]o";
+
+					cin >> inputs;
+
+					switch (inputs)
+					{
+						case 'y':
+						case 'Y':
+							writeToFile();
+							break;
+						case 'n':
+						case 'N':
+							break;
+						default:
+							retry = true;
+					}
+				}
+
+				player1->setLoc(TOWN);
 				break;
 		}
 	}
