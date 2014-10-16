@@ -672,11 +672,11 @@ void writeToFile ()
 void getFromFile (char *file)
 {
 	ifstream myfile (file, ifstream::binary);
-	
+
 	myfile.seekg(0, myfile.end);
 	long size = myfile.tellg();
 	myfile.seekg(0);
-	
+
 	char *buffer = new char[size];
 
 	if (myfile.is_open())
@@ -706,7 +706,7 @@ int _tmain (int argc, _TCHAR* argv[])
 	OCC inputClass; // The class that is chosen.
 	bool retry = true; // The fix for the race chooser.
 	bool iQuit = false; // To tell if the player want to quit the game.
-	bool newGame = true; 
+	bool newGame = true;
 
 	// Set the character to pointer var.
 	character *player1;
@@ -740,7 +740,7 @@ int _tmain (int argc, _TCHAR* argv[])
 				break;
 		}
 	}
-	
+
 	if (newGame == true)
 	{
 		reroll = true;
