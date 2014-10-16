@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cstdlib>
 #include "time.h"
+#include <fstream>
 using namespace std;
 
 // Roll the dice.
@@ -31,7 +32,7 @@ enum RACE { HUMAN, ELF, DARKELF, ANGEL, MONGREL, SHAMANI, NIBELUNG, UNDEAD };
 enum OCC { FIGHTER, CLERIC, THEIF, BARD, ROUGE, TINKER, MAGE };
 
 // Loations types.
-enum LOCATION { QUIT, TOWN, FOREST, VIEWSTATS, MONSTER };
+enum LOCATION { QUIT, TOWN, FOREST, VIEWSTATS, MONSTER, SAVE, LOAD };
 
 // Armors types.
 enum ARMOR { LOINCLOTH, CLOTHARMOR, LEATHER };
@@ -71,7 +72,7 @@ void displayStats(ATTRIBUTES atts)
 
 class monster
 {
-	protected:
+	public:
 		int hp, hpMax; // The var for hitpoints.
 		ATTRIBUTES atts; // The var for stats.
 		char *mName; // The name of the monster.
@@ -83,7 +84,6 @@ class monster
 		ARMOR armor; // The armor the monster has.
 		WEAPON weapon; // The weapon the monster has.
 
-	public:
 		// Create the monster class.
 		monster()
 		{
@@ -232,6 +232,46 @@ class character
 		}
 
 		// Accessors
+		int getHealth ()
+		{
+			return hp;
+		}
+
+		int getMaxHealth ()
+		{
+			return hpMax;
+		}
+
+		int getMana ()
+		{
+			return mp;
+		}
+
+		int getMaxMana ()
+		{
+			return mpMax;
+		}
+
+		int getCopper ()
+		{
+			return copper;
+		}
+
+		OCC getClass ()
+		{
+			return charClass;
+		}
+
+		RACE getRace ()
+		{
+			return charRace;
+		}
+
+		int getMasteries ()
+		{
+			return masteries;
+		}
+
 		// Get the attributes from outside this class.
 		ATTRIBUTES getAtts()
 		{
@@ -253,7 +293,7 @@ class character
 			return location;
 		}
 
-		virtual void attack(monster* monster1) {}
+		virtual void attack(monster monster1) {}
 
 		// Locations
 		// Display stats.
@@ -398,21 +438,37 @@ class character
 			monster monster1; // Monster variable.
 
 			cout << "\n";
-			cout << "You hear a rustel in the bushes. " << monster1->getName() << " jumps out at you\n";
+			cout << "You hear a rustel in the bushes. " << monster1.getName() << " jumps out at you\n";
 
 			// Start the loop.
-			while (hp > 0 && monster1.hp > 0)
+			while (hp > 0 && monster1.getHealth() > 0)
 			{
 				cout << "\n\n";
-				cout << monster1->getName() << ": " << monster1->getHealth() << "/" << monster1->getMaxHeath() << "\n";
+				cout << monster1.getName() << ": " << monster1.getHealth() << "/" << monster1.getMaxHealth() << "\n";
 				cout << "You: " << hp << "/" << hpMax << "\n\n";
 				cout << "Action?\n";
 
-				attack(&monster1); // Start the battle.
+				attack(monster1); // Start the battle.
 			}
 		}
 
-		// Attacks
+		void locSave()
+		{
+			bool reroll = true;
+			char menuItem;
+
+			while (reroll)
+			{
+				reroll = false;
+
+				cout << "\n";
+			}
+		}
+
+		void locLoad()
+		{
+
+		}
 };
 
 // Class for the fighter.
@@ -434,11 +490,13 @@ class fighter : public character
 			weapon = SWORD; // Set the default fighter's weapon.
 		}
 
-		virtual void attack(monster* monster1)
+		virtual void attack(monster monster1)
 		{
 			char inputs; // The var for the menus.
 			bool reroll = true; // Check for the loop.
 			int damage = 0; // Damage that is being done.
+
+			//moo
 
 			// Start the loop.
 			while (reroll)
@@ -463,7 +521,7 @@ class fighter : public character
 				cin >> inputs;
 
 				// Set the target roll
-				int targetRoll = 10 + (atts.dexterity + atts.strength) - (monster1->atts.dexterity + monster1->atts.strength);
+				int targetRoll = 10 + (atts.dexterity + atts.strength) - (monster1.getAtts().dexterity + monster1.getAtts().strength);
 
 				// Make the maximum of target roll to 17.
 				if (targetRoll > 17)
@@ -611,9 +669,29 @@ void writeToFile ()
 
 }
 
-void getFromFile ()
+void getFromFile (char *file)
 {
+	ifstream myfile (file, ifstream::binary);
+	
+	myfile.seekg(0, myfile.end);
+	long size = myfile.tellg();
+	myfile.seekg(0);
+	
+	char *buffer = new char[size];
 
+	if (myfile.is_open())
+	{
+		while (myfile.read(buffer, size))
+		{
+			cout << buffer << "\n";
+		}
+
+		myfile.close();
+	}
+	else
+	{
+		cout << "Unable to read file";
+	}
 }
 
 // Startup
@@ -628,6 +706,7 @@ int _tmain (int argc, _TCHAR* argv[])
 	OCC inputClass; // The class that is chosen.
 	bool retry = true; // The fix for the race chooser.
 	bool iQuit = false; // To tell if the player want to quit the game.
+	bool newGame = true; 
 
 	// Set the character to pointer var.
 	character *player1;
@@ -637,205 +716,240 @@ int _tmain (int argc, _TCHAR* argv[])
 
 	cout << "Welcome to Zoro\n";
 
-	// Check for the reroll
+	cout << "[N]ew game?\t\t[L]oad Game?\n";
+
+
 	while (reroll == true)
 	{
-		// End the reroll;
-		reroll = false;
-
-		cout << "Please Select a Race:\n";
-		cout << "[H]uman [E]lf [D]ark elf [A]ngel [M]ongrel [S]hamani [N]ibelung [U]ndead\n";
-
-		// Check for the retry
-		while (retry == true)
-		{
-			// The input for the chosen race.
-			cin >> inputs;
-
-			// End the retry.
-			retry = false;
-
-			switch (inputs)
-			{
-				case 'h':
-				case 'H':
-					cout << "\nHuman!\n";
-					inputRace = HUMAN;
-					tmpStats.strength = diceRoll(3, 6);
-					tmpStats.faith = diceRoll(3, 6);
-					tmpStats.dexterity = diceRoll(3, 6);
-					tmpStats.insperation = diceRoll(3, 6);
-					tmpStats.cleverness = diceRoll(3, 6);
-					tmpStats.focus = diceRoll(3, 6);
-					retry = false; // End the retry.
-					break;
-				case 'e':
-				case 'E':
-					cout << "\nElf!\n";
-					inputRace = ELF;
-					tmpStats.strength = diceRoll(3, 6);
-					tmpStats.faith = diceRoll(3, 6);
-					tmpStats.dexterity = diceRoll(3, 6);
-					tmpStats.insperation = diceRoll(3, 6);
-					tmpStats.cleverness = diceRoll(2, 6);
-					tmpStats.focus = diceRoll(4, 6);
-					break;
-				case 'd':
-				case 'D':
-					cout << "\nDark Elf!\n";
-					inputRace = DARKELF;
-					tmpStats.strength = diceRoll(3, 6);
-					tmpStats.faith = diceRoll(3, 6);
-					tmpStats.dexterity = diceRoll(4, 6);
-					tmpStats.insperation = diceRoll(2, 6);
-					tmpStats.cleverness = diceRoll(3, 6);
-					tmpStats.focus = diceRoll(3, 6);
-					break;
-				case 'a':
-				case 'A':
-					cout << "Angel!\n";
-					inputRace = ANGEL;
-					tmpStats.strength = diceRoll(3, 6);
-					tmpStats.faith = diceRoll(4, 6);
-					tmpStats.dexterity = diceRoll(3, 6);
-					tmpStats.insperation = diceRoll(3, 6);
-					tmpStats.cleverness = diceRoll(3, 6);
-					tmpStats.focus = diceRoll(3, 6);
-					break;
-				case 'm':
-				case 'M':
-					cout << "\nMongrel!\n";
-					inputRace = MONGREL;
-					tmpStats.strength = diceRoll(4, 6);
-					tmpStats.faith = diceRoll(3, 6);
-					tmpStats.dexterity = diceRoll(3, 6);
-					tmpStats.insperation = diceRoll(3, 6);
-					tmpStats.cleverness = diceRoll(3, 6);
-					tmpStats.focus = diceRoll(2, 6);
-					break;
-				case 's':
-				case 'S':
-					cout << "\nShamani!\n";
-					inputRace = SHAMANI;
-					tmpStats.strength = diceRoll(2, 6);
-					tmpStats.faith = diceRoll(4, 6);
-					tmpStats.dexterity = diceRoll(3, 6);
-					tmpStats.insperation = diceRoll(3, 6);
-					tmpStats.cleverness = diceRoll(3, 6);
-					tmpStats.focus = diceRoll(3, 6);
-					break;
-				case 'n':
-				case 'N':
-					cout << "\nNibelung!\n";
-					inputRace = NIBELUNG;
-					tmpStats.strength = diceRoll(3, 6);
-					tmpStats.faith = diceRoll(3, 6);
-					tmpStats.dexterity = diceRoll(2, 6);
-					tmpStats.insperation = diceRoll(3, 6);
-					tmpStats.cleverness = diceRoll(4, 6);
-					tmpStats.focus = diceRoll(3, 6);
-					break;
-				case 'u':
-				case 'U':
-					cout << "\nUndead!\n";
-					inputRace = UNDEAD;
-					tmpStats.strength = diceRoll(3, 6);
-					tmpStats.faith = diceRoll(3, 6);
-					tmpStats.dexterity = diceRoll(3, 6);
-					tmpStats.insperation = diceRoll(3, 6);
-					tmpStats.cleverness = diceRoll(2, 6);
-					tmpStats.focus = diceRoll(3, 6);
-					break;
-				default:
-					cout << "\nPlease input a vaild race.\n";
-					retry = true; // Set the retry to default
-					break;
-			}
-		}
-
-		// Display the stats
-		displayStats(tmpStats);
-
-		cout << "Reroll? [Y]es [N]o\n\n";
-
-		// Input for the reroll.
 		cin >> inputs;
 
-		// End the reroll
 		reroll = false;
 
-		if (inputs == 'y' || inputs == 'Y')
-		{
-			cout << inputs;
-			// Reset the reroll to default.
-			reroll = true;
-		}
-	}
-
-	// Reset the reroll to default for the second reroll.
-	reroll = true;
-
-	while (reroll) // While reroll == true
-	{
-		// End the reroll for now
-		reroll = false;
-
-		cout << "\nPlease select a class\n\n";
-		cout << "[F]ighter [C]leric [T]heif [B]ard [R]ouge [M]age\n\n";
-
-		// Check for inputs of which class.
-		cin >> inputs;
-
-		// Check for which class.
 		switch (inputs)
 		{
-			case 'f':
-			case 'F':
-				inputClass = FIGHTER;
-				cout << "\nFighter!\n";
-				player1 = new fighter;
+			case 'n':
+			case 'N':
+				newGame = true;
 				break;
-			case 'c':
-			case 'C':
-				inputClass = CLERIC;
-				cout << "\nCleric!\n";
-				player1 = new fighter;
-				break;
-			case 't':
-			case 'T':
-				inputClass = THEIF;
-				cout << "\nTheif!\n";
-				player1 = new rouge;
-				break;
-			case 'b':
-			case 'B':
-				inputClass = BARD;
-				cout << "\nBard!\n";
-				player1 = new bard;
-				break;
-			case 'r':
-			case 'R':
-				inputClass = ROUGE;
-				cout << "\nRouge!\n";
-				player1 = new rouge;
-				break;
-			case 'm':
-			case 'M':
-				inputClass = MAGE;
-				cout << "\nMage!\n";
-				player1 = new mage;
+			case 'l':
+			case 'L':
+				newGame = false;
 				break;
 			default:
-				cout << "\nPlease input a valid class.\n";
 				reroll = true;
 				break;
 		}
 	}
+	
+	if (newGame == true)
+	{
+		reroll = true;
+
+		// Check for the reroll
+		while (reroll == true)
+		{
+			// End the reroll;
+			reroll = false;
+
+			cout << "\n";
+			cout << "Please Select a Race:\n";
+			cout << "[H]uman [E]lf [D]ark elf [A]ngel [M]ongrel [S]hamani [N]ibelung [U]ndead\n";
+
+			// Check for the retry
+			while (retry == true)
+			{
+				// The input for the chosen race.
+				cin >> inputs;
+
+				// End the retry.
+				retry = false;
+
+				switch (inputs)
+				{
+					case 'h':
+					case 'H':
+						cout << "\nHuman!\n";
+						inputRace = HUMAN;
+						tmpStats.strength = diceRoll(3, 6);
+						tmpStats.faith = diceRoll(3, 6);
+						tmpStats.dexterity = diceRoll(3, 6);
+						tmpStats.insperation = diceRoll(3, 6);
+						tmpStats.cleverness = diceRoll(3, 6);
+						tmpStats.focus = diceRoll(3, 6);
+						retry = false; // End the retry.
+						break;
+					case 'e':
+					case 'E':
+						cout << "\nElf!\n";
+						inputRace = ELF;
+						tmpStats.strength = diceRoll(3, 6);
+						tmpStats.faith = diceRoll(3, 6);
+						tmpStats.dexterity = diceRoll(3, 6);
+						tmpStats.insperation = diceRoll(3, 6);
+						tmpStats.cleverness = diceRoll(2, 6);
+						tmpStats.focus = diceRoll(4, 6);
+						break;
+					case 'd':
+					case 'D':
+						cout << "\nDark Elf!\n";
+						inputRace = DARKELF;
+						tmpStats.strength = diceRoll(3, 6);
+						tmpStats.faith = diceRoll(3, 6);
+						tmpStats.dexterity = diceRoll(4, 6);
+						tmpStats.insperation = diceRoll(2, 6);
+						tmpStats.cleverness = diceRoll(3, 6);
+						tmpStats.focus = diceRoll(3, 6);
+						break;
+					case 'a':
+					case 'A':
+						cout << "Angel!\n";
+						inputRace = ANGEL;
+						tmpStats.strength = diceRoll(3, 6);
+						tmpStats.faith = diceRoll(4, 6);
+						tmpStats.dexterity = diceRoll(3, 6);
+						tmpStats.insperation = diceRoll(3, 6);
+						tmpStats.cleverness = diceRoll(3, 6);
+						tmpStats.focus = diceRoll(3, 6);
+						break;
+					case 'm':
+					case 'M':
+						cout << "\nMongrel!\n";
+						inputRace = MONGREL;
+						tmpStats.strength = diceRoll(4, 6);
+						tmpStats.faith = diceRoll(3, 6);
+						tmpStats.dexterity = diceRoll(3, 6);
+						tmpStats.insperation = diceRoll(3, 6);
+						tmpStats.cleverness = diceRoll(3, 6);
+						tmpStats.focus = diceRoll(2, 6);
+						break;
+					case 's':
+					case 'S':
+						cout << "\nShamani!\n";
+						inputRace = SHAMANI;
+						tmpStats.strength = diceRoll(2, 6);
+						tmpStats.faith = diceRoll(4, 6);
+						tmpStats.dexterity = diceRoll(3, 6);
+						tmpStats.insperation = diceRoll(3, 6);
+						tmpStats.cleverness = diceRoll(3, 6);
+						tmpStats.focus = diceRoll(3, 6);
+						break;
+					case 'n':
+					case 'N':
+						cout << "\nNibelung!\n";
+						inputRace = NIBELUNG;
+						tmpStats.strength = diceRoll(3, 6);
+						tmpStats.faith = diceRoll(3, 6);
+						tmpStats.dexterity = diceRoll(2, 6);
+						tmpStats.insperation = diceRoll(3, 6);
+						tmpStats.cleverness = diceRoll(4, 6);
+						tmpStats.focus = diceRoll(3, 6);
+						break;
+					case 'u':
+					case 'U':
+						cout << "\nUndead!\n";
+						inputRace = UNDEAD;
+						tmpStats.strength = diceRoll(3, 6);
+						tmpStats.faith = diceRoll(3, 6);
+						tmpStats.dexterity = diceRoll(3, 6);
+						tmpStats.insperation = diceRoll(3, 6);
+						tmpStats.cleverness = diceRoll(2, 6);
+						tmpStats.focus = diceRoll(3, 6);
+						break;
+					default:
+						cout << "\nPlease input a vaild race.\n";
+						retry = true; // Set the retry to default
+						break;
+				}
+			}
+
+			// Display the stats
+			displayStats(tmpStats);
+
+			cout << "Reroll? [Y]es [N]o\n\n";
+
+			// Input for the reroll.
+			cin >> inputs;
+
+			// End the reroll
+			reroll = false;
+
+			if (inputs == 'y' || inputs == 'Y')
+			{
+				cout << inputs;
+				// Reset the reroll to default.
+				reroll = true;
+			}
+
+			// Reset the reroll to default for the second reroll.
+			reroll = true;
+		}
+
+			while (reroll) // While reroll == true
+			{
+				// End the reroll for now
+				reroll = false;
+
+				cout << "\nPlease select a class\n\n";
+				cout << "[F]ighter [C]leric [T]heif [B]ard [R]ouge [M]age\n\n";
+
+				// Check for inputs of which class.
+				cin >> inputs;
+
+				// Check for which class.
+				switch (inputs)
+				{
+					case 'f':
+					case 'F':
+						inputClass = FIGHTER;
+						cout << "\nFighter!\n";
+						player1 = new fighter;
+						break;
+					case 'c':
+					case 'C':
+						inputClass = CLERIC;
+						cout << "\nCleric!\n";
+						player1 = new fighter;
+						break;
+					case 't':
+					case 'T':
+						inputClass = THEIF;
+						cout << "\nTheif!\n";
+						player1 = new rouge;
+						break;
+					case 'b':
+					case 'B':
+						inputClass = BARD;
+						cout << "\nBard!\n";
+						player1 = new bard;
+						break;
+					case 'r':
+					case 'R':
+						inputClass = ROUGE;
+						cout << "\nRouge!\n";
+						player1 = new rouge;
+						break;
+					case 'm':
+					case 'M':
+						inputClass = MAGE;
+						cout << "\nMage!\n";
+						player1 = new mage;
+						break;
+					default:
+						cout << "\nPlease input a valid class.\n";
+						reroll = true;
+						break;
+				}
+			}
 
 
 
-	// Set the attributes as they are at this point.
-	player1->setAtts(tmpStats);
+			// Set the attributes as they are at this point.
+			player1->setAtts(tmpStats);
+	}
+	else if (newGame == false)
+	{
+		getFromFile("save1.sav");
+	}
 
 	// Something or rather.
 	while (!iQuit)
