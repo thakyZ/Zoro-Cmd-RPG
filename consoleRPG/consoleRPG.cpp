@@ -130,11 +130,13 @@ class monster
 		}
 
 		// Get or set methods.
+		// Get the monster's hitpoints.
 		int getHealth ()
 		{
 			return hp;
 		}
 
+		// Get the monster's max hitpoints.
 		int getMaxHealth ()
 		{
 			return hpMax;
@@ -151,46 +153,55 @@ class monster
 			return mpMax;
 		}*/
 
+		// Get the monster's name.
 		char *getName ()
 		{
 			return mName;
 		}
 
+		// Get the monster's attack text.
 		char *getAttackText ()
 		{
 			return attackText;
 		}
 
+		// Get the monster's death text.
 		char *getDeathText ()
 		{
 			return deathText;
 		}
 
+		// Get the player's death text.
 		char *getWinText ()
 		{
 			return winText;
 		}
 
+		// Get the monster's skill level.
 		int getMasteries ()
 		{
 			return masteries;
 		}
 
+		// Get how much copper the monster will drop.
 		int getCopper ()
 		{
 			return copper;
 		}
 
+		// Get the monster's armor.
 		ARMOR getArmor ()
 		{
 			return armor;
 		}
 
+		// Get the monster's weapon.
 		WEAPON getWeapon ()
 		{
 			return weapon;
 		}
 
+		// Get the monster's attributes.
 		ATTRIBUTES getAtts ()
 		{
 			return atts;
@@ -234,85 +245,101 @@ class character
 		}
 
 		// Accessors
-		int getHealth ()
+		// Get the player's hitpoints.
+		int getHealth()
 		{
 			return hp;
 		}
 
-		int getMaxHealth ()
+		// Get the player's max hitpoints.
+		int getMaxHealth()
 		{
 			return hpMax;
 		}
 
-		int getMana ()
+		// Get the player's mana.
+		int getMana()
 		{
 			return mp;
 		}
 
-		int getMaxMana ()
+		// Get the player's max mana.
+		int getMaxMana()
 		{
 			return mpMax;
 		}
 
-		int getCopper ()
+		// Get how much copper the player has.
+		int getCopper()
 		{
 			return copper;
 		}
 
-		OCC getClass ()
+		// Get the player's class.
+		OCC getClass()
 		{
 			return charClass;
 		}
 
-		RACE getRace ()
+		// Get the player's race.
+		RACE getRace()
 		{
 			return charRace;
 		}
 
-		int getMasteries ()
+		// Get the player's skill level.
+		int getMasteries()
 		{
 			return masteries;
 		}
 
 		// Set arguments.
-		void setHealth (int ph)
+		// Set the player's hitpoints.
+		void setHealth(int tmpHp)
 		{
-			hp = ph;
+			hp = tmpHp;
 		}
 
-		void setMaxHealth (int maxHp)
+		// Set the player's max hitpoints.
+		void setMaxHealth(int tmpHpMax)
 		{
-			hpMax = maxHp;
+			hpMax = tmpHpMax;
 		}
 
-		void setMana (int pm)
+		// Set the player's mana.
+		void setMana(int tmpMp)
 		{
-			mp = pm;
+			mp = tmpMp;
 		}
 
-		void setMaxMana (int maxMp)
+		// Set the player's max mana.
+		void setMaxMana(int tmpMpMax)
 		{
-			mpMax = maxMp;
+			mpMax = tmpMpMax;
 		}
 
-		void setCopper (int money)
+		// Set the player's copper ammount.
+		void setCopper(int tmpCopper)
 		{
-			copper = money;
+			copper = tmpCopper;
 		}
 
-		void setClass (OCC classes)
+		// Set the player's class.
+		void setClass(OCC tmpCharClass)
 		{
-			charClass = classes;
+			charClass = tmpCharClass;
 		}
 
-		void setRace (RACE race)
+		// Set the player's race.
+		void setRace(RACE tmpCharRace)
 		{
-			charRace = race;
+			charRace = tmpCharRace;
 		}
 
-		void setMasteries (int master)
+		// Set the player's skill level.
+		void setMasteries(int tmpMasteries)
 		{
-			masteries = master;
+			masteries = tmpMasteries;
 		}
 
 		// Get the attributes from outside this class.
@@ -336,9 +363,9 @@ class character
 			return location;
 		}
 
-		void setLoc (LOCATION loc)
+		void setLoc (LOCATION tmpLoc)
 		{
-			location = loc;
+			location = tmpLoc;
 		}
 
 		virtual void attack(monster monster1) {}
@@ -519,45 +546,58 @@ char *getFileDirectory()
 	}
 }
 
-void writeToFile()
+void writeToFile(character *tempChar)
 {
-	character *player1;
-
+	// Create the var for the save file.
 	ofstream myfile;
 
+	// Get the save file's directory.
 	char *fileDir = getFileDirectory();
 
+	// Open the save file.
 	myfile.open(fileDir);
 
-	myfile.write((char *)&player1, sizeof(player1));
+	// Write to the save file.
+	myfile.write((char *)&tempChar, sizeof(tempChar));
 
+	// Close the file after we are done with it.
 	myfile.close();
 
 	cout << "File saved.";
 }
 
-void getFromFile()
+// To load a game.
+void getFromFile(character *tempChar)
 {
+	// The character var for the loaded file.
 	character *playerSave;
 
-	character *player1;
+	// The character var for the file to write to process.
+	character *tempChar;
 
+	// Get the save file directory.
 	char *fileDir = getFileDirectory();
 
+	// Load the save file.
 	ifstream myfile(fileDir, ios::binary);
 
+	// Read the save file.
 	myfile.read((char *)&playerSave, sizeof(playerSave));
 
-	player1->setAtts(playerSave->getAtts());
-	player1->setClass(playerSave->getClass());
-	player1->setCopper(playerSave->getCopper());
-	player1->setHealth(playerSave->getHealth());
-	player1->setLoc(playerSave->getLoc());
-	player1->setMana(playerSave->getMana());
-	player1->setMasteries(playerSave->getMasteries());
-	player1->setMaxHealth(playerSave->getMaxHealth());
-	player1->setMaxMana(playerSave->getMaxMana());
-	player1->setRace(playerSave->getRace());
+	// Set the player's saved stats.
+	tempChar->setAtts(playerSave->getAtts());
+	tempChar->setClass(playerSave->getClass());
+	tempChar->setCopper(playerSave->getCopper());
+	tempChar->setHealth(playerSave->getHealth());
+	tempChar->setLoc(playerSave->getLoc());
+	tempChar->setMana(playerSave->getMana());
+	tempChar->setMasteries(playerSave->getMasteries());
+	tempChar->setMaxHealth(playerSave->getMaxHealth());
+	tempChar->setMaxMana(playerSave->getMaxMana());
+	tempChar->setRace(playerSave->getRace());
+
+	// Close the file when we are done with it.
+	myfile.close();
 
 	cout << "Save loaded.";
 }
@@ -586,8 +626,6 @@ class fighter : public character
 			char inputs; // The var for the menus.
 			bool reroll = true; // Check for the loop.
 			int damage = 0; // Damage that is being done.
-
-			//moo
 
 			// Start the loop.
 			while (reroll)
@@ -777,33 +815,39 @@ int _tmain (int argc, _TCHAR* argv[])
 
 	cout << "Welcome to Zoro\n";
 
+	// Ask if the player wants a new game or to load a game...
 	cout << "[N]ew game?\t\t[L]oad Game?\n";
 
-
+	// Start the loop for the choosing of -above-
 	while (reroll == true)
 	{
-		cin >> inputs;
-
+		// End the loop.
 		reroll = false;
 
+		// Get the choice of the player.
+		cin >> inputs;
+
+		// Choose from the input.
 		switch (inputs)
 		{
 			case 'n':
 			case 'N':
-				newGame = true;
+				newGame = true; // Create a new game.
 				break;
 			case 'l':
 			case 'L':
-				newGame = false;
+				newGame = false; // Don't create a new game and instead load game.
 				break;
 			default:
-				reroll = true;
-				break;
+				reroll = true; // The player didn't type in a correct choice so restart
+				break;				 // the loop.
 		}
 	}
 
+	// Start a new game.
 	if (newGame == true)
 	{
+		// Reset the loop varible.
 		reroll = true;
 
 		// Check for the reroll
@@ -814,6 +858,7 @@ int _tmain (int argc, _TCHAR* argv[])
 
 			cout << "\n";
 			cout << "Please Select a Race:\n";
+			// Ask the player to choose a race.
 			cout << "[H]uman [E]lf [D]ark elf [A]ngel [M]ongrel [S]hamani [N]ibelung [U]ndead\n";
 
 			// Check for the retry
@@ -825,6 +870,7 @@ int _tmain (int argc, _TCHAR* argv[])
 				// End the retry.
 				retry = false;
 
+				// Choose from the input.
 				switch (inputs)
 				{
 					case 'h':
@@ -918,14 +964,15 @@ int _tmain (int argc, _TCHAR* argv[])
 						break;
 					default:
 						cout << "\nPlease input a vaild race.\n";
-						retry = true; // Set the retry to default
-						break;
+						retry = true; // Set the retry to default because the player didn't
+						break;				// input a correct input.
 				}
 			}
 
 			// Display the stats
 			displayStats(tmpStats);
 
+			// Ask the player if they want to reroll.
 			cout << "Reroll? [Y]es [N]o\n\n";
 
 			// Input for the reroll.
@@ -936,9 +983,9 @@ int _tmain (int argc, _TCHAR* argv[])
 
 			if (inputs == 'y' || inputs == 'Y')
 			{
-				cout << inputs;
-				// Reset the reroll to default.
-				reroll = true;
+				cout << inputs; //Get the input of the player.
+
+				reroll = true; // Reset the reroll to default.
 			}
 
 			// Reset the reroll to default for the second reroll.
@@ -950,6 +997,7 @@ int _tmain (int argc, _TCHAR* argv[])
 				reroll = false;
 
 				cout << "\nPlease select a class\n\n";
+				// Ask the player what class they want their character to be.
 				cout << "[F]ighter [C]leric [T]heif [B]ard [R]ouge [M]age\n\n";
 
 				// Check for inputs of which class.
@@ -960,44 +1008,44 @@ int _tmain (int argc, _TCHAR* argv[])
 				{
 					case 'f':
 					case 'F':
-						inputClass = FIGHTER;
+						inputClass = FIGHTER; // The player chose the fighter class.
 						cout << "\nFighter!\n";
-						player1 = new fighter;
+						player1 = new fighter; // Create a new fighter class.
 						break;
 					case 'c':
 					case 'C':
-						inputClass = CLERIC;
+						inputClass = CLERIC; // The player chose the cleric class.
 						cout << "\nCleric!\n";
-						player1 = new fighter;
+						player1 = new cleric; // Create a new cleric class
 						break;
 					case 't':
 					case 'T':
-						inputClass = THEIF;
+						inputClass = THEIF; // The player chose the theif class.
 						cout << "\nTheif!\n";
-						player1 = new rouge;
+						player1 = new theif; // Create a new rouge class.
 						break;
 					case 'b':
 					case 'B':
-						inputClass = BARD;
+						inputClass = BARD; // The player chose the bard class.
 						cout << "\nBard!\n";
-						player1 = new bard;
+						player1 = new bard; // Create a new bard class.
 						break;
 					case 'r':
 					case 'R':
-						inputClass = ROUGE;
+						inputClass = ROUGE; // The player chose the rouge class.
 						cout << "\nRouge!\n";
-						player1 = new rouge;
+						player1 = new rouge; // Create a new rouge class.
 						break;
 					case 'm':
 					case 'M':
-						inputClass = MAGE;
+						inputClass = MAGE; // The player chose the mage class.
 						cout << "\nMage!\n";
-						player1 = new mage;
+						player1 = new mage; // Create a new mage class.
 						break;
 					default:
 						cout << "\nPlease input a valid class.\n";
-						reroll = true;
-						break;
+						reroll = true; // The player didn't input a correct choice so
+						break; 				 // restart the loop.
 				}
 			}
 		}
@@ -1005,59 +1053,67 @@ int _tmain (int argc, _TCHAR* argv[])
 		// Set the attributes as they are at this point.
 		player1->setAtts(tmpStats);
 	}
-	else if (newGame == false)
+	else if (newGame == false) // The player chose to load a game.
 	{
-		getFromFile();
+		// Load the saved game.
+		getFromFile(player1);
 	}
 
+	// Reset the loop.
 	retry = true;
 
-	// Something or rather.
+	// Get if the player doesn't want to quit.
 	while (!iQuit)
 	{
+		// Choose from the location that the player is at.
 		switch (player1->getLoc())
 		{
 			case QUIT:
-				iQuit = true;
+				iQuit = true; // The player wants to quit.
 				break;
 			case VIEWSTATS:
-				player1->locStats();
+				player1->locStats(); // The player wants to view their stats.
 				break;
 			default:
 			case TOWN:
-				player1->locTown();
+				player1->locTown(); // The player wants to go to town.
 				break;
 			case FOREST:
-				player1->locForest();
+				player1->locForest(); // The player wants to go to the forest.
 				break;
 			case MONSTER:
-				player1->locMonster();
+				player1->locMonster(); // The player wants to find a monster.
 				break;
 			case SAVE:
-				if (retry)
+				// The player wants to save.
+				while (retry) // Create a loop.
 				{
-					retry = false;
+					retry = false; // End the loop.
 
 					cout << "\n";
-					cout << "Are you sure you want to save? [Y]es [N]o";
 
-					cin >> inputs;
+					cout << "Are you sure you want to save? [Y]es [N]o\n"; // Ask the
+															// player if they are sure that they want to save.
 
-					switch (inputs)
+					cin >> inputs; // Get the player's choice.
+
+					switch (inputs) // Choose from the input.
 					{
 						case 'y':
 						case 'Y':
-							writeToFile();
+							player1->setLoc(TOWN); // Set the location town so when they load
+																		 // the save they start back to the town.
+							writeToFile(player1); // Write to file.
 							break;
 						case 'n':
 						case 'N':
-							break;
+							player1->setLoc(TOWN); // Set the location back to town so they
+							break;								 // can go back to playing.
 						default:
-							retry = true;
+							retry = true; // The player didn't input anything that matched the
+														// Choices so restart.
 					}
 				}
-
-				player1->setLoc(TOWN);
 				break;
 		}
 	}
