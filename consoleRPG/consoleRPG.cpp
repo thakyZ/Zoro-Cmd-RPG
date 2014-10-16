@@ -505,7 +505,7 @@ class character
 		}
 };
 
-char getFileDirectory()
+char *getFileDirectory()
 {
 	char cCurrentPath[FILENAME_MAX];
 
@@ -525,9 +525,9 @@ void writeToFile()
 
 	ofstream myfile;
 
+	char *fileDir = getFileDirectory();
 
-
-	myfile.open(&getFileDirectory());
+	myfile.open(fileDir);
 
 	myfile.write((char *)&player1, sizeof(player1));
 
@@ -536,13 +536,15 @@ void writeToFile()
 	cout << "File saved.";
 }
 
-void getFromFile(char *file)
+void getFromFile()
 {
 	character *playerSave;
 
 	character *player1;
 
-	ifstream myfile(file, ios::binary);
+	char *fileDir = getFileDirectory();
+
+	ifstream myfile(fileDir, ios::binary);
 
 	myfile.read((char *)&playerSave, sizeof(playerSave));
 
@@ -1005,7 +1007,7 @@ int _tmain (int argc, _TCHAR* argv[])
 	}
 	else if (newGame == false)
 	{
-		getFromFile("save1.sav");
+		getFromFile();
 	}
 
 	retry = true;
