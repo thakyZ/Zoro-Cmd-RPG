@@ -747,6 +747,20 @@ class tinker : public character
 		}
 };
 
+// Class for the Mage.
+class mage : public character
+{
+	public:
+		// Create the mage class.
+		mage()
+		{
+			cout << "Mage Created.\n";
+
+			hpMax = hp = diceRoll(3, 6); // Set the default hitpoints for the mage.
+			mpMax = mp = 50; // Set the default mana for the mage.
+		}
+};
+
 class saveFileData
 {
 	public:
@@ -770,12 +784,10 @@ class saveFileData
 
 		saveFileData()
 		{
-			cout << "moo\n";
 		}
 
 		void init(character *tmpChar)
 		{
-			cout << "moo initilized\n";
 			strength = tmpChar->getAtts().strength;
 			faith = tmpChar->getAtts().faith;
 			dexterity = tmpChar->getAtts().dexterity;
@@ -796,58 +808,29 @@ class saveFileData
 		}
 };
 
-// Class for the Mage.
-class mage : public character
-{
-	public:
-		// Create the mage class.
-		mage()
-		{
-			cout << "Mage Created.\n";
-
-			hpMax = hp = diceRoll(3, 6); // Set the default hitpoints for the mage.
-			mpMax = mp = 50; // Set the default mana for the mage.
-		}
-};
-
-string getFileDirectory()
-{
-	/*TCHAR buffer[MAX_PATH];
-    char Lbuffer[MAX_PATH] = "";
-
-    Lbuffer = GetModuleFileName( NULL, buffer, MAX_PATH );
-
-	TCHAR argv[10];
-
-	argv[0] = _T(buffer);
-    string::size_type pos = string( buffer ).find_last_of( "\\/" );
-    return string( buffer ).substr( 0, pos);*/
-	return "cheese\n";
-}
-
-void writeToFile(character *tmpChar)
+void writeToFile(character *tmpChar, bool debug)
 {
 	// Create the var for the save file.
 	ofstream myfile;
 
+	// The temp Player save data;
 	saveFileData playerSave;
 
+	// Initlize the player save.
 	playerSave.init(tmpChar);
-	// Get the save file's directory.
-	/*string fileDir;
-	fileDir += getFileDirectory();
-
-	cout << getFileDirectory() << "\n";*/
 
 	// Open the save file.
-	myfile.open("./save1.sav");/*fileDir);*/
+	myfile.open("./save1.sav",'w');/*fileDir);*/
 
 	// Write to the save file.
 	myfile.write((char *)&playerSave, sizeof(playerSave));
 
-	cout << ((char *)&playerSave) << "\n";
-	cout << myfile.out << "\n";
-	cout << myfile.in << "\n";
+	if (debug == true)
+	{
+		cout << ((char *)&playerSave) << "\n";
+		cout << myfile.out << "\n";
+		cout << myfile.in << "\n";
+	}
 
 	// Close the file after we are done with it.
 	myfile.close();
@@ -856,16 +839,13 @@ void writeToFile(character *tmpChar)
 }
 
 // To load a game.
-character getFromFile()
+character getFromFile(bool debug)
 {
 	// The character var for the loaded file.
 	saveFileData playerSave;
 
-	character something;
-
-	// Get the save file directory.
-	/*string fileDir;
-	fileDir += getFileDirectory();*/
+	// The temp character
+	character tmpChar;
 
 	// Load the save file.
 	ifstream myfile("./save1.sav", ios::binary);
@@ -874,168 +854,171 @@ character getFromFile()
 	myfile.read((char *)&playerSave, sizeof(playerSave));
 
 	LOCATION location = playerSave.location;
-	int strength = (int)playerSave.strength; // The strength stat of the class.
-	int faith = (int)playerSave.faith; // The faith stat of the class.
-	int dexterity = (int)playerSave.dexterity; // The dexterity stat of the class.
-	int insperation =  (int)playerSave.insperation; // The insperation stat of the class.
-	int cleverness = (int)playerSave.cleverness; // The cleverness stat of the class.
-	int focus = (int)playerSave.focus; // The focus stat of the class.
-	int copper = (int)playerSave.copper; // The amount of money the player has.
+	int strength = playerSave.strength; // The strength stat of the class.
+	int faith = playerSave.faith; // The faith stat of the class.
+	int dexterity = playerSave.dexterity; // The dexterity stat of the class.
+	int insperation =  playerSave.insperation; // The insperation stat of the class.
+	int cleverness = playerSave.cleverness; // The cleverness stat of the class.
+	int focus = playerSave.focus; // The focus stat of the class.
+	int copper = playerSave.copper; // The amount of money the player has.
 	OCC charClass = playerSave.charClass; // The characters class.
 	RACE charRace = playerSave.charRace; // The characters race.
-	int hp = (int)playerSave.hp;
-	int hpMax = (int)playerSave.hpMax; // The hitpoints for the character.
-	int mp = (int)playerSave.mp;
-	int mpMax = (int)playerSave.mpMax; // The mana or stamina for the character.
+	int hp = playerSave.hp;
+	int hpMax = playerSave.hpMax; // The hitpoints for the character.
+	int mp = playerSave.mp;
+	int mpMax = playerSave.mpMax; // The mana or stamina for the character.
 	WEAPON weapon = playerSave.weapon; // The weapon the character has.
 	ARMOR armor = playerSave.armor; // The armor the character has.
-	int masteries = (int)playerSave.masteries; // The skills level of the player.
+	int masteries = playerSave.masteries; // The skills level of the player.
 
-	switch (location)
+	if (debug == true)
 	{
-		case QUIT:
-			cout << "Loc:\t\t\tQuit\n";
-			break;
-		case VIEWSTATS:
-			cout << "Loc:\t\t\tView Stats\n";
-			break;
-		case TOWN:
-			cout << "Loc:\t\t\tTown\n";
-			break;
-		case FOREST:
-			cout << "Loc:\t\t\tForest\n";
-			break;
-		case MONSTER:
-			cout << "Loc:\t\t\tMonster\n";
-			break;
-		case SAVE:
-			cout << "Loc:\t\t\tSave\n";
-			break;
-		default:
-			cout << "Loc:\t\t\tBroken\n";
-	}
+		switch (location)
+		{
+			case QUIT:
+				cout << "Loc:\t\t\tQuit\n";
+				break;
+			case VIEWSTATS:
+				cout << "Loc:\t\t\tView Stats\n";
+				break;
+			case TOWN:
+				cout << "Loc:\t\t\tTown\n";
+				break;
+			case FOREST:
+				cout << "Loc:\t\t\tForest\n";
+				break;
+			case MONSTER:
+				cout << "Loc:\t\t\tMonster\n";
+				break;
+			case SAVE:
+				cout << "Loc:\t\t\tSave\n";
+				break;
+			default:
+				cout << "Loc:\t\t\tBroken\n";
+		}
 
-	switch (charRace)
-	{
-		case HUMAN:
-			cout << "Race:\t\t\tHuman\n";
-			break;
-		case ELF:
-			cout << "Race:\t\t\tElf\n";
-			break;
-		case DARKELF:
-			cout << "Race:\t\t\tDark Elf\n";
-			break;
-		case ANGEL:
-			cout << "Race:\t\t\tAngel\n";
-			break;
-		case MONGREL:
-			cout << "Race:\t\t\tMongrel\n";
-			break;
-		case SHAMANI:
-			cout << "Race:\t\t\tShamni\n";
-			break;
-		case NIBELUNG:
-			cout << "Race:\t\t\tNibelung\n";
-			break;
-		case UNDEAD:
-			cout << "Race:\t\t\tUndead\n";
-			break;
-		default:
-			cout << "Race:\t\t\tBroken\n";
-	}
+		switch (charRace)
+		{
+			case HUMAN:
+				cout << "Race:\t\t\tHuman\n";
+				break;
+			case ELF:
+				cout << "Race:\t\t\tElf\n";
+				break;
+			case DARKELF:
+				cout << "Race:\t\t\tDark Elf\n";
+				break;
+			case ANGEL:
+				cout << "Race:\t\t\tAngel\n";
+				break;
+			case MONGREL:
+				cout << "Race:\t\t\tMongrel\n";
+				break;
+			case SHAMANI:
+				cout << "Race:\t\t\tShamni\n";
+				break;
+			case NIBELUNG:
+				cout << "Race:\t\t\tNibelung\n";
+				break;
+			case UNDEAD:
+				cout << "Race:\t\t\tUndead\n";
+				break;
+			default:
+				cout << "Race:\t\t\tBroken\n";
+		}
 
-	switch (charClass)
-	{
-		case FIGHTER:
-			cout << "Class:\t\t\tFighter\n";
-			break;
-		case CLERIC:
-			cout << "Class:\t\t\tCleric\n";
-			break;
-		case ROUGE:
-			cout << "Class:\t\t\tRouge\n";
-			break;
-		case BARD:
-			cout << "Class:\t\t\tBard\n";
-			break;
-		case THEIF:
-			cout << "Class:\t\t\tTheif\n";
-			break;
-		case TINKER:
-			cout << "Class:\t\t\tTinker\n";
-			break;
-		case MAGE:
-			cout << "Class:\t\t\tMage\n";
-			break;
-		default:
-			cout << "Class:\t\t\tBroken\n";
-	}
+		switch (charClass)
+		{
+			case FIGHTER:
+				cout << "Class:\t\t\tFighter\n";
+				break;
+			case CLERIC:
+				cout << "Class:\t\t\tCleric\n";
+				break;
+			case ROUGE:
+				cout << "Class:\t\t\tRouge\n";
+				break;
+			case BARD:
+				cout << "Class:\t\t\tBard\n";
+				break;
+			case THEIF:
+				cout << "Class:\t\t\tTheif\n";
+				break;
+			case TINKER:
+				cout << "Class:\t\t\tTinker\n";
+				break;
+			case MAGE:
+				cout << "Class:\t\t\tMage\n";
+				break;
+			default:
+				cout << "Class:\t\t\tBroken\n";
+		}
 
-	switch (weapon)
-	{
-		case FISTS:
-			cout << "Weapon:\t\t\tFists\n";
-			break;
-		case DAGGER:
-			cout << "Weapon:\t\t\tDagger\n";
-			break;
-		case SWORD:
-			cout << "Weapon:\t\t\tSword\n";
-			break;
-		case STAFF:
-			cout << "Weapon:\t\t\tStaff\n";
-			break;
-		default:
-			cout << "Weapon:\t\t\tBroken\n";
-	}
+		switch (weapon)
+		{
+			case FISTS:
+				cout << "Weapon:\t\t\tFists\n";
+				break;
+			case DAGGER:
+				cout << "Weapon:\t\t\tDagger\n";
+				break;
+			case SWORD:
+				cout << "Weapon:\t\t\tSword\n";
+				break;
+			case STAFF:
+				cout << "Weapon:\t\t\tStaff\n";
+				break;
+			default:
+				cout << "Weapon:\t\t\tBroken\n";
+		}
 
-	switch (armor)
-	{
-		case LOINCLOTH:
-			cout << "Armor:\t\t\tLoincloth\n";
-			break;
-		case CLOTHARMOR:
-			cout << "Armor:\t\t\tCloth\n";
-			break;
-		case LEATHER:
-			cout << "Armor:\t\t\tLeather\n";
-			break;
-		default:
-			cout << "Armor:\t\t\tBroken\n";
-	}
+		switch (armor)
+		{
+			case LOINCLOTH:
+				cout << "Armor:\t\t\tLoincloth\n";
+				break;
+			case CLOTHARMOR:
+				cout << "Armor:\t\t\tCloth\n";
+				break;
+			case LEATHER:
+				cout << "Armor:\t\t\tLeather\n";
+				break;
+			default:
+				cout << "Armor:\t\t\tBroken\n";
+		}
 
-	cout << "Stats:\n";
-	cout << "\tStrength:\t" <<  strength << "\n";
-	cout << "\tFaith:\t\t" <<  faith << "\n";
-	cout << "\tDexterity:\t" <<  dexterity << "\n";
-	cout << "\tInsperation:\t" <<  insperation << "\n";
-	cout << "\tCleverness:\t" <<  cleverness << "\n";
-	cout << "\tFocus:\t\t" <<  focus << "\n";
-	cout << "Copper:\t\t\t" << copper << "\n";
-	cout << "Hitpoints:\t\t" << hp << "\n";
-	cout << "Max Hitpoints:\t\t" << hpMax << "\n";
-	cout << "Mana:\t\t\t" << mp << "\n";
-	cout << "Max Mana:\t\t" << mpMax << "\n";
-	cout << "Masteries:\t\t" << masteries << "\n";
+		cout << "Stats:\n";
+		cout << "\tStrength:\t" <<  strength << "\n";
+		cout << "\tFaith:\t\t" <<  faith << "\n";
+		cout << "\tDexterity:\t" <<  dexterity << "\n";
+		cout << "\tInsperation:\t" <<  insperation << "\n";
+		cout << "\tCleverness:\t" <<  cleverness << "\n";
+		cout << "\tFocus:\t\t" <<  focus << "\n";
+		cout << "Copper:\t\t\t" << copper << "\n";
+		cout << "Hitpoints:\t\t" << hp << "\n";
+		cout << "Max Hitpoints:\t\t" << hpMax << "\n";
+		cout << "Mana:\t\t\t" << mp << "\n";
+		cout << "Max Mana:\t\t" << mpMax << "\n";
+		cout << "Masteries:\t\t" << masteries << "\n";
+	}
 
 	// Close the file when we are done with it.
 	myfile.close();
 
 	cout << "Save loaded.\n";
 
-	something.setLoc(location);
-	something.setAttsTest(strength, cleverness, dexterity, faith, focus, insperation);
-	something.setClass(charClass);
-	something.setCopper(copper);
-	something.setHealth(hp);
-	something.setMana(mp);
-	something.setMasteries(masteries);
-	something.setMaxHealth(hpMax);
-	something.setMaxMana(mpMax);
-	something.setRace(charRace);
+	tmpChar.setLoc(location);
+	tmpChar.setAttsTest(strength, cleverness, dexterity, faith, focus, insperation);
+	tmpChar.setClass(charClass);
+	tmpChar.setCopper(copper);
+	tmpChar.setHealth(hp);
+	tmpChar.setMana(mp);
+	tmpChar.setMasteries(masteries);
+	tmpChar.setMaxHealth(hpMax);
+	tmpChar.setMaxMana(mpMax);
+	tmpChar.setRace(charRace);
 
-	return something;
+	return tmpChar;
 }
 
 // Startup
@@ -1050,7 +1033,8 @@ int _tmain (int argc, _TCHAR* argv[])
 	OCC inputClass; // The class that is chosen.
 	bool retry = true; // The fix for the race chooser.
 	bool iQuit = false; // To tell if the player want to quit the game.
-	bool newGame = true;
+	bool newGame = true; // If the player wants a new game.
+	bool debug = false; // Enable if you need to debug;
 
 	// Set the character to pointer var.
 	character *player1 = NULL;
@@ -1081,19 +1065,18 @@ int _tmain (int argc, _TCHAR* argv[])
 				break;
 			case 'l':
 			case 'L':
-				//newGame = false; // Don't create a new game and instead load game.
-				newGame = true;
+				newGame = false; // Don't create a new game and instead load game.
 				break;
 			default:
 				reroll = true; // The player didn't type in a correct choice so restart
-				 // the loop.
-				break;
+				break;		   // the loop.
 		}
 
 		if (inputs == ('2', '3', '5'))
 		{
 			cout << "...? How did you get to this?\n";
 			newGame = false;
+			debug = true;
 
 			reroll = false;
 
@@ -1128,6 +1111,8 @@ int _tmain (int argc, _TCHAR* argv[])
 			cout << "Please Select a Race:\n";
 			// Ask the player to choose a race.
 			cout << "[H]uman [E]lf [D]ark elf [A]ngel [M]ongrel [S]hamani [N]ibelung [U]ndead\n";
+
+			retry = true;
 
 			// Check for the retry
 			while (retry == true)
@@ -1255,66 +1240,66 @@ int _tmain (int argc, _TCHAR* argv[])
 
 				reroll = true; // Reset the reroll to default.
 			}
+		}
 
-			// Reset the reroll to default for the second reroll.
-			reroll = true;
+		// Reset the reroll to default for the second reroll.
+		reroll = true;
 
-			while (reroll) // While reroll == true
+		while (reroll) // While reroll == true
+		{
+			// End the reroll for now
+			reroll = false;
+
+			cout << "\nPlease select a class\n\n";
+			// Ask the player what class they want their character to be.
+			cout << "[F]ighter [C]leric [T]heif [B]ard [R]ouge [M]age\n\n";
+
+			// Check for inputs of which class.
+			cin >> inputs;
+
+			// Check for which class.
+			switch (inputs)
 			{
-				// End the reroll for now
-				reroll = false;
-
-				cout << "\nPlease select a class\n\n";
-				// Ask the player what class they want their character to be.
-				cout << "[F]ighter [C]leric [T]heif [B]ard [R]ouge [M]age\n\n";
-
-				// Check for inputs of which class.
-				cin >> inputs;
-
-				// Check for which class.
-				switch (inputs)
-				{
-					case 'f':
-					case 'F':
-						inputClass = FIGHTER; // The player chose the fighter class.
-						cout << "\nFighter!\n";
-						player1 = new fighter; // Create a new fighter class.
-						break;
-					case 'c':
-					case 'C':
-						inputClass = CLERIC; // The player chose the cleric class.
-						cout << "\nCleric!\n";
-						player1 = new cleric; // Create a new cleric class
-						break;
-					case 't':
-					case 'T':
-						inputClass = THEIF; // The player chose the theif class.
-						cout << "\nTheif!\n";
-						player1 = new theif; // Create a new rouge class.
-						break;
-					case 'b':
-					case 'B':
-						inputClass = BARD; // The player chose the bard class.
-						cout << "\nBard!\n";
-						player1 = new bard; // Create a new bard class.
-						break;
-					case 'r':
-					case 'R':
-						inputClass = ROUGE; // The player chose the rouge class.
-						cout << "\nRouge!\n";
-						player1 = new rouge; // Create a new rouge class.
-						break;
-					case 'm':
-					case 'M':
-						inputClass = MAGE; // The player chose the mage class.
-						cout << "\nMage!\n";
-						player1 = new mage; // Create a new mage class.
-						break;
-					default:
-						cout << "\nPlease input a valid class.\n";
-						reroll = true; // The player didn't input a correct choice so
-						break; 				 // restart the loop.
-				}
+				case 'f':
+				case 'F':
+					inputClass = FIGHTER; // The player chose the fighter class.
+					cout << "\nFighter!\n";
+					player1 = new fighter; // Create a new fighter class.
+					break;
+				case 'c':
+				case 'C':
+					inputClass = CLERIC; // The player chose the cleric class.
+					cout << "\nCleric!\n";
+					player1 = new cleric; // Create a new cleric class
+					break;
+				case 't':
+				case 'T':
+					inputClass = THEIF; // The player chose the theif class.
+					cout << "\nTheif!\n";
+					player1 = new theif; // Create a new rouge class.
+					break;
+				case 'b':
+				case 'B':
+					inputClass = BARD; // The player chose the bard class.
+					cout << "\nBard!\n";
+					player1 = new bard; // Create a new bard class.
+					break;
+				case 'r':
+				case 'R':
+					inputClass = ROUGE; // The player chose the rouge class.
+					cout << "\nRouge!\n";
+					player1 = new rouge; // Create a new rouge class.
+					break;
+				case 'm':
+				case 'M':
+					inputClass = MAGE; // The player chose the mage class.
+					cout << "\nMage!\n";
+					player1 = new mage; // Create a new mage class.
+					break;
+				default:
+					cout << "\nPlease input a valid class.\n";
+					reroll = true; // The player didn't input a correct choice so
+					break; 				 // restart the loop.
 			}
 		}
 
@@ -1325,7 +1310,9 @@ int _tmain (int argc, _TCHAR* argv[])
 	if (newGame == false) // The player chose to load a game.
 	{
 		// Load the saved game.
-		player1 = &getFromFile();
+		player1 = &getFromFile(debug);
+
+		debug = false;
 	}
 
 	// Get if the player doesn't want to quit.
@@ -1360,7 +1347,7 @@ int _tmain (int argc, _TCHAR* argv[])
 					cout << "\n";
 
 					cout << "Are you sure you want to save? [Y]es [N]o\n"; // Ask the
-																		   // player if they are sure that they want to save.
+								   // player if they are sure that they want to save.
 
 					cin >> inputs; // Get the player's choice.
 
@@ -1370,7 +1357,7 @@ int _tmain (int argc, _TCHAR* argv[])
 						case 'Y':
 							player1->setLoc(TOWN); // Set the location town so when they load
 												   // the save they start back to the town.
-							//writeToFile(player1); // Write to file.
+							writeToFile(player1, debug); // Write to file.
 							break;
 						case 'n':
 						case 'N':
@@ -1384,9 +1371,13 @@ int _tmain (int argc, _TCHAR* argv[])
 					if (inputs == ('2', '3', '5'))
 					{
 						player1->setLoc(TOWN);
-						writeToFile(player1);
+						debug = true;
 
-						cout << player1 << "\n";
+						writeToFile(player1, debug);
+
+						debug = false;
+
+						retry = false;
 					}
 				}
 				break;
