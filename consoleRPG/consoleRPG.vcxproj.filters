@@ -34,7 +34,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="c:\program files\microsoft visual studio 10.0\vc\include\iostream" />
-    <None Include="c:\program files\microsoft visual studio 10.0\vc\include\cstdlib" />
+    <None Include="c:\program files\microsoft visual studio 10.0\vc\include\cstdlib">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="c:\program files\microsoft visual studio 10.0\vc\include\iostream">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

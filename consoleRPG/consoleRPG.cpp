@@ -3,12 +3,10 @@
 //
 
 #include "stdafx.h"
-#include <iostream>
-#include <cstdlib>
+#include "iostream"
+#include "cstdlib"
 #include "time.h"
 #include <fstream>
-#include <direct.h>
-#define GetCurrentDir _getcwd
 using namespace std;
 
 // Roll the dice.
@@ -131,78 +129,78 @@ class monster
 
 		// Get or set methods.
 		// Get the monster's hitpoints.
-		int getHealth ()
+		int getHealth()
 		{
 			return hp;
 		}
 
 		// Get the monster's max hitpoints.
-		int getMaxHealth ()
+		int getMaxHealth()
 		{
 			return hpMax;
 		}
 
 		// We do not need this right now...
-		/*int getMana ()
+		/*int getMana()
 		{
 			return mp;
 		}
 
-		int getMaxMana ()
+		int getMaxMana()
 		{
 			return mpMax;
 		}*/
 
 		// Get the monster's name.
-		char *getName ()
+		char *getName()
 		{
 			return mName;
 		}
 
 		// Get the monster's attack text.
-		char *getAttackText ()
+		char *getAttackText()
 		{
 			return attackText;
 		}
 
 		// Get the monster's death text.
-		char *getDeathText ()
+		char *getDeathText()
 		{
 			return deathText;
 		}
 
 		// Get the player's death text.
-		char *getWinText ()
+		char *getWinText()
 		{
 			return winText;
 		}
 
 		// Get the monster's skill level.
-		int getMasteries ()
+		int getMasteries()
 		{
 			return masteries;
 		}
 
 		// Get how much copper the monster will drop.
-		int getCopper ()
+		int getCopper()
 		{
 			return copper;
 		}
 
 		// Get the monster's armor.
-		ARMOR getArmor ()
+		ARMOR getArmor()
 		{
 			return armor;
 		}
 
 		// Get the monster's weapon.
-		WEAPON getWeapon ()
+		WEAPON getWeapon()
 		{
 			return weapon;
 		}
 
 		// Get the monster's attributes.
-		ATTRIBUTES getAtts ()
+		ATTRIBUTES getAtts()
 		{
 			return atts;
 		}
@@ -354,6 +352,16 @@ class character
 		{
 			// Set the attributes to the character.
 			atts = tmpAtts;
+		}
+
+		void setAttsTest(int tmpStrength, int tmpCleverness, int tmpDexterity, int tmpFaith, int tmpFocus, int tmpInsperation)
+		{
+			atts.strength = tmpStrength;
+			atts.cleverness = tmpCleverness;
+			atts.dexterity = tmpDexterity;
+			atts.faith = tmpFaith;
+			atts.focus = tmpFocus;
+			atts.insperation = tmpInsperation;
 		}
 
 		// Get the location
@@ -532,18 +540,19 @@ class character
 		}
 };
 
-char *getFileDirectory()
+string getFileDirectory()
 {
-	char cCurrentPath[FILENAME_MAX];
+	/*TCHAR buffer[MAX_PATH];
+    char Lbuffer[MAX_PATH] = "";
 
-	char *saveFilePath= "\save1.sav";
+    Lbuffer = GetModuleFileName( NULL, buffer, MAX_PATH );
 
-	if (!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath)))
-	{
-		char *stuff = cCurrentPath;
-		*stuff += *saveFilePath;
-		return *stuff;
-	}
+	TCHAR argv[10];
+
+	argv[0] = _T(buffer);
+    string::size_type pos = string( buffer ).find_last_of( "\\/" );
+    return string( buffer ).substr( 0, pos);*/
+	return "cheese";
 }
 
 void writeToFile(character *tempChar)
@@ -552,10 +561,13 @@ void writeToFile(character *tempChar)
 	ofstream myfile;
 
 	// Get the save file's directory.
-	char *fileDir = getFileDirectory();
+	/*string fileDir;
+	fileDir += getFileDirectory();
+
+	cout << getFileDirectory() << "\n";*/
 
 	// Open the save file.
-	myfile.open(fileDir);
+	myfile.open("./save1.sav");/*fileDir);*/
 
 	// Write to the save file.
 	myfile.write((char *)&tempChar, sizeof(tempChar));
@@ -570,31 +582,32 @@ void writeToFile(character *tempChar)
 void getFromFile(character *tempChar)
 {
 	// The character var for the loaded file.
-	character *playerSave;
+	character *playerSave = NULL;
 
-	// The character var for the file to write to process.
-	character *tempChar;
+	character *playerTemp = NULL;
 
 	// Get the save file directory.
-	char *fileDir = getFileDirectory();
+	/*string fileDir;
+	fileDir += getFileDirectory();*/
 
 	// Load the save file.
-	ifstream myfile(fileDir, ios::binary);
+	ifstream myfile("./save1.sav", ios::binary);
 
 	// Read the save file.
-	myfile.read((char *)&playerSave, sizeof(playerSave));
+	myfile.read((char *)&*playerSave, sizeof(playerSave));
 
 	// Set the player's saved stats.
-	tempChar->setAtts(playerSave->getAtts());
-	tempChar->setClass(playerSave->getClass());
-	tempChar->setCopper(playerSave->getCopper());
-	tempChar->setHealth(playerSave->getHealth());
-	tempChar->setLoc(playerSave->getLoc());
-	tempChar->setMana(playerSave->getMana());
-	tempChar->setMasteries(playerSave->getMasteries());
-	tempChar->setMaxHealth(playerSave->getMaxHealth());
-	tempChar->setMaxMana(playerSave->getMaxMana());
-	tempChar->setRace(playerSave->getRace());
+	playerTemp->setAttsTest(playerSave->getAtts().strength, playerSave->getAtts().cleverness, playerSave->getAtts().dexterity, playerSave->getAtts().faith, playerSave->getAtts().focus, playerSave->getAtts().insperation);
+	//playerTemp->setAtts(tempChar->getAtts());
+	playerTemp->setClass(playerSave->getClass());
+	playerTemp->setCopper(playerSave->getCopper());
+	playerTemp->setHealth(playerSave->getHealth());
+	playerTemp->setLoc(playerSave->getLoc());
+	playerTemp->setMana(playerSave->getMana());
+	playerTemp->setMasteries(playerSave->getMasteries());
+	playerTemp->setMaxHealth(playerSave->getMaxHealth());
+	playerTemp->setMaxMana(playerSave->getMaxMana());
+	playerTemp->setRace(playerSave->getRace());
 
 	// Close the file when we are done with it.
 	myfile.close();
@@ -765,6 +778,20 @@ class bard : public character
 		}
 };
 
+// Class for the Rouge.
+class theif : public character
+{
+	public:
+		// Create the rogue class.
+		theif()
+		{
+			cout << "Theif Created.\n";
+
+			hpMax = hp = diceRoll(7, 6); // Set the default hitpoints for the rouge.
+			mpMax = mp = 20; // Set the default stamina for the rouge.
+		}
+};
+
 // Class for the Tinker.
 class tinker : public character
 {
@@ -808,7 +835,7 @@ int _tmain (int argc, _TCHAR* argv[])
 	bool newGame = true;
 
 	// Set the character to pointer var.
-	character *player1;
+	character *player1 = NULL;
 
 	// Clear the console.
 	system("cls");
@@ -836,7 +863,8 @@ int _tmain (int argc, _TCHAR* argv[])
 				break;
 			case 'l':
 			case 'L':
-				newGame = false; // Don't create a new game and instead load game.
+				//newGame = false; // Don't create a new game and instead load game.
+				newGame = true;
 				break;
 			default:
 				reroll = true; // The player didn't type in a correct choice so restart
@@ -1059,9 +1087,6 @@ int _tmain (int argc, _TCHAR* argv[])
 		getFromFile(player1);
 	}
 
-	// Reset the loop.
-	retry = true;
-
 	// Get if the player doesn't want to quit.
 	while (!iQuit)
 	{
@@ -1085,6 +1110,7 @@ int _tmain (int argc, _TCHAR* argv[])
 				player1->locMonster(); // The player wants to find a monster.
 				break;
 			case SAVE:
+				retry = true;
 				// The player wants to save.
 				while (retry) // Create a loop.
 				{
@@ -1103,7 +1129,7 @@ int _tmain (int argc, _TCHAR* argv[])
 						case 'Y':
 							player1->setLoc(TOWN); // Set the location town so when they load
 																		 // the save they start back to the town.
-							writeToFile(player1); // Write to file.
+							//writeToFile(player1); // Write to file.
 							break;
 						case 'n':
 						case 'N':
