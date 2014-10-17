@@ -806,6 +806,144 @@ class saveFileData
 			armor = tmpChar->getArmor(); // The armor the character has.
 			masteries = tmpChar->getMasteries(); // The skills level of the player.
 		}
+
+		void debugSaveClass()
+		{
+			cout << "   Save Class Debug\n";
+			cout << "+=================================+\n";
+			cout << "\n";
+			cout << "Stats:\n";
+			cout << "   Strength:      " << strength << "\n";
+			cout << "   Faith:         " << faith << "\n";
+			cout << "   Dexterity:     " << dexterity << "\n";
+			cout << "   Insperation:   " << insperation << "\n";
+			cout << "   Cleverness:    " << cleverness << "\n";
+			cout << "   Focus:         " << focus << "\n";
+			cout << "Copper:           " << copper << "\n";
+			
+			switch (charClass)
+			{
+				case FIGHTER:
+					cout << "Class:            Fighter\n";
+					break;
+				case CLERIC:
+					cout << "Class:            Cleric\n";
+					break;
+				case ROUGE:
+					cout << "Class:            Rouge\n";
+					break;
+				case BARD:
+					cout << "Class:            Bard\n";
+					break;
+				case THEIF:
+					cout << "Class:            Theif\n";
+					break;
+				case TINKER:
+					cout << "Class:            Tinker\n";
+					break;
+				case MAGE:
+					cout << "Class:            Mage\n";
+					break;
+				default:
+					cout << "Class:            BROKEN\n";
+					break;
+			}
+
+			switch (charRace)
+			{
+				case HUMAN:
+					cout << "Race:             Human\n";
+					break;
+				case ELF:
+					cout << "Race:             Elf\n";
+					break;
+				case DARKELF:
+					cout << "Race:             Dark Elf\n";
+					break;
+				case ANGEL:
+					cout << "Race:             Angel\n";
+					break;
+				case MONGREL:
+					cout << "Race:             Mongrel\n";
+					break;
+				case SHAMANI:
+					cout << "Race:             Shamani\n";
+					break;
+				case NIBELUNG:
+					cout << "Race:             Nibelung\n";
+					break;
+				case UNDEAD:
+					cout << "Race:             Undead\n";
+					break;
+				default:
+					cout << "Race:             BROKEN\n";
+					break;
+			}
+
+			cout << "Hitpoints:        " << hp << "\n";
+			cout << "Max Hitpoints:    " << hpMax << "\n";
+			cout << "Mana:             " << mp << "\n";
+			cout << "Max Mana:         " << mpMax << "\n";
+
+			switch (location)
+			{
+				case QUIT:
+					cout << "Location:         Quit\n";
+					break;
+				case VIEWSTATS:
+					cout << "Location:         View Stats\n";
+					break;
+				case TOWN:
+					cout << "Location:         Town\n";
+					break;
+				case FOREST:
+					cout << "Location:         Forest\n";
+					break;
+				case MONSTER:
+					cout << "Location:         Monster\n";
+					break;
+				case SAVE:
+					cout << "Location:         Save\n";
+					break;
+				default:
+					cout << "Location:         BROKEN\n";
+			}
+
+			switch (weapon)
+			{
+				case FISTS:
+					cout << "Weapon:           Fists\n";
+					break;
+				case DAGGER:
+					cout << "Weapon:           Dagger\n";
+					break;
+				case SWORD:
+					cout << "Weapon:           Sword\n";
+					break;
+				case STAFF:
+					cout << "Weapon:           Staff\n";
+					break;
+				default:
+					cout << "Weapon:           Broken\n";
+			}
+
+			switch (armor)
+			{
+				case LOINCLOTH:
+					cout << "Armor:            Loincloth\n";
+					break;
+				case CLOTHARMOR:
+					cout << "Armor:            Cloth\n";
+					break;
+				case LEATHER:
+					cout << "Armor:            Leather\n";
+					break;
+				default:
+					cout << "Armor:            Broken\n";
+			}
+
+			cout << "Masteries:        " << masteries << "\n";
+		}
 };
 
 void writeToFile(character *tmpChar, bool debug)
@@ -827,9 +965,20 @@ void writeToFile(character *tmpChar, bool debug)
 
 	if (debug == true)
 	{
-		cout << ((char *)&playerSave) << "\n";
-		cout << myfile.out << "\n";
-		cout << myfile.in << "\n";
+		cout << "+=================================+\n";
+		cout << "   Debug -> STARTING\n";
+		cout << "+=================================+\n";
+		cout << "Player Save Data: " << ((char *)&playerSave) << "\n";
+		cout << "Player Save Data: " << (sizeof(playerSave)) << "\n";
+		cout << "Temp Player Data: " << ((char *)&tmpChar) << "\n";
+		cout << "Player Save Data: " << (sizeof(tmpChar)) << "\n";
+		cout << "File out:         " << myfile.out << "\n";
+		cout << "File in:          " << myfile.in << "\n";
+		cout << "+=================================+\n";
+		playerSave.debugSaveClass();
+		cout << "+=================================+\n";
+		cout << "   Debug -> ENDED\n";
+		cout << "+=================================+\n";
 	}
 
 	// Close the file after we are done with it.
@@ -871,142 +1020,6 @@ character getFromFile(bool debug)
 	ARMOR armor = playerSave.armor; // The armor the character has.
 	int masteries = playerSave.masteries; // The skills level of the player.
 
-	if (debug == true)
-	{
-		switch (location)
-		{
-			case QUIT:
-				cout << "Loc:\t\t\tQuit\n";
-				break;
-			case VIEWSTATS:
-				cout << "Loc:\t\t\tView Stats\n";
-				break;
-			case TOWN:
-				cout << "Loc:\t\t\tTown\n";
-				break;
-			case FOREST:
-				cout << "Loc:\t\t\tForest\n";
-				break;
-			case MONSTER:
-				cout << "Loc:\t\t\tMonster\n";
-				break;
-			case SAVE:
-				cout << "Loc:\t\t\tSave\n";
-				break;
-			default:
-				cout << "Loc:\t\t\tBroken\n";
-		}
-
-		switch (charRace)
-		{
-			case HUMAN:
-				cout << "Race:\t\t\tHuman\n";
-				break;
-			case ELF:
-				cout << "Race:\t\t\tElf\n";
-				break;
-			case DARKELF:
-				cout << "Race:\t\t\tDark Elf\n";
-				break;
-			case ANGEL:
-				cout << "Race:\t\t\tAngel\n";
-				break;
-			case MONGREL:
-				cout << "Race:\t\t\tMongrel\n";
-				break;
-			case SHAMANI:
-				cout << "Race:\t\t\tShamni\n";
-				break;
-			case NIBELUNG:
-				cout << "Race:\t\t\tNibelung\n";
-				break;
-			case UNDEAD:
-				cout << "Race:\t\t\tUndead\n";
-				break;
-			default:
-				cout << "Race:\t\t\tBroken\n";
-		}
-
-		switch (charClass)
-		{
-			case FIGHTER:
-				cout << "Class:\t\t\tFighter\n";
-				break;
-			case CLERIC:
-				cout << "Class:\t\t\tCleric\n";
-				break;
-			case ROUGE:
-				cout << "Class:\t\t\tRouge\n";
-				break;
-			case BARD:
-				cout << "Class:\t\t\tBard\n";
-				break;
-			case THEIF:
-				cout << "Class:\t\t\tTheif\n";
-				break;
-			case TINKER:
-				cout << "Class:\t\t\tTinker\n";
-				break;
-			case MAGE:
-				cout << "Class:\t\t\tMage\n";
-				break;
-			default:
-				cout << "Class:\t\t\tBroken\n";
-		}
-
-		switch (weapon)
-		{
-			case FISTS:
-				cout << "Weapon:\t\t\tFists\n";
-				break;
-			case DAGGER:
-				cout << "Weapon:\t\t\tDagger\n";
-				break;
-			case SWORD:
-				cout << "Weapon:\t\t\tSword\n";
-				break;
-			case STAFF:
-				cout << "Weapon:\t\t\tStaff\n";
-				break;
-			default:
-				cout << "Weapon:\t\t\tBroken\n";
-		}
-
-		switch (armor)
-		{
-			case LOINCLOTH:
-				cout << "Armor:\t\t\tLoincloth\n";
-				break;
-			case CLOTHARMOR:
-				cout << "Armor:\t\t\tCloth\n";
-				break;
-			case LEATHER:
-				cout << "Armor:\t\t\tLeather\n";
-				break;
-			default:
-				cout << "Armor:\t\t\tBroken\n";
-		}
-
-		cout << "Stats:\n";
-		cout << "\tStrength:\t" <<  strength << "\n";
-		cout << "\tFaith:\t\t" <<  faith << "\n";
-		cout << "\tDexterity:\t" <<  dexterity << "\n";
-		cout << "\tInsperation:\t" <<  insperation << "\n";
-		cout << "\tCleverness:\t" <<  cleverness << "\n";
-		cout << "\tFocus:\t\t" <<  focus << "\n";
-		cout << "Copper:\t\t\t" << copper << "\n";
-		cout << "Hitpoints:\t\t" << hp << "\n";
-		cout << "Max Hitpoints:\t\t" << hpMax << "\n";
-		cout << "Mana:\t\t\t" << mp << "\n";
-		cout << "Max Mana:\t\t" << mpMax << "\n";
-		cout << "Masteries:\t\t" << masteries << "\n";
-	}
-
-	// Close the file when we are done with it.
-	myfile.close();
-
-	cout << "Save loaded.\n";
-
 	tmpChar.setLoc(location);
 	tmpChar.setAttsTest(strength, cleverness, dexterity, faith, focus, insperation);
 	tmpChar.setClass(charClass);
@@ -1017,6 +1030,161 @@ character getFromFile(bool debug)
 	tmpChar.setMaxHealth(hpMax);
 	tmpChar.setMaxMana(mpMax);
 	tmpChar.setRace(charRace);
+
+	if (debug == true)
+	{
+		cout << "+=================================+\n";
+		cout << "   Debug -> STARTING\n";
+		cout << "+=================================+\n";
+		cout << "Player Save Data: " << ((char *)&playerSave) << "\n";
+		cout << "Player Save Data: " << (sizeof(playerSave)) << "\n";
+		cout << "Temp Player Data: " << ((char *)&tmpChar) << "\n";
+		cout << "Player Save Data: " << (sizeof(tmpChar)) << "\n";
+		cout << "File out:         " << myfile.out << "\n";
+		cout << "File in:          " << myfile.in << "\n";
+		cout << "+=================================+\n";
+		cout << "   Save File Debug\n";
+		cout << "+=================================+\n";
+		cout << "Stats:\n";
+		cout << "   Strength:      " << strength << "\n";
+		cout << "   Faith:         " << faith << "\n";
+		cout << "   Dexterity:     " << dexterity << "\n";
+		cout << "   Insperation:   " << insperation << "\n";
+		cout << "   Cleverness:    " << cleverness << "\n";
+		cout << "   Focus:         " << focus << "\n";
+		cout << "Copper:           " << copper << "\n";
+			
+		switch (charClass)
+		{
+			case FIGHTER:
+				cout << "Class:            Fighter\n";
+				break;
+			case CLERIC:
+				cout << "Class:            Cleric\n";
+				break;
+			case ROUGE:
+				cout << "Class:            Rouge\n";
+				break;
+			case BARD:
+				cout << "Class:            Bard\n";
+				break;
+			case THEIF:
+				cout << "Class:            Theif\n";
+				break;
+			case TINKER:
+				cout << "Class:            Tinker\n";
+				break;
+			case MAGE:
+				cout << "Class:            Mage\n";
+				break;
+			default:
+				cout << "Class:            BROKEN\n";
+				break;
+		}
+
+		switch (charRace)
+		{
+			case HUMAN:
+				cout << "Race:             Human\n";
+				break;
+			case ELF:
+				cout << "Race:             Elf\n";
+				break;
+			case DARKELF:
+				cout << "Race:             Dark Elf\n";
+				break;
+			case ANGEL:
+				cout << "Race:             Angel\n";
+				break;
+			case MONGREL:
+				cout << "Race:             Mongrel\n";
+				break;
+			case SHAMANI:
+				cout << "Race:             Shamani\n";
+				break;
+			case NIBELUNG:
+				cout << "Race:             Nibelung\n";
+				break;
+			case UNDEAD:
+				cout << "Race:             Undead\n";
+				break;
+			default:
+				cout << "Race:             BROKEN\n";
+				break;
+		}
+
+		cout << "Hitpoints:        " << hp << "\n";
+		cout << "Max Hitpoints:    " << hpMax << "\n";
+		cout << "Mana:             " << mp << "\n";
+		cout << "Max Mana:         " << mpMax << "\n";
+
+		switch (location)
+		{
+			case QUIT:
+				cout << "Location:         Quit\n";
+				break;
+			case VIEWSTATS:
+				cout << "Location:         View Stats\n";
+				break;
+			case TOWN:
+				cout << "Location:         Town\n";
+				break;
+			case FOREST:
+				cout << "Location:         Forest\n";
+				break;
+			case MONSTER:
+				cout << "Location:         Monster\n";
+				break;
+			case SAVE:
+				cout << "Location:         Save\n";
+				break;
+			default:
+				cout << "Location:         BROKEN\n";
+		}
+
+		switch (weapon)
+		{
+			case FISTS:
+				cout << "Weapon:           Fists\n";
+				break;
+			case DAGGER:
+				cout << "Weapon:           Dagger\n";
+				break;
+			case SWORD:
+				cout << "Weapon:           Sword\n";
+				break;
+			case STAFF:
+				cout << "Weapon:           Staff\n";
+				break;
+			default:
+				cout << "Weapon:           Broken\n";
+		}
+
+		switch (armor)
+		{
+			case LOINCLOTH:
+				cout << "Armor:            Loincloth\n";
+				break;
+			case CLOTHARMOR:
+				cout << "Armor:            Cloth\n";
+				break;
+			case LEATHER:
+				cout << "Armor:            Leather\n";
+				break;
+			default:
+				cout << "Armor:            Broken\n";
+		}
+
+		cout << "Masteries:        " << masteries << "\n";
+		cout << "+=================================+\n";
+		cout << "   Debug -> ENDED\n";
+		cout << "+=================================+\n";
+	}
+
+	// Close the file when we are done with it.
+	myfile.close();
+
+	cout << "Save loaded.\n";
 
 	return tmpChar;
 }
@@ -1074,23 +1242,26 @@ int _tmain (int argc, _TCHAR* argv[])
 
 		if (inputs == ('2', '3', '5'))
 		{
-			cout << "...? How did you get to this?\n";
 			newGame = false;
 			debug = true;
 
 			reroll = false;
 
+			cout << "+=================================+\n";
+			cout << "   Debug -> Enabled\n";
+			cout << "+=================================+\n";
+
 			if (newGame)
 			{
-				cout << "true\n";
+				cout << "NewGame:          true\n";
 			}
 			else if (!newGame)
 			{
-				cout << "false\n";
+				cout << "NewGame:          false\n";
 			}
 			else
 			{
-				cout << "well you broke it\n";
+				cout << "NewGame:          Well you broke it...\n";
 			}
 		}
 	}
@@ -1305,6 +1476,8 @@ int _tmain (int argc, _TCHAR* argv[])
 
 		// Set the attributes as they are at this point.
 		player1->setAtts(tmpStats);
+		player1->setRace(inputRace);
+		player1->setClass(inputClass);
 	}
 
 	if (newGame == false) // The player chose to load a game.
@@ -1313,6 +1486,10 @@ int _tmain (int argc, _TCHAR* argv[])
 		player1 = &getFromFile(debug);
 
 		debug = false;
+
+		cout << "+=================================+\n";
+		cout << "   Debug -> Disabled\n";
+		cout << "+=================================+\n";
 	}
 
 	// Get if the player doesn't want to quit.
@@ -1373,10 +1550,17 @@ int _tmain (int argc, _TCHAR* argv[])
 						player1->setLoc(TOWN);
 						debug = true;
 
+						cout << "+=================================+\n";
+						cout << "   Debug -> Enabled\n";
+
 						writeToFile(player1, debug);
 
 						debug = false;
 
+						cout << "+=================================+\n";
+						cout << "   Debug -> Disabled\n";
+						cout << "+=================================+\n";
+						
 						retry = false;
 					}
 				}
