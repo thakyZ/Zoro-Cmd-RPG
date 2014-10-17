@@ -866,6 +866,8 @@ int _tmain (int argc, _TCHAR* argv[])
 				//newGame = false; // Don't create a new game and instead load game.
 				newGame = true;
 				break;
+			case '235':
+				newGame = false;
 			default:
 				reroll = true; // The player didn't type in a correct choice so restart
 				break;				 // the loop.
@@ -1134,7 +1136,11 @@ int _tmain (int argc, _TCHAR* argv[])
 						case 'n':
 						case 'N':
 							player1->setLoc(TOWN); // Set the location back to town so they
-							break;								 // can go back to playing.
+							break; // can go back to playing.
+						case '235':
+							player1->setLoc(TOWN); // Set the location town so when they load
+																		 // the save they start back to the town.
+							//writeToFile(player1);
 						default:
 							retry = true; // The player didn't input anything that matched the
 														// Choices so restart.
