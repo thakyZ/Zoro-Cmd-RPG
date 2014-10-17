@@ -368,12 +368,16 @@ class character
 
 		void setAttsTest(int tmpStrength, int tmpCleverness, int tmpDexterity, int tmpFaith, int tmpFocus, int tmpInsperation)
 		{
-			atts.strength = tmpStrength;
-			atts.cleverness = tmpCleverness;
-			atts.dexterity = tmpDexterity;
-			atts.faith = tmpFaith;
-			atts.focus = tmpFocus;
-			atts.insperation = tmpInsperation;
+			ATTRIBUTES tmpAtts;
+
+			tmpAtts.strength = tmpStrength;
+			tmpAtts.cleverness = tmpCleverness;
+			tmpAtts.dexterity = tmpDexterity;
+			tmpAtts.faith = tmpFaith;
+			tmpAtts.focus = tmpFocus;
+			tmpAtts.insperation = tmpInsperation;
+
+			atts = tmpAtts;
 		}
 
 		// Get the location
@@ -852,14 +856,12 @@ void writeToFile(character *tmpChar)
 }
 
 // To load a game.
-character *getFromFile()
+character getFromFile()
 {
 	// The character var for the loaded file.
 	saveFileData playerSave;
 
-	character *something;
-
-	LOCATION loc = TOWN;
+	character something;
 
 	// Get the save file directory.
 	/*string fileDir;
@@ -871,36 +873,23 @@ character *getFromFile()
 	// Read the save file.
 	myfile.read((char *)&playerSave, sizeof(playerSave));
 
-	/*// Set the player's saved stats.
-	playerTemp->setAttsTest(playerSave->getAtts().strength, playerSave->getAtts().cleverness, playerSave->getAtts().dexterity, playerSave->getAtts().faith, playerSave->getAtts().focus, playerSave->getAtts().insperation);
-	//playerTemp->setAtts(tempChar->getAtts());
-	playerTemp->setClass(playerSave->getClass());
-	playerTemp->setCopper(playerSave->getCopper());
-	playerTemp->setHealth(playerSave->getHealth());
-	playerTemp->setLoc(playerSave->getLoc());
-	playerTemp->setMana(playerSave->getMana());
-	playerTemp->setMasteries(playerSave->getMasteries());
-	playerTemp->setMaxHealth(playerSave->getMaxHealth());
-	playerTemp->setMaxMana(playerSave->getMaxMana());
-	playerTemp->setRace(playerSave->getRace());*/
-
 	LOCATION location = playerSave.location;
-	int strength = playerSave.strength; // The strength stat of the class.
-	int faith = playerSave.faith; // The faith stat of the class.
-	int dexterity = playerSave.dexterity; // The dexterity stat of the class.
-	int insperation =  playerSave.insperation; // The insperation stat of the class.
-	int cleverness = playerSave.cleverness; // The cleverness stat of the class.
-	int focus = playerSave.focus; // The focus stat of the class.
-	int copper = playerSave.copper; // The amount of money the player has.
+	int strength = (int)playerSave.strength; // The strength stat of the class.
+	int faith = (int)playerSave.faith; // The faith stat of the class.
+	int dexterity = (int)playerSave.dexterity; // The dexterity stat of the class.
+	int insperation =  (int)playerSave.insperation; // The insperation stat of the class.
+	int cleverness = (int)playerSave.cleverness; // The cleverness stat of the class.
+	int focus = (int)playerSave.focus; // The focus stat of the class.
+	int copper = (int)playerSave.copper; // The amount of money the player has.
 	OCC charClass = playerSave.charClass; // The characters class.
 	RACE charRace = playerSave.charRace; // The characters race.
-	int hp = playerSave.hp;
-	int hpMax = playerSave.hpMax; // The hitpoints for the character.
-	int mp = playerSave.mp;
-	int mpMax = playerSave.mpMax; // The mana or stamina for the character.
+	int hp = (int)playerSave.hp;
+	int hpMax = (int)playerSave.hpMax; // The hitpoints for the character.
+	int mp = (int)playerSave.mp;
+	int mpMax = (int)playerSave.mpMax; // The mana or stamina for the character.
 	WEAPON weapon = playerSave.weapon; // The weapon the character has.
 	ARMOR armor = playerSave.armor; // The armor the character has.
-	int masteries = playerSave.masteries; // The skills level of the player.
+	int masteries = (int)playerSave.masteries; // The skills level of the player.
 
 	switch (location)
 	{
@@ -986,46 +975,46 @@ character *getFromFile()
 	switch (weapon)
 	{
 		case FISTS:
-			cout << "Weapon:\t\tFists\n";
+			cout << "Weapon:\t\t\tFists\n";
 			break;
 		case DAGGER:
-			cout << "Weapon:\t\tDagger\n";
+			cout << "Weapon:\t\t\tDagger\n";
 			break;
 		case SWORD:
-			cout << "Weapon:\t\tSword\n";
+			cout << "Weapon:\t\t\tSword\n";
 			break;
 		case STAFF:
-			cout << "Weapon:\t\tStaff\n";
+			cout << "Weapon:\t\t\tStaff\n";
 			break;
 		default:
-			cout << "Weapon:\t\tBroken\n";
+			cout << "Weapon:\t\t\tBroken\n";
 	}
 
 	switch (armor)
 	{
 		case LOINCLOTH:
-			cout << "Armor:\t\tLoincloth\n";
+			cout << "Armor:\t\t\tLoincloth\n";
 			break;
 		case CLOTHARMOR:
-			cout << "Armor:\t\tCloth\n";
+			cout << "Armor:\t\t\tCloth\n";
 			break;
 		case LEATHER:
-			cout << "Armor:\t\tLeather\n";
+			cout << "Armor:\t\t\tLeather\n";
 			break;
 		default:
-			cout << "Armor:\t\tBroken\n";
+			cout << "Armor:\t\t\tBroken\n";
 	}
 
-	cout << "Stats:";
-	cout << "\tStrength:\t\t" <<  strength << "\n";
+	cout << "Stats:\n";
+	cout << "\tStrength:\t" <<  strength << "\n";
 	cout << "\tFaith:\t\t" <<  faith << "\n";
 	cout << "\tDexterity:\t" <<  dexterity << "\n";
 	cout << "\tInsperation:\t" <<  insperation << "\n";
 	cout << "\tCleverness:\t" <<  cleverness << "\n";
-	cout << "\tFocus:\t" <<  focus << "\n";
+	cout << "\tFocus:\t\t" <<  focus << "\n";
 	cout << "Copper:\t\t\t" << copper << "\n";
 	cout << "Hitpoints:\t\t" << hp << "\n";
-	cout << "Max Hitpoints:\t" << hpMax << "\n";
+	cout << "Max Hitpoints:\t\t" << hpMax << "\n";
 	cout << "Mana:\t\t\t" << mp << "\n";
 	cout << "Max Mana:\t\t" << mpMax << "\n";
 	cout << "Masteries:\t\t" << masteries << "\n";
@@ -1035,16 +1024,16 @@ character *getFromFile()
 
 	cout << "Save loaded.\n";
 
-	something->setLoc(location);
-	something->setAttsTest(strength, cleverness, dexterity, faith, focus, insperation);
-	something->setClass(charClass);
-	something->setCopper(copper);
-	something->setHealth(hp);
-	something->setMana(mp);
-	something->setMasteries(masteries);
-	something->setMaxHealth(hpMax);
-	something->setMaxMana(mpMax);
-	something->setRace(charRace);
+	something.setLoc(location);
+	something.setAttsTest(strength, cleverness, dexterity, faith, focus, insperation);
+	something.setClass(charClass);
+	something.setCopper(copper);
+	something.setHealth(hp);
+	something.setMana(mp);
+	something.setMasteries(masteries);
+	something.setMaxHealth(hpMax);
+	something.setMaxMana(mpMax);
+	something.setRace(charRace);
 
 	return something;
 }
@@ -1336,7 +1325,7 @@ int _tmain (int argc, _TCHAR* argv[])
 	if (newGame == false) // The player chose to load a game.
 	{
 		// Load the saved game.
-		player1 = getFromFile();
+		player1 = &getFromFile();
 	}
 
 	// Get if the player doesn't want to quit.
