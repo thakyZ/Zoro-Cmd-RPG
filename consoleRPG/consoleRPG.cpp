@@ -884,7 +884,25 @@ character *getFromFile()
 	playerTemp->setMaxMana(playerSave->getMaxMana());
 	playerTemp->setRace(playerSave->getRace());*/
 
-	switch (playerSave.location)
+	LOCATION location = playerSave.location;
+	int strength = playerSave.strength; // The strength stat of the class.
+	int faith = playerSave.faith; // The faith stat of the class.
+	int dexterity = playerSave.dexterity; // The dexterity stat of the class.
+	int insperation =  playerSave.insperation; // The insperation stat of the class.
+	int cleverness = playerSave.cleverness; // The cleverness stat of the class.
+	int focus = playerSave.focus; // The focus stat of the class.
+	int copper = playerSave.copper; // The amount of money the player has.
+	OCC charClass = playerSave.charClass; // The characters class.
+	RACE charRace = playerSave.charRace; // The characters race.
+	int hp = playerSave.hp;
+	int hpMax = playerSave.hpMax; // The hitpoints for the character.
+	int mp = playerSave.mp;
+	int mpMax = playerSave.mpMax; // The mana or stamina for the character.
+	WEAPON weapon = playerSave.weapon; // The weapon the character has.
+	ARMOR armor = playerSave.armor; // The armor the character has.
+	int masteries = playerSave.masteries; // The skills level of the player.
+
+	switch (location)
 	{
 		case QUIT:
 			cout << "For some reason you had quit\n";
@@ -911,18 +929,84 @@ character *getFromFile()
 			cout << "Something is broken\n";
 	}
 
-	LOCATION loc2 = playerSave.location;
+	switch (charRace)
+	{
+		case HUMAN:
+			cout << "Race: Human\n";
+			break;
+		case ELF:
+			cout << "Race: Elf\n";
+			break;
+		case DARKELF:
+			cout << "Race: Dark Elf\n";
+			break;
+		case ANGEL:
+			cout << "Race: Angel\n";
+			break;
+		case MONGREL:
+			cout << "Race: Mongrel\n";
+			break;
+		case SHAMANI:
+			cout << "Race: Shamni\n";
+			break;
+		case NIBELUNG:
+			cout << "Race: Nibelung\n";
+			break;
+		case UNDEAD:
+			cout << "Race: Undead\n";
+			break;
+		default:
+			cout << "Something is broken\n";
+	}
 
-	cout << playerSave.location << "\n";
+	switch (charClass)
+	{
+		case FIGHTER:
+			cout << "Class: Fighter\n";
+			break;
+		/*case ELF:
+			cout << "Race: Elf\n";
+			break;
+		case DARKELF:
+			cout << "Race: Dark Elf\n";
+			break;
+		case ANGEL:
+			cout << "Race: Angel\n";
+			break;
+		case MONGREL:
+			cout << "Race: Mongrel\n";
+			break;
+		case SHAMANI:
+			cout << "Race: Shamni\n";
+			break;
+		case NIBELUNG:
+			cout << "Race: Nibelung\n";
+			break;
+		case UNDEAD:
+			cout << "Race: Undead\n";
+			break;*/
+		default:
+			cout << "Something is broken\n";
+	}
 
-	cout << loc << "\n";
+	cout << copper;
+	cout << strength;
 
 	// Close the file when we are done with it.
 	myfile.close();
 
 	cout << "Save loaded.\n";
 
-	something->setLoc(loc2);
+	something->setLoc(location);
+	something->setAttsTest(strength, cleverness, dexterity, faith, focus, insperation);
+	something->setClass(charClass);
+	something->setCopper(copper);
+	something->setHealth(hp);
+	something->setMana(mp);
+	something->setMasteries(masteries);
+	something->setMaxHealth(hpMax);
+	something->setMaxMana(mpMax);
+	something->setRace(charRace);
 
 	return something;
 }
