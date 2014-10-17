@@ -451,7 +451,7 @@ class character
 						location = VIEWSTATS; // Go to the view stats screen.
 						break;
 					case '5':
-						location = SAVE;
+						location = SAVE; // Go to the save screen.
 						break;
 					case '6':
 						// location = WEAPONSMITH; // Go to the weapon smith.
