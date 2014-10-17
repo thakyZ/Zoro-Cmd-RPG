@@ -291,6 +291,18 @@ class character
 			return masteries;
 		}
 
+		// Get the player's weapon.
+		WEAPON getWeapon()
+		{
+			return weapon;
+		}
+
+		// Get the player's armor
+		ARMOR getArmor()
+		{
+			return armor;
+		}
+
 		// Set arguments.
 		// Set the player's hitpoints.
 		void setHealth(int tmpHp)
@@ -540,81 +552,6 @@ class character
 		}
 };
 
-string getFileDirectory()
-{
-	/*TCHAR buffer[MAX_PATH];
-    char Lbuffer[MAX_PATH] = "";
-
-    Lbuffer = GetModuleFileName( NULL, buffer, MAX_PATH );
-
-	TCHAR argv[10];
-
-	argv[0] = _T(buffer);
-    string::size_type pos = string( buffer ).find_last_of( "\\/" );
-    return string( buffer ).substr( 0, pos);*/
-	return "cheese";
-}
-
-void writeToFile(character *tempChar)
-{
-	// Create the var for the save file.
-	ofstream myfile;
-
-	// Get the save file's directory.
-	/*string fileDir;
-	fileDir += getFileDirectory();
-
-	cout << getFileDirectory() << "\n";*/
-
-	// Open the save file.
-	myfile.open("./save1.sav");/*fileDir);*/
-
-	// Write to the save file.
-	myfile.write((char *)&tempChar, sizeof(tempChar));
-
-	// Close the file after we are done with it.
-	myfile.close();
-
-	cout << "File saved.";
-}
-
-// To load a game.
-void getFromFile(character *tempChar)
-{
-	// The character var for the loaded file.
-	character *playerSave = NULL;
-
-	character *playerTemp = NULL;
-
-	// Get the save file directory.
-	/*string fileDir;
-	fileDir += getFileDirectory();*/
-
-	// Load the save file.
-	ifstream myfile("./save1.sav", ios::binary);
-
-	// Read the save file.
-	myfile.read((char *)&*playerSave, sizeof(playerSave));
-
-	// Set the player's saved stats.
-	playerTemp->setAttsTest(playerSave->getAtts().strength, playerSave->getAtts().cleverness, playerSave->getAtts().dexterity, playerSave->getAtts().faith, playerSave->getAtts().focus, playerSave->getAtts().insperation);
-	//playerTemp->setAtts(tempChar->getAtts());
-	playerTemp->setClass(playerSave->getClass());
-	playerTemp->setCopper(playerSave->getCopper());
-	playerTemp->setHealth(playerSave->getHealth());
-	playerTemp->setLoc(playerSave->getLoc());
-	playerTemp->setMana(playerSave->getMana());
-	playerTemp->setMasteries(playerSave->getMasteries());
-	playerTemp->setMaxHealth(playerSave->getMaxHealth());
-	playerTemp->setMaxMana(playerSave->getMaxMana());
-	playerTemp->setRace(playerSave->getRace());
-
-	// Close the file when we are done with it.
-	myfile.close();
-
-	cout << "Save loaded.";
-}
-
 // Class for the fighter.
 class fighter : public character
 {
@@ -806,6 +743,55 @@ class tinker : public character
 		}
 };
 
+class saveFileData
+{
+	public:
+		int strength; // The strength stat of the class.
+		int faith; // The faith stat of the class.
+		int dexterity; // The dexterity stat of the class.
+		int insperation; // The insperation stat of the class.
+		int cleverness; // The cleverness stat of the class.
+		int focus; // The focus stat of the class.
+		int copper; // The amount of money the player has.
+		OCC charClass; // The characters class.
+		RACE charRace; // The characters race.
+		int hp;
+		int hpMax; // The hitpoints for the character.
+		int mp;
+		int mpMax; // The mana or stamina for the character.
+		LOCATION location; // The location the player is at.
+		WEAPON weapon; // The weapon the character has.
+		ARMOR armor; // The armor the character has.
+		int masteries; // The skills level of the player.
+
+		saveFileData()
+		{
+			cout << "moo\n";
+		}
+
+		void init(character *tmpChar)
+		{
+			cout << "moo initilized\n";
+			strength = tmpChar->getAtts().strength;
+			faith = tmpChar->getAtts().faith;
+			dexterity = tmpChar->getAtts().dexterity;
+			insperation = tmpChar->getAtts().insperation;
+			cleverness = tmpChar->getAtts().cleverness;
+			focus = tmpChar->getAtts().focus;
+			copper = tmpChar->getCopper(); // The amount of money the player has.
+			charClass = tmpChar->getClass(); // The characters class.
+			charRace = tmpChar->getRace(); // The characters race.
+			hp = tmpChar->getHealth();
+			hpMax = tmpChar->getMaxHealth(); // The hitpoints for the character.
+			mp = tmpChar->getMana();
+			mpMax = tmpChar->getMaxMana(); // The mana or stamina for the character.
+			location = tmpChar->getLoc(); // The location the player is at.
+			weapon = tmpChar->getWeapon(); // The weapon the character has.
+			armor = tmpChar->getArmor(); // The armor the character has.
+			masteries = tmpChar->getMasteries(); // The skills level of the player.
+		}
+};
+
 // Class for the Mage.
 class mage : public character
 {
@@ -819,6 +805,127 @@ class mage : public character
 			mpMax = mp = 50; // Set the default mana for the mage.
 		}
 };
+
+string getFileDirectory()
+{
+	/*TCHAR buffer[MAX_PATH];
+    char Lbuffer[MAX_PATH] = "";
+
+    Lbuffer = GetModuleFileName( NULL, buffer, MAX_PATH );
+
+	TCHAR argv[10];
+
+	argv[0] = _T(buffer);
+    string::size_type pos = string( buffer ).find_last_of( "\\/" );
+    return string( buffer ).substr( 0, pos);*/
+	return "cheese\n";
+}
+
+void writeToFile(character *tmpChar)
+{
+	// Create the var for the save file.
+	ofstream myfile;
+
+	saveFileData playerSave;
+
+	playerSave.init(tmpChar);
+	// Get the save file's directory.
+	/*string fileDir;
+	fileDir += getFileDirectory();
+
+	cout << getFileDirectory() << "\n";*/
+
+	// Open the save file.
+	myfile.open("./save1.sav");/*fileDir);*/
+
+	// Write to the save file.
+	myfile.write((char *)&playerSave, sizeof(playerSave));
+
+	cout << ((char *)&playerSave) << "\n";
+	cout << myfile.out << "\n";
+	cout << myfile.in << "\n";
+	
+	// Close the file after we are done with it.
+	myfile.close();
+
+	cout << "File saved.\n";
+}
+
+// To load a game.
+character *getFromFile()
+{
+	// The character var for the loaded file.
+	saveFileData playerSave;
+
+	character *something;
+
+	LOCATION loc = TOWN;
+
+	// Get the save file directory.
+	/*string fileDir;
+	fileDir += getFileDirectory();*/
+
+	// Load the save file.
+	ifstream myfile("./save1.sav", ios::binary);
+
+	// Read the save file.
+	myfile.read((char *)&playerSave, sizeof(playerSave));
+
+	/*// Set the player's saved stats.
+	playerTemp->setAttsTest(playerSave->getAtts().strength, playerSave->getAtts().cleverness, playerSave->getAtts().dexterity, playerSave->getAtts().faith, playerSave->getAtts().focus, playerSave->getAtts().insperation);
+	//playerTemp->setAtts(tempChar->getAtts());
+	playerTemp->setClass(playerSave->getClass());
+	playerTemp->setCopper(playerSave->getCopper());
+	playerTemp->setHealth(playerSave->getHealth());
+	playerTemp->setLoc(playerSave->getLoc());
+	playerTemp->setMana(playerSave->getMana());
+	playerTemp->setMasteries(playerSave->getMasteries());
+	playerTemp->setMaxHealth(playerSave->getMaxHealth());
+	playerTemp->setMaxMana(playerSave->getMaxMana());
+	playerTemp->setRace(playerSave->getRace());*/
+
+	switch (playerSave.location)
+	{
+		case QUIT:
+			cout << "For some reason you had quit\n";
+			break;
+		case VIEWSTATS:
+			cout << "Loc: VIEWSTATS\n";
+			break;
+		case TOWN:
+			cout << "Loc: TOWN\n";
+			break;
+		case FOREST:
+			cout << "Loc: FOREST\n";
+			break;
+		case MONSTER:
+			cout << "Loc: MONSTER\n";
+			break;
+		case SAVE:
+			cout << "Loc: SAVE\n";
+			break;
+		case 256:
+			cout << "Loc: 256\n";
+			break;
+		default:
+			cout << "Something is broken\n";
+	}
+
+	LOCATION loc2 = playerSave.location;
+
+	cout << playerSave.location << "\n";
+
+	cout << loc << "\n";
+
+	// Close the file when we are done with it.
+	myfile.close();
+
+	cout << "Save loaded.\n";
+
+	something->setLoc(loc2);
+
+	return something;
+}
 
 // Startup
 int _tmain (int argc, _TCHAR* argv[])
@@ -866,11 +973,31 @@ int _tmain (int argc, _TCHAR* argv[])
 				//newGame = false; // Don't create a new game and instead load game.
 				newGame = true;
 				break;
-			case '235':
-				newGame = false;
 			default:
 				reroll = true; // The player didn't type in a correct choice so restart
-				break;				 // the loop.
+				 // the loop.
+				break;
+		}
+
+		if (inputs == ('2', '3', '5'))
+		{
+			cout << "...? How did you get to this?\n";
+			newGame = false;
+			
+			reroll = false;
+
+			if (newGame)
+			{
+				cout << "true\n";
+			}
+			else if (!newGame)
+			{
+				cout << "false\n";
+			}
+			else
+			{
+				cout << "well you broke it\n";
+			}
 		}
 	}
 
@@ -1083,10 +1210,11 @@ int _tmain (int argc, _TCHAR* argv[])
 		// Set the attributes as they are at this point.
 		player1->setAtts(tmpStats);
 	}
-	else if (newGame == false) // The player chose to load a game.
+	
+	if (newGame == false) // The player chose to load a game.
 	{
 		// Load the saved game.
-		getFromFile(player1);
+		player1 = getFromFile();
 	}
 
 	// Get if the player doesn't want to quit.
@@ -1121,7 +1249,7 @@ int _tmain (int argc, _TCHAR* argv[])
 					cout << "\n";
 
 					cout << "Are you sure you want to save? [Y]es [N]o\n"; // Ask the
-															// player if they are sure that they want to save.
+																		   // player if they are sure that they want to save.
 
 					cin >> inputs; // Get the player's choice.
 
@@ -1130,20 +1258,24 @@ int _tmain (int argc, _TCHAR* argv[])
 						case 'y':
 						case 'Y':
 							player1->setLoc(TOWN); // Set the location town so when they load
-																		 // the save they start back to the town.
+												   // the save they start back to the town.
 							//writeToFile(player1); // Write to file.
 							break;
 						case 'n':
 						case 'N':
 							player1->setLoc(TOWN); // Set the location back to town so they
 							break; // can go back to playing.
-						case '235':
-							player1->setLoc(TOWN); // Set the location town so when they load
-																		 // the save they start back to the town.
-							//writeToFile(player1);
 						default:
 							retry = true; // The player didn't input anything that matched the
 														// Choices so restart.
+					}
+
+					if (inputs == ('2', '3', '5'))
+					{
+						player1->setLoc(TOWN);
+						writeToFile(player1);
+
+						cout << player1 << "\n";
 					}
 				}
 				break;
