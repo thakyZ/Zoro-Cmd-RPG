@@ -322,10 +322,24 @@ class character
 			return weapon;
 		}
 
+		// Get the attributes from outside this class.
+		ATTRIBUTES getAtts()
+		{
+			// Return the attributes because thats what we want to do.
+			return atts;
+		}
+
 		// Get the player's armor
 		ARMOR getArmor()
 		{
 			return armor;
+		}
+
+		// Get the location
+		LOCATION getLoc()
+		{
+			// Return the location because thats what we want to do.
+			return location;
 		}
 
 		// Set arguments.
@@ -377,13 +391,6 @@ class character
 			masteries = tmpMasteries;
 		}
 
-		// Get the attributes from outside this class.
-		ATTRIBUTES getAtts()
-		{
-			// Return the attributes because thats what we want to do.
-			return atts;
-		}
-
 		// Set the attributes from outside this class.
 		void setAtts(ATTRIBUTES tmpAtts)
 		{
@@ -391,6 +398,7 @@ class character
 			atts = tmpAtts;
 		}
 
+		// Set the attributes outside of this class in parts.
 		void setAttsTest(int tmpStrength, int tmpCleverness, int tmpDexterity, int tmpFaith, int tmpFocus, int tmpInsperation)
 		{
 			ATTRIBUTES tmpAtts;
@@ -405,16 +413,16 @@ class character
 			atts = tmpAtts;
 		}
 
-		// Get the location
-		LOCATION getLoc()
-		{
-			// Return the location because thats what we want to do.
-			return location;
-		}
-
-		void setLoc (LOCATION tmpLoc)
+		// Set the player's location.
+		void setLoc(LOCATION tmpLoc)
 		{
 			location = tmpLoc;
+		}
+
+		// Set the player's class's class.
+		void setClassClass(int tmpClassClass)
+		{
+			classClass = tmpClassClass;
 		}
 
 		// Attack functions
@@ -919,10 +927,10 @@ class saveFileData
 		}
 };
 
-void getClassToClass(character *tmpChar, int classClass)
+void getClassToClass(character *tmpChar)
 {
 	// 0 = FIGHTER, 1 = CLERIC, 2 = THEIF, 3 = BARD, 4 = ROUGE, 5 = TINKER, 6 = MAGE
-	switch(classClass)
+	switch(tmpChar.classClass)
 	{
 		case 0:
 			tmpChar = new fighter;
@@ -1313,8 +1321,9 @@ character getFromFile()
 	tmpChar.setMaxHealth(hpMax);
 	tmpChar.setMaxMana(mpMax);
 	tmpChar.setRace(charRace);
+	tmpChar.setClassClass(classClass);
 
-	playerSave.getClassToClass(&tmpChar, classClass);
+	playerSave.getClassToClass(&tmpChar);
 
 	if (debug)
 	{
