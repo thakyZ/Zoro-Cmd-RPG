@@ -10,6 +10,8 @@
 using namespace std;
 
 bool debug = false;
+bool permDebug = false;
+int classClass = 0;
 
 // Roll the dice.
 int diceRoll(int qty, int sides)
@@ -423,12 +425,6 @@ class character
 		void setLoc(LOCATION tmpLoc)
 		{
 			location = tmpLoc;
-		}
-
-		// Set the player's class's class.
-		void setClassClass(int tmpClassClass)
-		{
-			classClass = tmpClassClass;
 		}
 
 		// Attack functions
@@ -939,7 +935,6 @@ class saveFileData
 		WEAPON weapon; // The weapon the character has.
 		ARMOR armor; // The armor the character has.
 		int masteries; // The skills level of the player.
-		int classClass; // To save the class's class
 
 		saveFileData()
 		{
@@ -966,15 +961,22 @@ class saveFileData
 			masteries = tmpChar->getMasteries(); // Set the masteries.
 			classClass = tmpChar->getClass(); // Set the class's class.
 		}
+
+		// Set the player's class's class.
+		void setClassClass(int tmpClassClass)
+		{
+			classClass = tmpClassClass;
+		}
 };
 
-void getClassToClass(character *tmpChar)
+void getClassToClass(saveFileData tmpSave, character *tmpChar)
 {
 	// 0 = FIGHTER, 1 = CLERIC, 2 = THEIF, 3 = BARD, 4 = ROUGE, 5 = TINKER, 6 = MAGE
-	switch(tmpChar.classClass)
+	switch(classClass)
 	{
 		case 0:
 			tmpChar = new fighter;
+			cout << "\n\n\nMOO\n\n\n";
 			break;
 		case 1:
 			tmpChar = new cleric;
@@ -1108,22 +1110,22 @@ void debugSave(saveFileData tmpSaveFile, character *tmpChar, int debugType)
 				cout << "Location:         Save\n";
 				break;
 			case ARMORSMITH:
-				cout << "Location:         Armor Smith\n"
+				cout << "Location:         Armor Smith\n";
 				break;
 			case TAVERN:
-				cout << "Location:         Tavern\n"
+				cout << "Location:         Tavern\n";
 				break;
 			case WEAPONSMITH:
-				cout << "Location:         Weapon Smith\n"
+				cout << "Location:         Weapon Smith\n";
 				break;
 			case CHAPEL:
-				cout << "Location:         Chapel\n"
+				cout << "Location:         Chapel\n";
 				break;
 			case BANK:
-				cout << "Location:         Bank\n"
+				cout << "Location:         Bank\n";
 				break;
 			case ALCHIMEST:
-				cout << "Location:         Alchimest\n"
+				cout << "Location:         Alchimest\n";
 				break;
 			default:
 				cout << "Location:         BROKEN\n";
@@ -1184,7 +1186,7 @@ void debugSave(saveFileData tmpSaveFile, character *tmpChar, int debugType)
 		}
 
 		cout << "Masteries:        " << tmpSaveFile.masteries << "\n";
-		cout << "Class of class:   " << tmpSaveFile.classClass << "\n";
+		cout << "Class of class:   " << classClass << "\n";
 	}
 	else if (debugType == 2)
 	{
@@ -1282,22 +1284,22 @@ void debugSave(saveFileData tmpSaveFile, character *tmpChar, int debugType)
 				cout << "Location:         Save\n";
 				break;
 			case ARMORSMITH:
-				cout << "Location:         Armor Smith\n"
+				cout << "Location:         Armor Smith\n";
 				break;
 			case TAVERN:
-				cout << "Location:         Tavern\n"
+				cout << "Location:         Tavern\n";
 				break;
 			case WEAPONSMITH:
-				cout << "Location:         Weapon Smith\n"
+				cout << "Location:         Weapon Smith\n";
 				break;
 			case CHAPEL:
-				cout << "Location:         Chapel\n"
+				cout << "Location:         Chapel\n";
 				break;
 			case BANK:
-				cout << "Location:         Bank\n"
+				cout << "Location:         Bank\n";
 				break;
 			case ALCHIMEST:
-				cout << "Location:         Alchimest\n"
+				cout << "Location:         Alchimest\n";
 				break;
 			default:
 				cout << "Location:         BROKEN\n";
@@ -1358,7 +1360,7 @@ void debugSave(saveFileData tmpSaveFile, character *tmpChar, int debugType)
 		}
 
 		cout << "Masteries:        " << tmpChar->getMasteries() << "\n";
-		cout << "Class of class:   " << tmpSaveFile.classClass << "\n";
+		cout << "Class of class:   " << classClass << "\n";
 	}
 	cout << "+=================================+\n";
 	cout << "   Debug -> ENDED\n";
@@ -1428,7 +1430,6 @@ character getFromFile()
 	WEAPON weapon = playerSave.weapon; // The weapon the character has.
 	ARMOR armor = playerSave.armor; // The armor the character has.
 	int masteries = playerSave.masteries; // The skills level of the player.
-	int classClass = playerSave.classClass; // The class for the class.
 
 	tmpChar.setLoc(location);
 	tmpChar.setAttsTest(strength, cleverness, dexterity, faith, focus, insperation);
@@ -1440,10 +1441,10 @@ character getFromFile()
 	tmpChar.setMaxHealth(hpMax);
 	tmpChar.setMaxMana(mpMax);
 	tmpChar.setRace(charRace);
-	tmpChar.setClassClass(classClass);
+	playerSave.setClassClass(classClass);
 
 	// Set the new class for the player.
-	playerSave.getClassToClass(&tmpChar);
+	//getClassToClass(playerSave, &tmpChar);
 
 	// Debug the class.
 	if (debug)
@@ -1751,7 +1752,21 @@ int _tmain (int argc, _TCHAR* argv[])
 	{
 		// Load the saved game.
 		player1 = &getFromFile();
+
+		switch (classClass)
+		{
+			case 0:
+				cout << "\n\n\nMOO\n\n\n";
+				player1 = new fighter;
+				break;
+			default:
+				cout << "\n\n\nNO MOO\n\n\n";
+				break;
+		}
+
 		player1->setLoc(TOWN);
+
+
 	}
 
 	// Get if the player doesn't want to quit.
