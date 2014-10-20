@@ -34,13 +34,13 @@ enum RACE { HUMAN, ELF, DARKELF, ANGEL, MONGREL, SHAMANI, NIBELUNG, UNDEAD };
 enum OCC { FIGHTER, CLERIC, THEIF, BARD, ROUGE, TINKER, MAGE };
 
 // Loations types.
-enum LOCATION { QUIT, TOWN, FOREST, VIEWSTATS, MONSTER, SAVE };
+enum LOCATION { QUIT, TOWN, FOREST, VIEWSTATS, MONSTER, SAVE, ARMORSMITH, TAVERN, WEAPONSMITH, CHAPEL, BANK, ALCHIMEST };
 
 // Armors types.
-enum ARMOR { LOINCLOTH, CLOTHARMOR, LEATHER };
+enum ARMOR { LOINCLOTH, CLOTHARMOR, LEATHER, IRON, NICKEL, GOLD, TITANIUM, IMPERVIUM };
 
 // Weapons types.
-enum WEAPON { FISTS, DAGGER, STAFF, SWORD };
+enum WEAPON { FISTS, DAGGER, STAFF, SWORD, MACE, HALEBIRD };
 
 // Attacks types.
 enum ATTACK { REGULAR, FRENZY, DEADLY };
@@ -947,24 +947,24 @@ class saveFileData
 
 		void init(character *tmpChar)
 		{
-			strength = tmpChar->getAtts().strength;
-			faith = tmpChar->getAtts().faith;
-			dexterity = tmpChar->getAtts().dexterity;
-			insperation = tmpChar->getAtts().insperation;
-			cleverness = tmpChar->getAtts().cleverness;
-			focus = tmpChar->getAtts().focus;
-			copper = tmpChar->getCopper(); // The amount of money the player has.
-			charClass = tmpChar->getClass(); // The characters class.
-			charRace = tmpChar->getRace(); // The characters race.
-			hp = tmpChar->getHealth();
-			hpMax = tmpChar->getMaxHealth(); // The hitpoints for the character.
-			mp = tmpChar->getMana();
-			mpMax = tmpChar->getMaxMana(); // The mana or stamina for the character.
-			location = tmpChar->getLoc(); // The location the player is at.
-			weapon = tmpChar->getWeapon(); // The weapon the character has.
-			armor = tmpChar->getArmor(); // The armor the character has.
-			masteries = tmpChar->getMasteries(); // The skills level of the player.
-			classClass = tmpChar->getClass();
+			strength = tmpChar->getAtts().strength; // Set the strength.
+			faith = tmpChar->getAtts().faith; // Set the faith.
+			dexterity = tmpChar->getAtts().dexterity; // Set the dexterity.
+			insperation = tmpChar->getAtts().insperation; // Set the insperation.
+			cleverness = tmpChar->getAtts().cleverness; // Set the cleverness.
+			focus = tmpChar->getAtts().focus; // Set the focus.
+			copper = tmpChar->getCopper(); // Set the copper.
+			charClass = tmpChar->getClass(); // Set the class.
+			charRace = tmpChar->getRace(); // Set the race.
+			hp = tmpChar->getHealth(); // Set the hp.
+			hpMax = tmpChar->getMaxHealth(); // Set the max hp.
+			mp = tmpChar->getMana(); // Set the mana.
+			mpMax = tmpChar->getMaxMana(); // Set the max mana.
+			location = tmpChar->getLoc(); // Set the location.
+			weapon = tmpChar->getWeapon(); // Set the weapon.
+			armor = tmpChar->getArmor(); // Set the armor.
+			masteries = tmpChar->getMasteries(); // Set the masteries.
+			classClass = tmpChar->getClass(); // Set the class's class.
 		}
 };
 
@@ -1107,6 +1107,24 @@ void debugSave(saveFileData tmpSaveFile, character *tmpChar, int debugType)
 			case SAVE:
 				cout << "Location:         Save\n";
 				break;
+			case ARMORSMITH:
+				cout << "Location:         Armor Smith\n"
+				break;
+			case TAVERN:
+				cout << "Location:         Tavern\n"
+				break;
+			case WEAPONSMITH:
+				cout << "Location:         Weapon Smith\n"
+				break;
+			case CHAPEL:
+				cout << "Location:         Chapel\n"
+				break;
+			case BANK:
+				cout << "Location:         Bank\n"
+				break;
+			case ALCHIMEST:
+				cout << "Location:         Alchimest\n"
+				break;
 			default:
 				cout << "Location:         BROKEN\n";
 		}
@@ -1125,6 +1143,12 @@ void debugSave(saveFileData tmpSaveFile, character *tmpChar, int debugType)
 			case STAFF:
 				cout << "Weapon:           Staff\n";
 				break;
+			case MACE:
+				cout << "Weapon:           Mace\n";
+				break;
+			case HALEBIRD:
+				cout << "Weapon:           Halebird\n";
+				break;
 			default:
 				cout << "Weapon:           Broken\n";
 		}
@@ -1139,6 +1163,21 @@ void debugSave(saveFileData tmpSaveFile, character *tmpChar, int debugType)
 				break;
 			case LEATHER:
 				cout << "Armor:            Leather\n";
+				break;
+			case IRON:
+				cout << "Armor:            Iron\n";
+				break;
+			case NICKEL:
+				cout << "Armor:            Nickel\n";
+				break;
+			case GOLD:
+				cout << "Armor:            Gold\n";
+				break;
+			case TITANIUM:
+				cout << "Armor:            Titanium\n";
+				break;
+			case IMPERVIUM:
+				cout << "Armor:            Impervium\n";
 				break;
 			default:
 				cout << "Armor:            Broken\n";
@@ -1242,6 +1281,24 @@ void debugSave(saveFileData tmpSaveFile, character *tmpChar, int debugType)
 			case SAVE:
 				cout << "Location:         Save\n";
 				break;
+			case ARMORSMITH:
+				cout << "Location:         Armor Smith\n"
+				break;
+			case TAVERN:
+				cout << "Location:         Tavern\n"
+				break;
+			case WEAPONSMITH:
+				cout << "Location:         Weapon Smith\n"
+				break;
+			case CHAPEL:
+				cout << "Location:         Chapel\n"
+				break;
+			case BANK:
+				cout << "Location:         Bank\n"
+				break;
+			case ALCHIMEST:
+				cout << "Location:         Alchimest\n"
+				break;
 			default:
 				cout << "Location:         BROKEN\n";
 		}
@@ -1260,6 +1317,12 @@ void debugSave(saveFileData tmpSaveFile, character *tmpChar, int debugType)
 			case STAFF:
 				cout << "Weapon:           Staff\n";
 				break;
+			case MACE:
+				cout << "Weapon:           Mace\n";
+				break;
+			case HALEBIRD:
+				cout << "Weapon:           Halebird\n";
+				break;
 			default:
 				cout << "Weapon:           Broken\n";
 		}
@@ -1274,6 +1337,21 @@ void debugSave(saveFileData tmpSaveFile, character *tmpChar, int debugType)
 				break;
 			case LEATHER:
 				cout << "Armor:            Leather\n";
+				break;
+			case IRON:
+				cout << "Armor:            Iron\n";
+				break;
+			case NICKEL:
+				cout << "Armor:            Nickel\n";
+				break;
+			case GOLD:
+				cout << "Armor:            Gold\n";
+				break;
+			case TITANIUM:
+				cout << "Armor:            Titanium\n";
+				break;
+			case IMPERVIUM:
+				cout << "Armor:            Impervium\n";
 				break;
 			default:
 				cout << "Armor:            Broken\n";
@@ -1343,14 +1421,14 @@ character getFromFile()
 	int copper = playerSave.copper; // The amount of money the player has.
 	OCC charClass = playerSave.charClass; // The characters class.
 	RACE charRace = playerSave.charRace; // The characters race.
-	int hp = playerSave.hp;
-	int hpMax = playerSave.hpMax; // The hitpoints for the character.
-	int mp = playerSave.mp;
-	int mpMax = playerSave.mpMax; // The mana or stamina for the character.
+	int hp = playerSave.hp; // The hitpoints for the character.
+	int hpMax = playerSave.hpMax; // The max hitpoints for the character.
+	int mp = playerSave.mp; // The mana or stamina for the character.
+	int mpMax = playerSave.mpMax; // The max mana or stamina for the character.
 	WEAPON weapon = playerSave.weapon; // The weapon the character has.
 	ARMOR armor = playerSave.armor; // The armor the character has.
 	int masteries = playerSave.masteries; // The skills level of the player.
-	int classClass = playerSave.classClass;
+	int classClass = playerSave.classClass; // The class for the class.
 
 	tmpChar.setLoc(location);
 	tmpChar.setAttsTest(strength, cleverness, dexterity, faith, focus, insperation);
@@ -1364,8 +1442,10 @@ character getFromFile()
 	tmpChar.setRace(charRace);
 	tmpChar.setClassClass(classClass);
 
+	// Set the new class for the player.
 	playerSave.getClassToClass(&tmpChar);
 
+	// Debug the class.
 	if (debug)
 	{
 		debugSave(playerSave, &tmpChar, 2);
@@ -1376,6 +1456,7 @@ character getFromFile()
 
 	cout << "Save loaded.\n";
 
+	// Return the character to return the char.
 	return tmpChar;
 }
 
@@ -1429,12 +1510,26 @@ int _tmain (int argc, _TCHAR* argv[])
 				break;		   // the loop.
 		}
 
+		// Enabled the game loading debug.
 		if (inputs == ('2', '3', '5'))
 		{
 			newGame = false;
 			debug = true;
 
 			reroll = false;
+		}
+
+		if (inputs == ('1', '2', '3'))
+		{
+			debug = true;
+			permDebug = true;
+
+			cout << "+=================================+\n";
+			cout << "   Debug -> ENABLED\n";
+			cout << "   Perm Debug -> ENABLED\n";
+			cout << "+=================================+\n";
+
+			reroll = true;
 		}
 	}
 
@@ -1672,7 +1767,7 @@ int _tmain (int argc, _TCHAR* argv[])
 				player1->locStats(); // The player wants to view their stats.
 				break;
 			default:
-			case TOWN:
+			case TOWN: // Town is the default location.
 				player1->locTown(); // The player wants to go to town.
 				break;
 			case FOREST:
