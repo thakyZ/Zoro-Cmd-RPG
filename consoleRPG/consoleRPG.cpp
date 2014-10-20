@@ -106,9 +106,9 @@ class monster
 					copper = diceRoll(10, 5);
 					armor = LOINCLOTH;
 					weapon = DAGGER;
-					attackText = "a moldy stick";
-					deathText = "the goblin cries out \"why use hits mes sos hards?\"";
-					winText = "the goblin celibrates its victory by dancing around with his moldy stick.";
+					attackText = "A Moldy Stick";
+					deathText = "the Goblin cries out \"why use hits mes sos hards?\"";
+					winText = "the Goblin celibrates its victory by dancing around with his moldy stick.";
 					break;
 				case 2:
 					mName = "A Giant Rat";
@@ -122,11 +122,34 @@ class monster
 					copper = diceRoll(10, 5);
 					armor = LOINCLOTH;
 					weapon = FISTS;
-					attackText = "sharp pointy teeth";
-					deathText = "the rat goes squee and keels over dead.";
-					winText = "the rat starts eating your dead carcus.";
+					attackText = "Sharp Pointy Teeth";
+					deathText = "the Rat goes squee and keels over dead.";
+					winText = "the Rat starts eating your dead carcus.";
 					break;
 			}
+		}
+
+		// Damaging
+		// Damaging the monster.
+		int mitigate(int tmpDamage)
+		{
+			// The balace for the armor of the monster and it's dexterity
+			int dice = atts.dexterity + armor;
+
+			// The tmpDamage set by the armor and dexterity all rolled in a dice.
+			tmpDamage -= diceRoll(dice, 3);
+
+			// Debugging.
+			cout << "After Mit: " << tmpDamage << "\n";
+
+			if (tmpDamage <= 0)
+			{
+				tmpDamage = 1;
+			}
+
+			hp -= tmpDamage;
+
+			return tmpDamage;
 		}
 
 		// Get or set methods.
@@ -216,8 +239,8 @@ class character
 		int copper; // The amount of money the player has.
 		OCC charClass; // The characters class.
 		RACE charRace; // The characters race.
-		unsigned int hp, hpMax; // The hitpoints for the character.
-		unsigned int mp, mpMax; // The mana or stamina for the character.
+		int hp, hpMax; // The hitpoints for the character.
+		int mp, mpMax; // The mana or stamina for the character.
 		LOCATION location; // The location the player is at.
 		WEAPON weapon; // The weapon the character has.
 		ARMOR armor; // The armor the character has.
@@ -394,7 +417,67 @@ class character
 			location = tmpLoc;
 		}
 
-		virtual void attack(monster monster1) {}
+		// Attack functions
+		// Damaging the player.
+		int mitigate(int tmpDamage)
+		{
+			// The balace for the armor of the monster and it's dexterity
+			int dice = atts.dexterity + armor;
+
+			// The tmpDamage set by the armor and dexterity all rolled in a dice.
+			tmpDamage -= diceRoll(dice, 3);
+
+			// Debugging.
+			cout << "After Mit: " << tmpDamage << "\n";
+
+			if (tmpDamage <= 0)
+			{
+				tmpDamage = 1;
+			}
+
+			hp -= tmpDamage;
+
+			return tmpDamage;
+		}
+
+		// Attack functions for classes.
+		virtual void attack(monster* monster1) {}
+
+		// The monster's attack function.
+		void monsterAttack(monster* tmpMonster)
+		{
+			int damage = 0;
+
+			int targetRoll = 10 + (tmpMonster->getAtts().strength + tmpMonster->getAtts().dexterity) - (atts.strength + atts.dexterity);
+
+			if (targetRoll > 17)
+			{
+				targetRoll = 17;
+			}
+			if (targetRoll < 3)
+			{
+				targetRoll = 3;
+			}
+
+			bool hit = targetRoll >= diceRoll(1, 20);
+
+			if (!hit)
+			{
+				cout << tmpMonster->getName() << " missed!\n";
+			}
+			else
+			{
+				int dice = tmpMonster->getAtts().strength + tmpMonster->weapon + tmpMonster->getMasteries();
+
+				damage = diceRoll(dice, 3) - dice;
+
+				cout << "Monster damage: " << damage << "\n";
+
+				damage = mitigate(damage);
+
+				cout << "\n" << tmpMonster->getName() << " Attacks you with " << tmpMonster->getAttackText() << " for " << damage << " damage!";
+			}
+		}
 
 		// Locations
 		// Display stats.
@@ -551,9 +634,28 @@ class character
 				cout << "\n\n";
 				cout << monster1.getName() << ": " << monster1.getHealth() << "/" << monster1.getMaxHealth() << "\n";
 				cout << "You: " << hp << "/" << hpMax << "\n\n";
-				cout << "Action?\n";
+				cout << "Action?\n\n";
 
-				attack(monster1); // Start the battle.
+				attack(&monster1); // Start the battle.
+
+				if (monster1.getHealth() > 0)
+				{
+					monsterAttack(&monster1);
+				}
+			}
+			if (monster1.getHealth() <= 0)
+			{
+				cout << "As it dies, " << monster1.deathText << "\n";
+				setLoc(FOREST);
+				cout << "You collect " << monster1.copper << " copper from teh corpse.";
+				copper += monster1.copper;
+			}
+			if (hp <= 0)
+			{
+				cout << monster1.winText << "\n";
+				cout << "You died!";
+				setLoc(QUIT);
+
 			}
 		}
 };
@@ -577,7 +679,7 @@ class fighter : public character
 			weapon = SWORD; // Set the default fighter's weapon.
 		}
 
-		virtual void attack(monster monster1)
+		virtual void attack(monster* monster1)
 		{
 			char inputs; // The var for the menus.
 			bool reroll = true; // Check for the loop.
@@ -606,7 +708,7 @@ class fighter : public character
 				cin >> inputs;
 
 				// Set the target roll
-				int targetRoll = 10 + (atts.dexterity + atts.strength) - (monster1.getAtts().dexterity + monster1.getAtts().strength);
+				int targetRoll = 10 + (atts.dexterity + atts.strength) - (monster1->getAtts().dexterity + monster1->getAtts().strength);
 
 				// Make the maximum of target roll to 17.
 				if (targetRoll > 17)
@@ -640,7 +742,7 @@ class fighter : public character
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 3) - dice;
 							// For now output the damage.
-							cout << "\nBasic Attack (F): " << damage;
+							cout << "\nBasic Attack (F): " << damage << "\n";
 						}
 						break;
 					case 'f':
@@ -655,7 +757,7 @@ class fighter : public character
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 3) - dice;
 							// For now output the damage.
-							cout << "\nFrenzy Attack (F): " << damage;
+							cout << "\nFrenzy Attack (F): " << damage << "\n";
 							// Since this is a special attack then remove some mana points.
 							mp -= 1;
 						}
@@ -669,7 +771,7 @@ class fighter : public character
 							// Set the damage pre-roll and since this is a deadly attack
 							int dice = 100 * (atts.strength + weapon + masteries);
 							damage = diceRoll(dice, 6) - dice;
-							cout << "\nDeadly Strike Attack (F): " << damage;
+							cout << "\nDeadly Strike Attack (F): " << damage << "\n";
 							mp -= 5;
 						}
 						break;
@@ -678,7 +780,10 @@ class fighter : public character
 				}
 			}
 
-			//damage = monster1.Mitigate(damage);
+			if (damage > 0)
+			{
+				damage = monster1->mitigate(damage);
+			}
 		}
 };
 
@@ -785,6 +890,7 @@ class saveFileData
 		WEAPON weapon; // The weapon the character has.
 		ARMOR armor; // The armor the character has.
 		int masteries; // The skills level of the player.
+		int classClass; // To save the class's class
 
 		saveFileData()
 		{
@@ -809,12 +915,38 @@ class saveFileData
 			weapon = tmpChar->getWeapon(); // The weapon the character has.
 			armor = tmpChar->getArmor(); // The armor the character has.
 			masteries = tmpChar->getMasteries(); // The skills level of the player.
-		}
-
-		void debugSaveClass()
-		{
+			classClass = tmpChar->getClass();
 		}
 };
+
+void getClassToClass(character *tmpChar, int classClass)
+{
+	// 0 = FIGHTER, 1 = CLERIC, 2 = THEIF, 3 = BARD, 4 = ROUGE, 5 = TINKER, 6 = MAGE
+	switch(classClass)
+	{
+		case 0:
+			tmpChar = new fighter;
+			break;
+		case 1:
+			tmpChar = new cleric;
+			break;
+		case 2:
+			tmpChar = new theif;
+			break;
+		case 3:
+			tmpChar = new bard;
+			break;
+		case 4:
+			tmpChar = new rouge;
+			break;
+		case 5:
+			tmpChar = new tinker;
+			break;
+		case 6:
+			tmpChar = new mage;
+			break;
+	}
+}
 
 void debugSave(saveFileData tmpSaveFile, character *tmpChar, int debugType)
 {
@@ -964,6 +1096,7 @@ void debugSave(saveFileData tmpSaveFile, character *tmpChar, int debugType)
 		}
 
 		cout << "Masteries:        " << tmpSaveFile.masteries << "\n";
+		cout << "Class of class:   " << tmpSaveFile.classClass << "\n";
 	}
 	else if (debugType == 2)
 	{
@@ -1098,6 +1231,7 @@ void debugSave(saveFileData tmpSaveFile, character *tmpChar, int debugType)
 		}
 
 		cout << "Masteries:        " << tmpChar->getMasteries() << "\n";
+		cout << "Class of class:   " << tmpSaveFile.classClass << "\n";
 	}
 	cout << "+=================================+\n";
 	cout << "   Debug -> ENDED\n";
@@ -1167,6 +1301,7 @@ character getFromFile()
 	WEAPON weapon = playerSave.weapon; // The weapon the character has.
 	ARMOR armor = playerSave.armor; // The armor the character has.
 	int masteries = playerSave.masteries; // The skills level of the player.
+	int classClass = playerSave.classClass;
 
 	tmpChar.setLoc(location);
 	tmpChar.setAttsTest(strength, cleverness, dexterity, faith, focus, insperation);
@@ -1178,6 +1313,8 @@ character getFromFile()
 	tmpChar.setMaxHealth(hpMax);
 	tmpChar.setMaxMana(mpMax);
 	tmpChar.setRace(charRace);
+
+	playerSave.getClassToClass(&tmpChar, classClass);
 
 	if (debug)
 	{
@@ -1469,6 +1606,7 @@ int _tmain (int argc, _TCHAR* argv[])
 	{
 		// Load the saved game.
 		player1 = &getFromFile();
+		player1->setLoc(TOWN);
 	}
 
 	// Get if the player doesn't want to quit.
