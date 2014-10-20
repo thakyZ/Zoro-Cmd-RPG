@@ -140,15 +140,21 @@ class monster
 			tmpDamage -= diceRoll(dice, 3);
 
 			// Debugging.
-			cout << "After Mit: " << tmpDamage << "\n";
+			if (debug)
+			{
+				cout << "After Mit: " << tmpDamage << "\n";
+			}
 
+			// Check if the damage is nothing or less than nothing.
 			if (tmpDamage <= 0)
 			{
 				tmpDamage = 1;
 			}
 
+			// Subtract hp from the monster.
 			hp -= tmpDamage;
 
+			// Return the damage.
 			return tmpDamage;
 		}
 
@@ -436,15 +442,21 @@ class character
 			tmpDamage -= diceRoll(dice, 3);
 
 			// Debugging.
-			cout << "After Mit: " << tmpDamage << "\n";
+			if (debug)
+			{
+				cout << "After Mit: " << tmpDamage << "\n";
+			}
 
+			// If the damage is below or equal to 0 then set to 1.
 			if (tmpDamage <= 0)
 			{
 				tmpDamage = 1;
 			}
 
+			// Subtract hp from the player.
 			hp -= tmpDamage;
 
+			// Return the Damage.
 			return tmpDamage;
 		}
 
@@ -454,33 +466,42 @@ class character
 		// The monster's attack function.
 		void monsterAttack(monster* tmpMonster)
 		{
-			int damage = 0;
+			int damage = 0; // The damage var.
 
+			// Calculate the target roll.
 			int targetRoll = 10 + (tmpMonster->getAtts().strength + tmpMonster->getAtts().dexterity) - (atts.strength + atts.dexterity);
 
-			if (targetRoll > 17)
+			if (targetRoll > 17) // If the target roll is above 17 then set to 17.
 			{
 				targetRoll = 17;
 			}
-			if (targetRoll < 3)
+			if (targetRoll < 3) // If the target roll is below 3 then set to 3.
 			{
 				targetRoll = 3;
 			}
 
+			// Tell if the monster hit or missed.
 			bool hit = targetRoll >= diceRoll(1, 20);
 
+			// If the monster hit or missed
 			if (!hit)
 			{
 				cout << tmpMonster->getName() << " missed!\n";
 			}
 			else
 			{
+				// Get the dice modifier.
 				int dice = tmpMonster->getAtts().strength + tmpMonster->weapon + tmpMonster->getMasteries();
 
+				// Roll the dice modifier.
 				damage = diceRoll(dice, 3) - dice;
 
-				cout << "Monster damage: " << damage << "\n";
+				if (debug) // If 'debug == true' then output debug.
+				{
+					cout << "Monster damage: " << damage << "\n";
+				}
 
+				// Do damage.
 				damage = mitigate(damage);
 
 				cout << "\n" << tmpMonster->getName() << " Attacks you with " << tmpMonster->getAttackText() << " for " << damage << " damage!";
@@ -516,6 +537,7 @@ class character
 				// Get the input for the menu.
 				cin >> menuItem;
 
+				// Choose to go back to the town, no matter what.
 				switch (menuItem)
 				{
 					case 'g':
@@ -553,6 +575,7 @@ class character
 				// Get the menuItem.
 				cin >> menuItem;
 
+				// Choose from the locations in the town.
 				switch (menuItem)
 				{
 					case '1':
@@ -610,6 +633,7 @@ class character
 				// Input for the menu.
 				cin >> menuItem;
 
+				// Choose from the locations in the forest.
 				switch (menuItem)
 				{
 					case '1':
@@ -644,26 +668,32 @@ class character
 				cout << "You: " << hp << "/" << hpMax << "\n\n";
 				cout << "Action?\n\n";
 
+				// Attack the monster with it's data.
 				attack(&monster1); // Start the battle.
 
+				// If the monster is still alive then let the monster attack.
 				if (monster1.getHealth() > 0)
 				{
+					// Let the monster attack with it's data.
 					monsterAttack(&monster1);
 				}
 			}
-			if (monster1.getHealth() <= 0)
+
+			if (monster1.getHealth() <= 0) // The monster dies and you get loot.
 			{
 				cout << "As it dies, " << monster1.deathText << "\n";
+				// Set the location back to forest.
 				setLoc(FOREST);
 				cout << "You collect " << monster1.copper << " copper from teh corpse.";
+				// Collect copper.
 				copper += monster1.copper;
 			}
-			if (hp <= 0)
+			if (hp <= 0) // You die and quit.
 			{
 				cout << monster1.winText << "\n";
 				cout << "You died!";
+				// Quit the game.
 				setLoc(QUIT);
-
 			}
 		}
 };
@@ -687,6 +717,7 @@ class fighter : public character
 			weapon = SWORD; // Set the default fighter's weapon.
 		}
 
+		// This is to attack the monster.
 		virtual void attack(monster* monster1)
 		{
 			char inputs; // The var for the menus.
@@ -749,8 +780,11 @@ class fighter : public character
 							int dice = atts.strength + weapon + masteries;
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 3) - dice;
-							// For now output the damage.
-							cout << "\nBasic Attack (F): " << damage << "\n";
+							if (debug) // For now output the damage.
+							{
+								cout << "\nBasic Attack (F): " << damage << "\n";
+
+							}
 						}
 						break;
 					case 'f':
@@ -764,8 +798,10 @@ class fighter : public character
 							int dice = 2 * (atts.strength + weapon + masteries);
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 3) - dice;
-							// For now output the damage.
-							cout << "\nFrenzy Attack (F): " << damage << "\n";
+							if (debug) // For now output the damage.
+							{
+								cout << "\nFrenzy Attack (F): " << damage << "\n";
+							}
 							// Since this is a special attack then remove some mana points.
 							mp -= 1;
 						}
@@ -778,9 +814,14 @@ class fighter : public character
 						{
 							// Set the damage pre-roll and since this is a deadly attack
 							int dice = 100 * (atts.strength + weapon + masteries);
+							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 6) - dice;
-							cout << "\nDeadly Strike Attack (F): " << damage << "\n";
+							if (debug) // If debug then output the damage.
+							{
+								cout << "\nDeadly Strike Attack (F): " << damage << "\n";
+							}
 							mp -= 5;
+							// Since this is a special attack then remove some mana points.
 						}
 						break;
 					default:
