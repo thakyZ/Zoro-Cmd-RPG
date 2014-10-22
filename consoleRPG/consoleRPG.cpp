@@ -43,7 +43,7 @@ enum ARMOR { LOINCLOTH, CLOTH, LEATHER, CHAIN, PLATE, ANCIENTPLATE, MAGICPLATE, 
 enum WEAPON { FISTS, DAGGER, STAFF, SWORD, ANCIENTBLADE, MAGICBLADE, ARCHANEBLADE, VOIDEXCALIBUR };
 
 // Items.
-enum ITEMS { };
+enum ITEMS { NONE, CLOTH, LEATHER, CHAIN, PLATE, ANCIENTPLATE, MAGICPLATE, ARCHANEPLATE, IMPERVIUMPLATE, DAGGER, STAFF, SWORD, ANCIENTBLADE, MAGICBLADE, ARCHANEBLADE, VOIDEXCALIBUR, HEALTH, MANA, EXP, CHEAT, CATEARS, ENERGYCRYSTAL, HANDLE, IRON, HEROBLADE, IMPERVIUMBAR, LEATHERITEM, HAMMER, PLATE, ENCHANTBOOK, DEMONHEART, MANASTAR };
 
 // Stats Tree.
 struct ATTRIBUTES
@@ -577,6 +577,10 @@ class character
 		WEAPON weapon; // The weapon the character has.
 		ARMOR armor; // The armor the character has.
 		int masteries; // The skills level of the player.
+		bool cheated; // If the player cheated.
+		ITEMS items;
+		int inventory[15]; // Array for the Items.
+		int equipment[2];
 
 	public:
 		// Constructors
@@ -652,17 +656,34 @@ class character
 			return atts;
 		}
 
-		// Get the player's armor
+		// Get the player's armor.
 		ARMOR getArmor()
 		{
 			return armor;
 		}
 
-		// Get the location
+		// Get the location.
 		LOCATION getLoc()
 		{
 			// Return the location because thats what we want to do.
 			return location;
+		}
+
+		// Get the cheated var.
+		bool getCheated()
+		{
+			return cheated;
+		}
+
+		// Get the inventory.
+		int *getInv()
+		{
+			return inventory;
+		}
+
+		int *getEquip()
+		{
+			return equipment;
 		}
 
 		// Set arguments.
@@ -754,10 +775,31 @@ class character
 			location = tmpLoc;
 		}
 
+		void setCheat(bool tmpCheated)
+		{
+			cheated = tmpCheated;
+		}
+
+		void setInventory(int *tmpInv)
+		{
+			inventory = tmpInv;
+		}
+
+		void setEquipment(int *tmpEquip)
+		{
+			equipment = tmpEquip;
+		}
+
+		// Computing Functions
 		// Subtract Health
 		void subHealth(int tmpHp)
 		{
 			hp -= tmpHp;
+
+			if (health < 0)
+			{
+				health = 0;
+			}
 		}
 
 		// Add Health
@@ -770,6 +812,11 @@ class character
 		void subCopper(int tmpCopper)
 		{
 			copper -= tmpCopper;
+
+			if (copper < 0)
+			{
+				copper = 0
+			}
 		}
 
 		// Add Health
@@ -777,21 +824,44 @@ class character
 		{
 			copper += tmpCopper;
 
-			if (debug == true && tmpCopper == 50000)
+			if (copper >= 25000 && !debug)
 			{
-				cheated == false;
+				copper = 24999;
 			}
-			if (debug == false)
-			{
-				cheated == false;
-			}
-			if
 		}
 
 		// Subtract Mana
 		void subMana(int tmpMp)
 		{
 			mp -= tmpMp
+
+			if (mp < 0)
+			{
+				mp = 0;
+			}
+		}
+
+		// Add Mana
+		void addMana(int tmpMp)
+		{
+			mp = tmpMp;
+		}
+
+		// Inventory Functions;
+		void equipItem(int item, int slot)
+		{
+			int tmpItem1 = getEquip()[slot];
+
+			if (slot == 1)
+			{
+				inventory[1] = tmpItem1;
+				equipment[1] = item;
+			}
+			else if (slot == 2)
+			{
+				inventory[2] = tmpItem1;
+				equipment[2] = item;
+			}
 		}
 
 		// Attack functions
@@ -1490,6 +1560,88 @@ class character
 
 			setLoc(WEAPONSMITH);
 		}
+
+		void locInventory()
+		{
+			cout << "   Inventory:\n";
+			cout << "\n";
+
+			for (int i = 0; i < 2)
+			{
+				switch (getEquip()[i])
+				{
+					case 0:
+						cout << "Nothing\n";
+					case 1:
+						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
+					case 2:
+						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
+					case 3:
+						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
+					case 4:
+						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
+					case 5:
+						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
+					case 6:
+						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
+					case 7:
+						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
+					case 8:
+						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
+					case 9:
+						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
+					case 10:
+						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
+					case 11:
+						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
+					case 12:
+						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
+					case 13:
+						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
+					case 14:
+						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
+					case 15:
+						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
+				}
+			}
+
+			for (int i = 0; i < 15)
+			{
+				switch (getInv()[i])
+					case 0:
+						cout << "Nothing\n";
+					case 1:
+						cout << displayArmorName(getInv()[i], getClass()) << "\n";
+					case 2:
+						cout << displayArmorName(getInv()[i], getClass()) << "\n";
+					case 3:
+						cout << displayArmorName(getInv()[i], getClass()) << "\n";
+					case 4:
+						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
+					case 5:
+						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
+					case 6:
+						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
+					case 7:
+						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
+					case 8:
+						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
+					case 9:
+						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
+					case 10:
+						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
+					case 11:
+						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
+					case 12:
+						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
+					case 13:
+						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
+					case 14:
+						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
+					case 15:
+						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
+			}
+		}
 };
 
 // Class for the fighter.
@@ -1748,7 +1900,9 @@ class saveFileData
 		WEAPON weapon; // The weapon the character has.
 		ARMOR armor; // The armor the character has.
 		int masteries; // The skills level of the player.
-		bool cheated;
+		bool cheated; // If the player has cheated.
+		int inventory[15] = {};
+		int equipment[2] = {};
 
 		saveFileData()
 		{
@@ -1774,6 +1928,8 @@ class saveFileData
 			armor = tmpChar->getArmor(); // Set the armor.
 			masteries = tmpChar->getMasteries(); // Set the masteries.
 			cheated = tmpChar->getCheated();
+			inventory = tmpChar->getInv();
+			equipment = tmpChar->getEquip();
 		}
 };
 
@@ -1978,6 +2134,18 @@ void debugSave(saveFileData tmpSaveFile)
 
 	cout << "Masteries:        " << tmpSaveFile.masteries << "\n";
 
+	switch (tmpSaveFile.cheated)
+	{
+		case true:
+			cout << "Cheated:         True\n";
+			break;
+		case false:
+			cout << "Cheated:         False\n";
+			break;
+		default:
+			cout << "Cheated:         Broken\n";
+	}
+
 	cout << "+=================================+\n";
 	cout << "   Debug -> ENDED\n";
 	cout << "+=================================+\n";
@@ -1994,12 +2162,22 @@ void writeToFile(character *tmpChar)
 	// Initlize the player save.
 	playerSave.init(tmpChar);
 
+	if (tmpChar->getCopper() >= 50000 && !debug)
+	{
+		playerSave.cheated = true;
+	}
+	if (debug)
+	{
+		playerSave.copper -= 50000;
+	}
+
 	// Open the save file.
-	myfile.open("./save1.sav",'w');/*fileDir);*/
+	myfile.open("./save1.sav",'w');
 
 	// Write to the save file.
 	myfile.write((char *)&playerSave, sizeof(playerSave));
 
+	// If debug is enabled.
 	if (debug)
 	{
 		debugSave(playerSave);
@@ -2056,9 +2234,18 @@ character getFromFile()
 	tmpChar.setMaxMana(mpMax);
 	tmpChar.setRace(charRace);
 
-	if (cheated && tmpChar.getCopper() >= 50000)
+	// If the player has cheated.
+	if (cheated && !debug)
 	{
-		tmpChar.setCopper(0);
+		cout << "Player has cheated, setting copper to default!\n";
+		// Reset the player's copper.
+		tmpChar.setCopper(100);
+		// Set the cheat variable to false;
+		tmpChar.setCheat(false);
+	}
+	else if (cheated && debug)
+	{
+		tmpChar.setCheat(false);
 	}
 
 	// Debug the class.
