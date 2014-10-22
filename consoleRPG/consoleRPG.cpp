@@ -1180,6 +1180,7 @@ class character
 		{
 			bool reroll = true; // Check the loop
 			int menuItem; // The var for the menus.
+			bool nosale = false;
 
 			// Repeat the menu
 			while (reroll)
@@ -1229,63 +1230,91 @@ class character
 						if (copper >= 100)
 						{
 							cout << "You buy " << displayArmorName(CLOTH, getClass()) << " for 100 copper\n";
-							cout << "You recive the " << displayArmorName(CLOTH, getClass()) << "\n";
+							cout << "You recive " << pawnItem(getArmor(), 1) << "copper, for selling your old armor.\n";
 							subCopper(100);
 							setArmor(CLOTH);
+						}
+						else
+						{
+							nosale = true;
 						}
 						break;
 					case 2:
 						if (copper >= 200)
 						{
 							cout << "You buy " << displayArmorName(LEATHER, getClass()) << " for 200 copper\n";
-							cout << "You recive the " << displayArmorName(LEATHER, getClass()) << "\n";
+							cout << "You recive " << pawnItem(getArmor(), 1) << "copper, for selling your old armor.\n";
 							subCopper(200);
 							setArmor(LEATHER);
+						}
+						else
+						{
+							nosale = true;
 						}
 						break;
 					case 3:
 						if (copper >= 400)
 						{
 							cout << "You buy " << displayArmorName(CHAIN, getClass()) << " for 400 copper\n";
-							cout << "You recive the " << displayArmorName(CHAIN, getClass()) << "\n";
+							cout << "You recive " << pawnItem(getArmor(), 1) << "copper, for selling your old armor.\n";
 							subCopper(400);
 							setArmor(CHAIN);
+						}
+						else
+						{
+							nosale = true;
 						}
 						break;
 					case 4:
 						if (copper >= 800)
 						{
 							cout << "You buy " << displayArmorName(PLATE, getClass()) << " for 800 copper\n";
-							cout << "You recive the " << displayArmorName(PLATE, getClass()) << "\n";
+							cout << "You recive " << pawnItem(getArmor(), 1) << "copper, for selling your old armor.\n";
 							subCopper(800);
 							setArmor(PLATE);
+						}
+						else
+						{
+							nosale = true;
 						}
 						break;
 					case 5:
 						if (copper >= 1600)
 						{
 							cout << "You buy " << displayArmorName(ANCIENTPLATE, getClass()) << " for 1600 copper\n";
-							cout << "You recive the " << displayArmorName(ANCIENTPLATE, getClass()) << "\n";
+							cout << "You recive " << pawnItem(getArmor(), 1) << "copper, for selling your old armor.\n";
 							subCopper(1600);
 							setArmor(ANCIENTPLATE);
+						}
+						else
+						{
+							nosale = true;
 						}
 						break;
 					case 6:
 						if (copper >= 3200)
 						{
 							cout << "You buy " << displayArmorName(MAGICPLATE, getClass()) << " for 3200 copper\n";
-							cout << "You recive the " << displayArmorName(MAGICPLATE, getClass()) << "\n";
+							cout << "You recive " << pawnItem(getArmor(), 1) << "copper, for selling your old armor.\n";
 							subCopper(3200);
 							setArmor(MAGICPLATE);
+						}
+						else
+						{
+							nosale = true;
 						}
 						break;
 					case 7:
 						if (copper >= 6400)
 						{
 							cout << "You buy " << displayArmorName(ARCHANEPLATE, getClass()) << " for 6400 copper\n";
-							cout << "You recive the " << displayArmorName(ARCHANEPLATE, getClass()) << "\n";
+							cout << "You recive " << pawnItem(getArmor(), 1) << "copper, for selling your old armor.\n";
 							subCopper(6400);
 							setArmor(ARCHANEPLATE);
+						}
+						else
+						{
+							nosale = true;
 						}
 						break;
 					case 8:
@@ -1298,6 +1327,14 @@ class character
 						break;
 				}
 			}
+
+			if (nosale)
+			{
+				cout << "\n";
+				cout << "You cannot afford this...";
+			}
+
+			setLoc(WEAPONSMITH);
 		}
 
 		// Display sell the armor code.
@@ -1377,6 +1414,7 @@ class character
 		{
 			bool reroll = true; // Check the loop
 			int menuItem; // The var for the menus.
+			bool nosale = false;
 
 			// Repeat the menu
 			while (reroll)
@@ -1423,9 +1461,13 @@ class character
 						{
 							cout << "\n";
 							cout << "You buy " << displayArmorName(DAGGER, getClass()) << " for 100 copper\n";
-							cout << "You recive the " << displayArmorName(DAGGER, getClass()) << "\n";
+							cout << "You recive " << pawnItem(getWeapon(), 1) << "copper, for selling your old weapon.\n";
 							subCopper(100);
-							setArmor(CLOTH);
+							setWeapon(DAGGER);
+						}
+						else
+						{
+							nosale = true;
 						}
 						break;
 					case 2:
@@ -1433,9 +1475,13 @@ class character
 						{
 							cout << "\n";
 							cout << "You buy " << displayArmorName(STAFF, getClass()) << " for 200 copper\n";
-							cout << "You recive the " << displayArmorName(STAFF, getClass()) << "\n";
+							cout << "You recive " << pawnItem(getWeapon(), 1) << "copper, for selling your old weapon.\n";
 							subCopper(200);
-							setArmor(LEATHER);
+							setWeapon(STAFF);
+						}
+						else
+						{
+							nosale = true;
 						}
 						break;
 					case 3:
@@ -1443,9 +1489,13 @@ class character
 						{
 							cout << "\n";
 							cout << "You buy " << displayArmorName(SWORD, getClass()) << " for 400 copper\n";
-							cout << "You recive the " << displayArmorName(SWORD, getClass()) << "\n";
+							cout << "You recive " << pawnItem(getWeapon(), 1) << "copper, for selling your old weapon.\n";
 							subCopper(400);
 							setWeapon(SWORD);
+						}
+						else
+						{
+							nosale = true;
 						}
 						break;
 					case 4:
@@ -1453,9 +1503,13 @@ class character
 						{
 							cout << "\n";
 							cout << "You buy " << displayArmorName(ANCIENTBLADE, getClass()) << " for 800 copper\n";
-							cout << "You recive the " << displayArmorName(ANCIENTBLADE, getClass()) << "\n";
+							cout << "You recive " << pawnItem(getWeapon(), 1) << "copper, for selling your old weapon.\n";
 							subCopper(800);
 							setWeapon(ANCIENTBLADE);
+						}
+						else
+						{
+							nosale = true;
 						}
 						break;
 					case 5:
@@ -1463,9 +1517,13 @@ class character
 						{
 							cout << "\n";
 							cout << "You buy " << displayArmorName(MAGICBLADE, getClass()) << " for 1600 copper\n";
-							cout << "You recive the " << displayArmorName(MAGICBLADE, getClass()) << "\n";
+							cout << "You recive " << pawnItem(getWeapon(), 1) << "copper, for selling your old weapon.\n";
 							subCopper(1600);
 							setWeapon(MAGICBLADE);
+						}
+						else
+						{
+							nosale = true;
 						}
 						break;
 					case 6:
@@ -1473,9 +1531,13 @@ class character
 						{
 							cout << "\n";
 							cout << "You buy " << displayArmorName(ARCHANEBLADE, getClass()) << " for 3200 copper\n";
-							cout << "You recive the " << displayArmorName(ARCHANEBLADE, getClass()) << "";
+							cout << "You recive " << pawnItem(getWeapon(), 1) << "copper, for selling your old weapon.\n";
 							subCopper(3200);
 							setWeapon(ARCHANEBLADE);
+						}
+						else
+						{
+							nosale = true;
 						}
 						break;
 					case 7:
@@ -1488,6 +1550,14 @@ class character
 						break;
 				}
 			}
+
+			if (nosale)
+			{
+				cout << "\n";
+				cout << "You cannot afford this...";
+			}
+
+			setLoc(WEAPONSMITH);
 		}
 
 		void locSellWeapon()
