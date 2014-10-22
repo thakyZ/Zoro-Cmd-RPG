@@ -42,8 +42,8 @@ enum ARMOR { LOINCLOTH, CLOTH, LEATHER, CHAIN, PLATE, ANCIENTPLATE, MAGICPLATE, 
 // Weapons types.
 enum WEAPON { FISTS, DAGGER, STAFF, SWORD, ANCIENTBLADE, MAGICBLADE, ARCHANEBLADE, VOIDEXCALIBUR };
 
-// Items.
-enum ITEMS { NONE, CLOTH, LEATHER, CHAIN, PLATE, ANCIENTPLATE, MAGICPLATE, ARCHANEPLATE, IMPERVIUMPLATE, DAGGER, STAFF, SWORD, ANCIENTBLADE, MAGICBLADE, ARCHANEBLADE, VOIDEXCALIBUR, HEALTH, MANA, EXP, CHEAT, CATEARS, ENERGYCRYSTAL, HANDLE, IRON, HEROBLADE, IMPERVIUMBAR, LEATHERITEM, HAMMER, PLATE, ENCHANTBOOK, DEMONHEART, MANASTAR };
+// Potions.
+enum Potions { HEALTH, MANA, EXP, CHEAT };
 
 // Stats Tree.
 struct ATTRIBUTES
@@ -306,6 +306,8 @@ char *displayWeaponName(int tmpWeapon, int tmpCharClass)
 			}
 			break;
 	}
+
+	return "";
 }
 
 char *displayArmorName(int tmpArmor, int tmpCharClass)
@@ -320,8 +322,7 @@ char *displayArmorName(int tmpArmor, int tmpCharClass)
 		case 6:
 			switch (tmpArmor)
 			{
-
-	cout << "   Debug -> ENABLED\n";case 0:
+				case 0:
 					return "Loin Cloth";
 					break;
 				case 1:
@@ -384,6 +385,8 @@ char *displayArmorName(int tmpArmor, int tmpCharClass)
 			}
 			break;
 	}
+
+	return "";
 }
 
 class monster
@@ -578,9 +581,6 @@ class character
 		ARMOR armor; // The armor the character has.
 		int masteries; // The skills level of the player.
 		bool cheated; // If the player cheated.
-		ITEMS items;
-		int inventory[15]; // Array for the Items.
-		int equipment[2];
 
 	public:
 		// Constructors
@@ -673,17 +673,6 @@ class character
 		bool getCheated()
 		{
 			return cheated;
-		}
-
-		// Get the inventory.
-		int *getInv()
-		{
-			return inventory;
-		}
-
-		int *getEquip()
-		{
-			return equipment;
 		}
 
 		// Set arguments.
@@ -780,25 +769,15 @@ class character
 			cheated = tmpCheated;
 		}
 
-		void setInventory(int *tmpInv)
-		{
-			inventory = tmpInv;
-		}
-
-		void setEquipment(int *tmpEquip)
-		{
-			equipment = tmpEquip;
-		}
-
 		// Computing Functions
 		// Subtract Health
 		void subHealth(int tmpHp)
 		{
 			hp -= tmpHp;
 
-			if (health < 0)
+			if (hp < 0)
 			{
-				health = 0;
+				hp = 0;
 			}
 		}
 
@@ -815,7 +794,7 @@ class character
 
 			if (copper < 0)
 			{
-				copper = 0
+				copper = 0;
 			}
 		}
 
@@ -833,9 +812,9 @@ class character
 		// Subtract Mana
 		void subMana(int tmpMp)
 		{
-			mp -= tmpMp
+			mp -= tmpMp;
 
-			if (mp < 0)
+			if(mp < 0)
 			{
 				mp = 0;
 			}
@@ -845,23 +824,6 @@ class character
 		void addMana(int tmpMp)
 		{
 			mp = tmpMp;
-		}
-
-		// Inventory Functions;
-		void equipItem(int item, int slot)
-		{
-			int tmpItem1 = getEquip()[slot];
-
-			if (slot == 1)
-			{
-				inventory[1] = tmpItem1;
-				equipment[1] = item;
-			}
-			else if (slot == 2)
-			{
-				inventory[2] = tmpItem1;
-				equipment[2] = item;
-			}
 		}
 
 		// Attack functions
@@ -1303,7 +1265,7 @@ class character
 						if (copper >= 1600)
 						{
 							cout << "You buy " << displayArmorName(ANCIENTPLATE, getClass()) << " for 1600 copper\n";
-							cout << "You recive the " << displayArmorName(ANCHIENTPLATE, getClass()) << "\n";
+							cout << "You recive the " << displayArmorName(ANCIENTPLATE, getClass()) << "\n";
 							subCopper(1600);
 							setArmor(ANCIENTPLATE);
 						}
@@ -1322,7 +1284,7 @@ class character
 						{
 							cout << "You buy " << displayArmorName(ARCHANEPLATE, getClass()) << " for 6400 copper\n";
 							cout << "You recive the " << displayArmorName(ARCHANEPLATE, getClass()) << "\n";
-							subCopper(6400)
+							subCopper(6400);
 							setArmor(ARCHANEPLATE);
 						}
 						break;
@@ -1436,11 +1398,11 @@ class character
 					case STAFF:
 						cout << "[3] " << displayArmorName(SWORD, getClass()) << "\t400 copper\n";
 					case SWORD:
-						cout << "[4] " << displayArmorName(ANCIENTSWORD, getClass()) << "\t800 copper\n";
-					case ANCIENTSWORD:
-						cout << "[5] " << displayArmorName(MAGICSWORD, getClass()) << "\t1600 copper\n";
-					case MAGICSWORD:
-						cout << "[6] " << displayArmorName(ARCHANESWORD, getClass()) << "\t3200 copper\n";
+						cout << "[4] " << displayArmorName(ANCIENTBLADE, getClass()) << "\t800 copper\n";
+					case ANCIENTBLADE:
+						cout << "[5] " << displayArmorName(MAGICBLADE, getClass()) << "\t1600 copper\n";
+					case MAGICBLADE:
+						cout << "[6] " << displayArmorName(ARCHANEBLADE, getClass()) << "\t3200 copper\n";
 					default:
 						cout << "[7] Back to Shop";
 				}
@@ -1483,37 +1445,37 @@ class character
 							cout << "You buy " << displayArmorName(SWORD, getClass()) << " for 400 copper\n";
 							cout << "You recive the " << displayArmorName(SWORD, getClass()) << "\n";
 							subCopper(400);
-							setArmor(CHAIN);
+							setWeapon(SWORD);
 						}
 						break;
 					case 4:
 						if (copper >= 800)
 						{
 							cout << "\n";
-							cout << "You buy " << displayArmorName(ANCIENTSWORD, getClass()) << " for 800 copper\n";
-							cout << "You recive the " << displayArmorName(ANCIENTSWORD, getClass()) << "\n";
+							cout << "You buy " << displayArmorName(ANCIENTBLADE, getClass()) << " for 800 copper\n";
+							cout << "You recive the " << displayArmorName(ANCIENTBLADE, getClass()) << "\n";
 							subCopper(800);
-							setArmor(PLATE);
+							setWeapon(ANCIENTBLADE);
 						}
 						break;
 					case 5:
 						if (copper >= 1600)
 						{
 							cout << "\n";
-							cout << "You buy " << displayArmorName(MAGICSWORD, getClass()) << " for 1600 copper\n";
-							cout << "You recive the " << displayArmorName(MAGICSWORD, getClass()) << "\n";
+							cout << "You buy " << displayArmorName(MAGICBLADE, getClass()) << " for 1600 copper\n";
+							cout << "You recive the " << displayArmorName(MAGICBLADE, getClass()) << "\n";
 							subCopper(1600);
-							setArmor(ANCIENTPLATE);
+							setWeapon(MAGICBLADE);
 						}
 						break;
 					case 6:
 						if (copper >= 3200)
 						{
 							cout << "\n";
-							cout << "You buy " << displayArmorName(ARCHANESWORD, getClass()) << " for 3200 copper\n";
-							cout << "You recive the " << displayArmorName(ARCHANESWORD, getClass()) << "";
+							cout << "You buy " << displayArmorName(ARCHANEBLADE, getClass()) << " for 3200 copper\n";
+							cout << "You recive the " << displayArmorName(ARCHANEBLADE, getClass()) << "";
 							subCopper(3200);
-							setArmor(MAGICPLATE);
+							setWeapon(ARCHANEBLADE);
 						}
 						break;
 					case 7:
@@ -1549,7 +1511,7 @@ class character
 					case 'y':
 					case 'Y':
 						cout << "You sell your armor for " << pawnItem(getWeapon(), 1) << "copper\n";
-						setArmor(FISTS);
+						setWeapon(FISTS);
 						break;
 					case 'n':
 					case 'N':
@@ -1559,88 +1521,6 @@ class character
 			}
 
 			setLoc(WEAPONSMITH);
-		}
-
-		void locInventory()
-		{
-			cout << "   Inventory:\n";
-			cout << "\n";
-
-			for (int i = 0; i < 2)
-			{
-				switch (getEquip()[i])
-				{
-					case 0:
-						cout << "Nothing\n";
-					case 1:
-						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
-					case 2:
-						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
-					case 3:
-						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
-					case 4:
-						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
-					case 5:
-						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
-					case 6:
-						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
-					case 7:
-						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
-					case 8:
-						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
-					case 9:
-						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
-					case 10:
-						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
-					case 11:
-						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
-					case 12:
-						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
-					case 13:
-						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
-					case 14:
-						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
-					case 15:
-						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
-				}
-			}
-
-			for (int i = 0; i < 15)
-			{
-				switch (getInv()[i])
-					case 0:
-						cout << "Nothing\n";
-					case 1:
-						cout << displayArmorName(getInv()[i], getClass()) << "\n";
-					case 2:
-						cout << displayArmorName(getInv()[i], getClass()) << "\n";
-					case 3:
-						cout << displayArmorName(getInv()[i], getClass()) << "\n";
-					case 4:
-						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
-					case 5:
-						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
-					case 6:
-						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
-					case 7:
-						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
-					case 8:
-						cout << displayArmorName(getEquip()[i], getClass()) << "\n";
-					case 9:
-						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
-					case 10:
-						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
-					case 11:
-						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
-					case 12:
-						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
-					case 13:
-						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
-					case 14:
-						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
-					case 15:
-						cout << displayWeaponName(getEquip()[i], getClass()) << "\n";
-			}
 		}
 };
 
@@ -1901,8 +1781,6 @@ class saveFileData
 		ARMOR armor; // The armor the character has.
 		int masteries; // The skills level of the player.
 		bool cheated; // If the player has cheated.
-		int inventory[15] = {};
-		int equipment[2] = {};
 
 		saveFileData()
 		{
@@ -1928,8 +1806,6 @@ class saveFileData
 			armor = tmpChar->getArmor(); // Set the armor.
 			masteries = tmpChar->getMasteries(); // Set the masteries.
 			cheated = tmpChar->getCheated();
-			inventory = tmpChar->getInv();
-			equipment = tmpChar->getEquip();
 		}
 };
 
@@ -2079,7 +1955,7 @@ void debugSave(saveFileData tmpSaveFile)
 		case STAFF:
 			cout << "Weapon:           Staff\n";
 			break;
-		case ANCEINTBLADE:
+		case ANCIENTBLADE:
 			cout << "Weapon:           Ancient Blade\n";
 			break;
 		case MAGICBLADE:
@@ -2142,8 +2018,6 @@ void debugSave(saveFileData tmpSaveFile)
 		case false:
 			cout << "Cheated:         False\n";
 			break;
-		default:
-			cout << "Cheated:         Broken\n";
 	}
 
 	cout << "+=================================+\n";
@@ -2587,10 +2461,10 @@ int _tmain (int argc, _TCHAR* argv[])
 		cout << "You have been equiped with the " << displayWeaponName(VOIDEXCALIBUR, player1->getClass()) << "!\n";
 		cout << "DO NOT SELL THIS WEAPON!!!\n";
 	}
-	if (player1->getArmor() == IMPERVIUM)
+	if (player1->getArmor() == IMPERVIUMPLATE)
 	{
 		cout << "\n";
-		cout << "You have been equiped with " << displayArmorName(IMPERVIUM, player1->getClass()) << "!\n";
+		cout << "You have been equiped with " << displayArmorName(IMPERVIUMPLATE, player1->getClass()) << "!\n";
 		cout << "DO NOT SELL THIS ARMOR!!!\n";
 	}
 
