@@ -22,22 +22,22 @@ This is a, 32-bit C++ Console Application
 
 ###GAME PLAY
 
-####Not ready to be played yet...
+**Not ready to be played yet.**
 
 ---
 
 ###DOWNLOADS
 
-####Not ready to download yet...
+**Not ready to download yet.**
 
 ---
 
 ###SYSTEM REQUIREMENTS
 
-This program is only for **Windows XP/7/8/8.1** or **Linux** with the extension **Wine** (I haven't tested it on Linux yet).
+This program is only for **Windows XP/7/8/8.1**.
 
 ---
 
 ###LATER FEATURES AND DEVELOPMENT
 
-####None Yet...
+**None Yet...**

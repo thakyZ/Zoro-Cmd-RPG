@@ -1592,6 +1592,118 @@ class character
 
 			setLoc(WEAPONSMITH);
 		}
+
+		void locTavern()
+		{
+			bool reroll = true;
+			char menuItem;
+
+			while (reroll)
+			{
+				reroll = false;
+
+				cout << "There is nothing to see here...\n";
+				cout << "[G]o back to town"
+
+				cin >> menuItem;
+
+				switch (menuItem)
+				{
+					case 'g':
+					case 'G':
+						setLoc(TOWN);
+						break;
+					default:
+						cout << "please enter a correct input.";
+						reroll = true;
+						break;
+				}
+			}
+		}
+
+		void locChapel()
+		{
+			bool reroll = true;
+			char menuItem;
+
+			while (reroll)
+			{
+				reroll = false;
+
+				cout << "There is nothing to see here...\n";
+				cout << "[G]o back to town"
+
+				cin >> menuItem;
+
+				switch (menuItem)
+				{
+					case 'g':
+					case 'G':
+						setLoc(TOWN);
+						break;
+					default:
+						cout << "please enter a correct input.";
+						reroll = true;
+						break;
+				}
+			}
+		}
+
+		void locBank()
+		{
+			bool reroll = true;
+			char menuItem;
+
+			while (reroll)
+			{
+				reroll = false;
+
+				cout << "There is nothing to see here...\n";
+				cout << "[G]o back to town"
+
+				cin >> menuItem;
+
+				switch (menuItem)
+				{
+					case 'g':
+					case 'G':
+						setLoc(TOWN);
+						break;
+					default:
+						cout << "please enter a correct input.";
+						reroll = true;
+						break;
+				}
+			}
+		}
+
+		void locAlchimest()
+		{
+			bool reroll = true;
+			char menuItem;
+
+			while (reroll)
+			{
+				reroll = false;
+
+				cout << "There is nothing to see here...\n";
+				cout << "[G]o back to town"
+
+				cin >> menuItem;
+
+				switch (menuItem)
+				{
+					case 'g':
+					case 'G':
+						setLoc(FOREST);
+						break;
+					default:
+						cout << "please enter a correct input.";
+						reroll = true;
+						break;
+				}
+			}
+		}
 };
 
 // Class for the fighter.
@@ -2607,6 +2719,7 @@ int _tmain (int argc, _TCHAR* argv[])
 				player1->locSellArmor();
 				break;
 			case TAVERN:
+				player1->locTavern();
 				break;
 			case WEAPONSMITH:
 				player1->locWeaponSmith();
@@ -2618,10 +2731,13 @@ int _tmain (int argc, _TCHAR* argv[])
 				player1->locSellWeapon();
 				break;
 			case CHAPEL:
+				player1->locChapel();
 				break;
 			case BANK:
+				player1->locBank();
 				break;
 			case ALCHIMEST:
+				player1->locAlchimest();
 				break;
 		}
 	}
