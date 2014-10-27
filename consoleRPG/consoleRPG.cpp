@@ -43,7 +43,7 @@ enum ARMOR { LOINCLOTH, CLOTH, LEATHER, CHAIN, PLATE, ANCIENTPLATE, MAGICPLATE, 
 enum WEAPON { FISTS, DAGGER, STAFF, SWORD, ANCIENTBLADE, MAGICBLADE, ARCHANEBLADE, VOIDEXCALIBUR };
 
 // Potions.
-enum POTION { HEALTH, MANA, EXP, CHEAT };
+enum POTION { NONE, HEALTH, MANA, EXP, CHEAT };
 
 // Stats Tree.
 struct ATTRIBUTES
@@ -581,6 +581,8 @@ class character
 		ARMOR armor; // The armor the character has.
 		int masteries; // The skills level of the player.
 		bool cheated; // If the player cheated.
+		POTION potion; // The potion the player currently has.
+		int bankCopper; // The copper the player has in the bank.
 
 	public:
 		// Constructors
@@ -592,6 +594,9 @@ class character
 
 			// Set the default location of the menu.
 			location = VIEWSTATS;
+
+			// Set the default potion var.
+			potion = NONE;
 		}
 
 		// Accessors
@@ -673,6 +678,18 @@ class character
 		bool getCheated()
 		{
 			return cheated;
+		}
+
+		// Get the player's current potion.
+		POTION getPotion()
+		{
+			return potion;
+		}
+
+		// Get the player's copper in the bank.
+		int getBankCopper()
+		{
+			return bankCopper;
 		}
 
 		// Set arguments.
@@ -764,9 +781,22 @@ class character
 			location = tmpLoc;
 		}
 
+		// Set if the player cheated.
 		void setCheat(bool tmpCheated)
 		{
 			cheated = tmpCheated;
+		}
+
+		// Set the player's current potion.
+		void setPotion(POTION tmpPotion)
+		{
+			potion = tmpPotion;
+		}
+
+		// Set the player's copper in the bank.
+		void setBankCopper(int tmpCopper)
+		{
+			bankCopper = tmpCopper;
 		}
 
 		// Computing Functions
@@ -824,6 +854,18 @@ class character
 		void addMana(int tmpMp)
 		{
 			mp = tmpMp;
+		}
+
+		// Add bank copper.
+		void addBankCopper(int tmpCopper)
+		{
+			bankCopper += tmpCopper;
+		}
+
+		// Subtract Copper.
+		void subBankCopper(int tmpCopper)
+		{
+			bankCopper -= tmpCopper;
 		}
 
 		// Attack functions
@@ -1603,7 +1645,7 @@ class character
 				reroll = false;
 
 				cout << "There is nothing to see here...\n";
-				cout << "[G]o back to town"
+				cout << "[G]o back to town";
 
 				cin >> menuItem;
 
@@ -1631,7 +1673,7 @@ class character
 				reroll = false;
 
 				cout << "There is nothing to see here...\n";
-				cout << "[G]o back to town"
+				cout << "[G]o back to town";
 
 				cin >> menuItem;
 
@@ -1659,7 +1701,7 @@ class character
 				reroll = false;
 
 				cout << "There is nothing to see here...\n";
-				cout << "[G]o back to town"
+				cout << "[G]o back to town";
 
 				cin >> menuItem;
 
@@ -1687,7 +1729,7 @@ class character
 				reroll = false;
 
 				cout << "There is nothing to see here...\n";
-				cout << "[G]o back to town"
+				cout << "[G]o back to town";
 
 				cin >> menuItem;
 
@@ -1963,6 +2005,8 @@ class saveFileData
 		ARMOR armor; // The armor the character has.
 		int masteries; // The skills level of the player.
 		bool cheated; // If the player has cheated.
+		POTION potion; // The current potion the player has.
+		int bankCopper; // The amount of copper the player has in his bank.
 
 		saveFileData()
 		{
@@ -1987,7 +2031,9 @@ class saveFileData
 			weapon = tmpChar->getWeapon(); // Set the weapon.
 			armor = tmpChar->getArmor(); // Set the armor.
 			masteries = tmpChar->getMasteries(); // Set the masteries.
-			cheated = tmpChar->getCheated();
+			cheated = tmpChar->getCheated(); // Set if the player cheated.
+			potion = tmpChar->getPotion(); // Set the player's current potion.
+			bankCopper = tmpChar->getBankCopper(); // Set the player's money in the bank.
 		}
 };
 
@@ -2014,25 +2060,25 @@ void debugSave(saveFileData tmpSaveFile)
 	switch (tmpSaveFile.charClass)
 	{
 		case FIGHTER:
-			cout << "Class:            Fighter\n";
+			cout << "Class:            FIGHTER\n";
 			break;
 		case CLERIC:
-			cout << "Class:            Cleric\n";
+			cout << "Class:            CLERIC\n";
 			break;
 		case ROUGE:
-			cout << "Class:            Rouge\n";
+			cout << "Class:            ROUGE\n";
 			break;
 		case BARD:
-			cout << "Class:            Bard\n";
+			cout << "Class:            BARD\n";
 			break;
 		case THEIF:
-			cout << "Class:            Theif\n";
+			cout << "Class:            THEIF\n";
 			break;
 		case TINKER:
-			cout << "Class:            Tinker\n";
+			cout << "Class:            TINKER\n";
 			break;
 		case MAGE:
-			cout << "Class:            Mage\n";
+			cout << "Class:            MAGE\n";
 			break;
 		default:
 			cout << "Class:            BROKEN\n";
@@ -2042,28 +2088,28 @@ void debugSave(saveFileData tmpSaveFile)
 	switch (tmpSaveFile.charRace)
 	{
 		case HUMAN:
-			cout << "Race:             Human\n";
+			cout << "Race:             HUMAN\n";
 			break;
 		case ELF:
-			cout << "Race:             Elf\n";
+			cout << "Race:             ELF\n";
 			break;
 		case DARKELF:
-			cout << "Race:             Dark Elf\n";
+			cout << "Race:             DARKELF\n";
 			break;
 		case ANGEL:
-			cout << "Race:             Angel\n";
+			cout << "Race:             ANGEL\n";
 			break;
 		case MONGREL:
-			cout << "Race:             Mongrel\n";
+			cout << "Race:             MONGREL\n";
 			break;
 		case SHAMANI:
-			cout << "Race:             Shamani\n";
+			cout << "Race:             SHAMANI\n";
 			break;
 		case NIBELUNG:
-			cout << "Race:             Nibelung\n";
+			cout << "Race:             NIBELUNG\n";
 			break;
 		case UNDEAD:
-			cout << "Race:             Undead\n";
+			cout << "Race:             UNDEAD\n";
 			break;
 		default:
 			cout << "Race:             BROKEN\n";
@@ -2078,46 +2124,46 @@ void debugSave(saveFileData tmpSaveFile)
 	switch (tmpSaveFile.location)
 	{
 		case QUIT:
-			cout << "Location:         Quit\n";
+			cout << "Location:         QUIT\n";
 			break;
 		case VIEWSTATS:
-			cout << "Location:         View Stats\n";
+			cout << "Location:         VIEWSTATS\n";
 			break;
 		case TOWN:
-			cout << "Location:         Town\n";
+			cout << "Location:         TOWN\n";
 			break;
 		case FOREST:
-			cout << "Location:         Forest\n";
+			cout << "Location:         FOREST\n";
 			break;
 		case MONSTER:
-			cout << "Location:         Monster\n";
+			cout << "Location:         MONSTER\n";
 			break;
 		case SAVE:
-			cout << "Location:         Save\n";
+			cout << "Location:         SAVE\n";
 			break;
 		case ARMORSMITH:
-			cout << "Location:         Armor Smith\n";
+			cout << "Location:         ARMORSMITH\n";
 			break;
 		case BUYARMOR:
-			cout << "Location:         Buy Armor\n";
+			cout << "Location:         BUYARMOR\n";
 			break;
 		case SELLARMOR:
-			cout << "Location:         Sell Armor\n";
+			cout << "Location:         SELLARMOR\n";
 			break;
 		case TAVERN:
-			cout << "Location:         Tavern\n";
+			cout << "Location:         TAVERN\n";
 			break;
 		case WEAPONSMITH:
-			cout << "Location:         Weapon Smith\n";
+			cout << "Location:         WEAPONSMITH\n";
 			break;
 		case CHAPEL:
-			cout << "Location:         Chapel\n";
+			cout << "Location:         CHAPEL\n";
 			break;
 		case BANK:
-			cout << "Location:         Bank\n";
+			cout << "Location:         BANK\n";
 			break;
 		case ALCHIMEST:
-			cout << "Location:         Alchimest\n";
+			cout << "Location:         ALCHIMEST\n";
 			break;
 		default:
 			cout << "Location:         BROKEN\n";
@@ -2126,31 +2172,31 @@ void debugSave(saveFileData tmpSaveFile)
 	switch (tmpSaveFile.weapon)
 	{
 		case FISTS:
-			cout << "Weapon:           Fists\n";
+			cout << "Weapon:           FISTS\n";
 			break;
 		case DAGGER:
-			cout << "Weapon:           Dagger\n";
+			cout << "Weapon:           DAGGER\n";
 			break;
 		case SWORD:
-			cout << "Weapon:           Sword\n";
+			cout << "Weapon:           SWORD\n";
 			break;
 		case STAFF:
-			cout << "Weapon:           Staff\n";
+			cout << "Weapon:           STAFF\n";
 			break;
 		case ANCIENTBLADE:
-			cout << "Weapon:           Ancient Blade\n";
+			cout << "Weapon:           ANCIENTBLADE\n";
 			break;
 		case MAGICBLADE:
-			cout << "Weapon:           Magic blade\n";
+			cout << "Weapon:           MAGICBLADE\n";
 			break;
 		case ARCHANEBLADE:
-			cout << "Weapon:           Archane blade\n";
+			cout << "Weapon:           ARCHANEBLADE\n";
 			break;
 		case VOIDEXCALIBUR:
-			cout << "Weapon:           Void Excalibur\n";
+			cout << "Weapon:           VOIDEXCALIBUR\n";
 			break;
 		default:
-			cout << "Weapon:           Broken\n";
+			cout << "Weapon:           BROKEN\n";
 	}
 
 	cout << "Weapon set name:  " << displayWeaponName(tmpSaveFile.weapon, tmpSaveFile.charClass) << "\n";
@@ -2158,34 +2204,34 @@ void debugSave(saveFileData tmpSaveFile)
 	switch (tmpSaveFile.armor)
 	{
 		case LOINCLOTH:
-			cout << "Armor:            Loincloth\n";
+			cout << "Armor:            LOINCLOTH\n";
 			break;
 		case CLOTH:
-			cout << "Armor:            Cloth Armor\n";
+			cout << "Armor:            CLOTH\n";
 			break;
 		case LEATHER:
-			cout << "Armor:            Leather Armor\n";
+			cout << "Armor:            LEATHER\n";
 			break;
 		case CHAIN:
-			cout << "Armor:            Chain Armor\n";
+			cout << "Armor:            CHAIN\n";
 			break;
 		case PLATE:
-			cout << "Armor:            Plate Armor\n";
+			cout << "Armor:            PLATE\n";
 			break;
 		case ANCIENTPLATE:
-			cout << "Armor:            Ancient Plate\n";
+			cout << "Armor:            ANCIENTPLATE\n";
 			break;
 		case MAGICPLATE:
-			cout << "Armor:            Magic Plate\n";
+			cout << "Armor:            MAGICPLATE\n";
 			break;
 		case ARCHANEPLATE:
-			cout << "Armor:            Archane Plate\n";
+			cout << "Armor:            ARCHANEPLATE\n";
 			break;
 		case IMPERVIUMPLATE:
-			cout << "Armor:            Impervium Plate\n";
+			cout << "Armor:            IMPERVIUMPLATE\n";
 			break;
 		default:
-			cout << "Armor:            Broken\n";
+			cout << "Armor:            BROKEN\n";
 	}
 
 	cout << "Armor set name:   " << displayArmorName(tmpSaveFile.armor, tmpSaveFile.charClass) << "\n";
@@ -2195,10 +2241,31 @@ void debugSave(saveFileData tmpSaveFile)
 	switch (tmpSaveFile.cheated)
 	{
 		case true:
-			cout << "Cheated:         True\n";
+			cout << "Cheated:         TRUE\n";
 			break;
 		case false:
-			cout << "Cheated:         False\n";
+			cout << "Cheated:         FALSE\n";
+			break;
+	}
+
+	cout << "Bank Copper:      " << tmpSaveFile.bankCopper << "\n";
+
+	switch (tmpSaveFile.potion)
+	{
+		case NONE:
+			cout << "Potion:          NONE\n";
+			break;
+		case HEALTH:
+			cout << "Potion:          HEALTH\n";
+			break;
+		case MANA:
+			cout << "Potion:          MANA\n";
+			break;
+		case EXP:
+			cout << "Potion:          EXP\n";
+			break;
+		case CHEAT:
+			cout << "Potion:          CHEAT\n";
 			break;
 	}
 
@@ -2277,7 +2344,9 @@ character getFromFile()
 	WEAPON weapon = playerSave.weapon; // The weapon the character has.
 	ARMOR armor = playerSave.armor; // The armor the character has.
 	int masteries = playerSave.masteries; // The skills level of the player.
-	bool cheated = playerSave.cheated;
+	bool cheated = playerSave.cheated; // The fact if the player cheated.
+	POTION potion = playerSave.potion; // The current potion of the player.
+	int bankCopper = playerSave.bankCopper; // The amount of copper the player has in the bank.
 
 	tmpChar.setLoc(location);
 	tmpChar.setAttsTest(strength, cleverness, dexterity, faith, focus, insperation);
@@ -2289,9 +2358,11 @@ character getFromFile()
 	tmpChar.setMaxHealth(hpMax);
 	tmpChar.setMaxMana(mpMax);
 	tmpChar.setRace(charRace);
+	tmpChar.setPotion(potion);
+	tmpChar.setBankCopper(bankCopper);
 
 	// If the player has cheated.
-	if (cheated && !debug)
+	if (cheated)
 	{
 		cout << "Player has cheated, setting copper to default!\n";
 		// Reset the player's copper.
@@ -2339,7 +2410,9 @@ int _tmain (int argc, _TCHAR* argv[])
 	// Clear the console.
 	system("cls");
 
-	cout << "Welcome to Zoro\n";
+	cout << "Welcome to the land of Zoro!\n";
+	cout << "Created by Nire Inicana";
+	cout << "\n\n";
 
 	// Ask if the player wants a new game or to load a game...
 	cout << "[N]ew game?\t\t[L]oad Game?\n";
