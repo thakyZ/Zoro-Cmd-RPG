@@ -1974,7 +1974,7 @@ class fighter : public character
 				}
 				if (getMana() >= 5)
 				{
-					cout << "\n[D]eadly Strike";
+					cout << "\n[D]eadly Strike\n";
 				}
 
 				// Get the input of what attack to use.
@@ -2083,6 +2083,128 @@ class cleric : public character
 			setHealth(diceRoll(7, 6)); // Set the default hitpoints for the cleric.
 			setMaxMana(50);
 			setMana(50); // Set the default stamina for the cleric.
+
+			setMasteries(1); // Set the default fighter's skill level.
+
+			setArmor(CLOTH); // Set the default fighter's armor.
+
+			setWeapon(STAFF); // Set the default fighter's weapon.
+		}
+
+		// This is to attack the monster.
+		virtual void attack(monster* monster1)
+		{
+			char inputs; // The var for the menus.
+			bool reroll = true; // Check for the loop.
+			int damage = 0; // Damage that is being done.
+
+			// Start the loop.
+			while (reroll)
+			{
+				reroll = false; // End the loop.
+
+				cout << "[A]ttack";
+
+				if (getMana() >= 1)
+				{
+					cout << "\t[J]ab";
+				}
+				if (getMana() >= 5)
+				{
+					cout << "\n[P]ound\n";
+				}
+
+				// Get the input of what attack to use.
+				cin >> inputs;
+
+				// Set the target roll
+				int targetRoll = 10 + (getAtts().dexterity + getAtts().strength) - (monster1->getAtts().dexterity + monster1->getAtts().strength);
+
+				// Make the maximum of target roll to 17.
+				if (targetRoll > 17)
+				{
+					targetRoll = 17;
+				}
+				// Make the minimum of target roll to 3.
+				if (targetRoll < 3)
+				{
+					targetRoll = 3;
+				}
+
+				// Get if the dice roll is the same as the target roll.
+				bool hit = targetRoll >= diceRoll(1, 20);
+
+				cout << "\n";
+
+				// If the dice roll doesn't equal the target roll.
+				if (!hit)
+				{
+					cout << "Missed!\n";
+				}
+
+				switch (inputs)
+				{
+					case 'a':
+					case 'A':
+						// If the dice roll matches the target roll or is higher than it.
+						if (hit)
+						{
+							// Set the damage pre-roll
+							int dice = getAtts().strength + getWeapon() + getMasteries();
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 3) - dice;
+							if (debug) // For now output the damage.
+							{
+								cout << "\n";
+								cout << "Basic Attack (F): " << damage << "\n";
+							}
+						}
+						break;
+					case 'j':
+					case 'J':
+						// If the dice roll matches the target roll or is higher than it and the player's mana is greater than or equal to one.
+						if (hit && getMana() >= 1)
+						{
+							// Set the damage pre-roll and since it is a higher damage attack then double the attack.
+							int dice = 2 * (getAtts().strength + getWeapon() + getMasteries());
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 3) - dice;
+							if (debug) // For now output the damage.
+							{
+								cout << "\n";
+								cout << "Frenzy Attack (F): " << damage << "\n";
+							}
+							// Since this is a special attack then remove some mana points.
+							subMana(1);
+						}
+						break;
+					case 'p':
+					case 'P':
+						// If the dice roll matches the target roll or is higher than it and the player's mana is greater than or equal to five.
+						if (hit && getMana() >= 5)
+						{
+							// Set the damage pre-roll and since this is a deadly attack
+							int dice = 100 * (getAtts().strength + getWeapon() + getMasteries());
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 6) - dice;
+							if (debug) // If debug then output the damage.
+							{
+								cout << "\n";
+								cout << "Deadly Strike Attack (F): " << damage << "\n";
+							}
+							subMana(5);
+							// Since this is a special attack then remove some mana points.
+						}
+						break;
+					default:
+						reroll = true; // If the input is not valid restart the loop.
+				}
+			}
+
+			if (damage > 0)
+			{
+				damage = monster1->mitigate(damage);
+			}
 		}
 };
 
@@ -2099,6 +2221,128 @@ class rouge : public character
 			setHealth(diceRoll(7, 6)); // Set the default hitpoints for the rouge.
 			setMaxMana(20);
 			setMana(20); // Set the default stamina for the rouge.
+
+			setMasteries(1); // Set the default fighter's skill level.
+
+			setArmor(LEATHER); // Set the default fighter's armor.
+
+			setWeapon(SWORD); // Set the default fighter's weapon.
+		}
+
+		// This is to attack the monster.
+		virtual void attack(monster* monster1)
+		{
+			char inputs; // The var for the menus.
+			bool reroll = true; // Check for the loop.
+			int damage = 0; // Damage that is being done.
+
+			// Start the loop.
+			while (reroll)
+			{
+				reroll = false; // End the loop.
+
+				cout << "[A]ttack";
+
+				if (getMana() >= 1)
+				{
+					cout << "\t[J]ab";
+				}
+				if (getMana() >= 5)
+				{
+					cout << "\n[S]pin Attack\n";
+				}
+
+				// Get the input of what attack to use.
+				cin >> inputs;
+
+				// Set the target roll
+				int targetRoll = 10 + (getAtts().dexterity + getAtts().strength) - (monster1->getAtts().dexterity + monster1->getAtts().strength);
+
+				// Make the maximum of target roll to 17.
+				if (targetRoll > 17)
+				{
+					targetRoll = 17;
+				}
+				// Make the minimum of target roll to 3.
+				if (targetRoll < 3)
+				{
+					targetRoll = 3;
+				}
+
+				// Get if the dice roll is the same as the target roll.
+				bool hit = targetRoll >= diceRoll(1, 20);
+
+				cout << "\n";
+
+				// If the dice roll doesn't equal the target roll.
+				if (!hit)
+				{
+					cout << "Missed!\n";
+				}
+
+				switch (inputs)
+				{
+					case 'a':
+					case 'A':
+						// If the dice roll matches the target roll or is higher than it.
+						if (hit)
+						{
+							// Set the damage pre-roll
+							int dice = getAtts().strength + getWeapon() + getMasteries();
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 3) - dice;
+							if (debug) // For now output the damage.
+							{
+								cout << "\n";
+								cout << "Basic Attack (F): " << damage << "\n";
+							}
+						}
+						break;
+					case 'j':
+					case 'J':
+						// If the dice roll matches the target roll or is higher than it and the player's mana is greater than or equal to one.
+						if (hit && getMana() >= 1)
+						{
+							// Set the damage pre-roll and since it is a higher damage attack then double the attack.
+							int dice = 2 * (getAtts().strength + getWeapon() + getMasteries());
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 3) - dice;
+							if (debug) // For now output the damage.
+							{
+								cout << "\n";
+								cout << "Frenzy Attack (F): " << damage << "\n";
+							}
+							// Since this is a special attack then remove some mana points.
+							subMana(1);
+						}
+						break;
+					case 's':
+					case 'S':
+						// If the dice roll matches the target roll or is higher than it and the player's mana is greater than or equal to five.
+						if (hit && getMana() >= 5)
+						{
+							// Set the damage pre-roll and since this is a deadly attack
+							int dice = 100 * (getAtts().strength + getWeapon() + getMasteries());
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 6) - dice;
+							if (debug) // If debug then output the damage.
+							{
+								cout << "\n";
+								cout << "Deadly Strike Attack (F): " << damage << "\n";
+							}
+							subMana(5);
+							// Since this is a special attack then remove some mana points.
+						}
+						break;
+					default:
+						reroll = true; // If the input is not valid restart the loop.
+				}
+			}
+
+			if (damage > 0)
+			{
+				damage = monster1->mitigate(damage);
+			}
 		}
 };
 
@@ -2115,6 +2359,128 @@ class bard : public character
 			setHealth(diceRoll(7, 6)); // Set the default hitpoints for the bard.
 			setMaxMana(50);
 			setMana(50); // Set the default stamina for the bard.
+
+			setMasteries(1); // Set the default fighter's skill level.
+
+			setArmor(LEATHER); // Set the default fighter's armor.
+
+			setWeapon(SWORD); // Set the default fighter's weapon.
+		}
+
+		// This is to attack the monster.
+		virtual void attack(monster* monster1)
+		{
+			char inputs; // The var for the menus.
+			bool reroll = true; // Check for the loop.
+			int damage = 0; // Damage that is being done.
+
+			// Start the loop.
+			while (reroll)
+			{
+				reroll = false; // End the loop.
+
+				cout << "[A]ttack";
+
+				if (getMana() >= 1)
+				{
+					cout << "\t[F]renzy";
+				}
+				if (getMana() >= 5)
+				{
+					cout << "\n[P]ound";
+				}
+
+				// Get the input of what attack to use.
+				cin >> inputs;
+
+				// Set the target roll
+				int targetRoll = 10 + (getAtts().dexterity + getAtts().strength) - (monster1->getAtts().dexterity + monster1->getAtts().strength);
+
+				// Make the maximum of target roll to 17.
+				if (targetRoll > 17)
+				{
+					targetRoll = 17;
+				}
+				// Make the minimum of target roll to 3.
+				if (targetRoll < 3)
+				{
+					targetRoll = 3;
+				}
+
+				// Get if the dice roll is the same as the target roll.
+				bool hit = targetRoll >= diceRoll(1, 20);
+
+				cout << "\n";
+
+				// If the dice roll doesn't equal the target roll.
+				if (!hit)
+				{
+					cout << "Missed!\n";
+				}
+
+				switch (inputs)
+				{
+					case 'a':
+					case 'A':
+						// If the dice roll matches the target roll or is higher than it.
+						if (hit)
+						{
+							// Set the damage pre-roll
+							int dice = getAtts().strength + getWeapon() + getMasteries();
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 3) - dice;
+							if (debug) // For now output the damage.
+							{
+								cout << "\n";
+								cout << "Basic Attack (F): " << damage << "\n";
+							}
+						}
+						break;
+					case 'f':
+					case 'F':
+						// If the dice roll matches the target roll or is higher than it and the player's mana is greater than or equal to one.
+						if (hit && getMana() >= 1)
+						{
+							// Set the damage pre-roll and since it is a higher damage attack then double the attack.
+							int dice = 2 * (getAtts().strength + getWeapon() + getMasteries());
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 3) - dice;
+							if (debug) // For now output the damage.
+							{
+								cout << "\n";
+								cout << "Frenzy Attack (F): " << damage << "\n";
+							}
+							// Since this is a special attack then remove some mana points.
+							subMana(1);
+						}
+						break;
+					case 'p':
+					case 'P':
+						// If the dice roll matches the target roll or is higher than it and the player's mana is greater than or equal to five.
+						if (hit && getMana() >= 5)
+						{
+							// Set the damage pre-roll and since this is a deadly attack
+							int dice = 100 * (getAtts().strength + getWeapon() + getMasteries());
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 6) - dice;
+							if (debug) // If debug then output the damage.
+							{
+								cout << "\n";
+								cout << "Deadly Strike Attack (F): " << damage << "\n";
+							}
+							subMana(5);
+							// Since this is a special attack then remove some mana points.
+						}
+						break;
+					default:
+						reroll = true; // If the input is not valid restart the loop.
+				}
+			}
+
+			if (damage > 0)
+			{
+				damage = monster1->mitigate(damage);
+			}
 		}
 };
 
@@ -2131,6 +2497,128 @@ class theif : public character
 			setHealth(diceRoll(7, 6)); // Set the default hitpoints for the rouge.
 			setMaxMana(20);
 			setMana(20); // Set the default stamina for the rouge.
+
+			setMasteries(1); // Set the default fighter's skill level.
+
+			setArmor(CLOTH); // Set the default fighter's armor.
+
+			setWeapon(SWORD); // Set the default fighter's weapon.
+		}
+
+		// This is to attack the monster.
+		virtual void attack(monster* monster1)
+		{
+			char inputs; // The var for the menus.
+			bool reroll = true; // Check for the loop.
+			int damage = 0; // Damage that is being done.
+
+			// Start the loop.
+			while (reroll)
+			{
+				reroll = false; // End the loop.
+
+				cout << "[A]ttack";
+
+				if (getMana() >= 1)
+				{
+					cout << "\t[S]wipe";
+				}
+				if (getMana() >= 5)
+				{
+					cout << "\n[M]asicre";
+				}
+
+				// Get the input of what attack to use.
+				cin >> inputs;
+
+				// Set the target roll
+				int targetRoll = 10 + (getAtts().dexterity + getAtts().strength) - (monster1->getAtts().dexterity + monster1->getAtts().strength);
+
+				// Make the maximum of target roll to 17.
+				if (targetRoll > 17)
+				{
+					targetRoll = 17;
+				}
+				// Make the minimum of target roll to 3.
+				if (targetRoll < 3)
+				{
+					targetRoll = 3;
+				}
+
+				// Get if the dice roll is the same as the target roll.
+				bool hit = targetRoll >= diceRoll(1, 20);
+
+				cout << "\n";
+
+				// If the dice roll doesn't equal the target roll.
+				if (!hit)
+				{
+					cout << "Missed!\n";
+				}
+
+				switch (inputs)
+				{
+					case 'a':
+					case 'A':
+						// If the dice roll matches the target roll or is higher than it.
+						if (hit)
+						{
+							// Set the damage pre-roll
+							int dice = getAtts().strength + getWeapon() + getMasteries();
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 3) - dice;
+							if (debug) // For now output the damage.
+							{
+								cout << "\n";
+								cout << "Basic Attack (F): " << damage << "\n";
+							}
+						}
+						break;
+					case 's':
+					case 'S':
+						// If the dice roll matches the target roll or is higher than it and the player's mana is greater than or equal to one.
+						if (hit && getMana() >= 1)
+						{
+							// Set the damage pre-roll and since it is a higher damage attack then double the attack.
+							int dice = 2 * (getAtts().strength + getWeapon() + getMasteries());
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 3) - dice;
+							if (debug) // For now output the damage.
+							{
+								cout << "\n";
+								cout << "Frenzy Attack (F): " << damage << "\n";
+							}
+							// Since this is a special attack then remove some mana points.
+							subMana(1);
+						}
+						break;
+					case 'm':
+					case 'M':
+						// If the dice roll matches the target roll or is higher than it and the player's mana is greater than or equal to five.
+						if (hit && getMana() >= 5)
+						{
+							// Set the damage pre-roll and since this is a deadly attack
+							int dice = 100 * (getAtts().strength + getWeapon() + getMasteries());
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 6) - dice;
+							if (debug) // If debug then output the damage.
+							{
+								cout << "\n";
+								cout << "Deadly Strike Attack (F): " << damage << "\n";
+							}
+							subMana(5);
+							// Since this is a special attack then remove some mana points.
+						}
+						break;
+					default:
+						reroll = true; // If the input is not valid restart the loop.
+				}
+			}
+
+			if (damage > 0)
+			{
+				damage = monster1->mitigate(damage);
+			}
 		}
 };
 
@@ -2147,6 +2635,128 @@ class tinker : public character
 			setHealth(diceRoll(7, 6)); // Set the default hitpoints for the tinker.
 			setMaxMana(20);
 			setMana(20); // Set the default stamina for the tinker.
+
+			setMasteries(1); // Set the default fighter's skill level.
+
+			setArmor(LEATHER); // Set the default fighter's armor.
+
+			setWeapon(SWORD); // Set the default fighter's weapon.
+		}
+
+		// This is to attack the monster.
+		virtual void attack(monster* monster1)
+		{
+			char inputs; // The var for the menus.
+			bool reroll = true; // Check for the loop.
+			int damage = 0; // Damage that is being done.
+
+			// Start the loop.
+			while (reroll)
+			{
+				reroll = false; // End the loop.
+
+				cout << "[A]ttack";
+
+				if (getMana() >= 1)
+				{
+					cout << "\t[W]rench";
+				}
+				if (getMana() >= 5)
+				{
+					cout << "\n[E]nergy Pound";
+				}
+
+				// Get the input of what attack to use.
+				cin >> inputs;
+
+				// Set the target roll
+				int targetRoll = 10 + (getAtts().dexterity + getAtts().strength) - (monster1->getAtts().dexterity + monster1->getAtts().strength);
+
+				// Make the maximum of target roll to 17.
+				if (targetRoll > 17)
+				{
+					targetRoll = 17;
+				}
+				// Make the minimum of target roll to 3.
+				if (targetRoll < 3)
+				{
+					targetRoll = 3;
+				}
+
+				// Get if the dice roll is the same as the target roll.
+				bool hit = targetRoll >= diceRoll(1, 20);
+
+				cout << "\n";
+
+				// If the dice roll doesn't equal the target roll.
+				if (!hit)
+				{
+					cout << "Missed!\n";
+				}
+
+				switch (inputs)
+				{
+					case 'a':
+					case 'A':
+						// If the dice roll matches the target roll or is higher than it.
+						if (hit)
+						{
+							// Set the damage pre-roll
+							int dice = getAtts().strength + getWeapon() + getMasteries();
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 3) - dice;
+							if (debug) // For now output the damage.
+							{
+								cout << "\n";
+								cout << "Basic Attack (F): " << damage << "\n";
+							}
+						}
+						break;
+					case 'w':
+					case 'W':
+						// If the dice roll matches the target roll or is higher than it and the player's mana is greater than or equal to one.
+						if (hit && getMana() >= 1)
+						{
+							// Set the damage pre-roll and since it is a higher damage attack then double the attack.
+							int dice = 2 * (getAtts().strength + getWeapon() + getMasteries());
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 3) - dice;
+							if (debug) // For now output the damage.
+							{
+								cout << "\n";
+								cout << "Frenzy Attack (F): " << damage << "\n";
+							}
+							// Since this is a special attack then remove some mana points.
+							subMana(1);
+						}
+						break;
+					case 'e':
+					case 'E':
+						// If the dice roll matches the target roll or is higher than it and the player's mana is greater than or equal to five.
+						if (hit && getMana() >= 5)
+						{
+							// Set the damage pre-roll and since this is a deadly attack
+							int dice = 100 * (getAtts().strength + getWeapon() + getMasteries());
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 6) - dice;
+							if (debug) // If debug then output the damage.
+							{
+								cout << "\n";
+								cout << "Deadly Strike Attack (F): " << damage << "\n";
+							}
+							subMana(5);
+							// Since this is a special attack then remove some mana points.
+						}
+						break;
+					default:
+						reroll = true; // If the input is not valid restart the loop.
+				}
+			}
+
+			if (damage > 0)
+			{
+				damage = monster1->mitigate(damage);
+			}
 		}
 };
 
@@ -2163,6 +2773,128 @@ class mage : public character
 			setHealth(diceRoll(7, 6)); // Set the default hitpoints for the mage.
 			setMaxMana(50);
 			setMana(50); // Set the default mana for the mage.
+
+			setMasteries(1); // Set the default fighter's skill level.
+
+			setArmor(CLOTH); // Set the default fighter's armor.
+
+			setWeapon(STAFF); // Set the default fighter's weapon.
+		}
+
+		// This is to attack the monster.
+		virtual void attack(monster* monster1)
+		{
+			char inputs; // The var for the menus.
+			bool reroll = true; // Check for the loop.
+			int damage = 0; // Damage that is being done.
+
+			// Start the loop.
+			while (reroll)
+			{
+				reroll = false; // End the loop.
+
+				cout << "[S]pell";
+
+				if (getMana() >= 1)
+				{
+					cout << "\t[M]agic Frenzy";
+				}
+				if (getMana() >= 5)
+				{
+					cout << "\n[A]steriod Beam";
+				}
+
+				// Get the input of what attack to use.
+				cin >> inputs;
+
+				// Set the target roll
+				int targetRoll = 10 + (getAtts().dexterity + getAtts().strength) - (monster1->getAtts().dexterity + monster1->getAtts().strength);
+
+				// Make the maximum of target roll to 17.
+				if (targetRoll > 17)
+				{
+					targetRoll = 17;
+				}
+				// Make the minimum of target roll to 3.
+				if (targetRoll < 3)
+				{
+					targetRoll = 3;
+				}
+
+				// Get if the dice roll is the same as the target roll.
+				bool hit = targetRoll >= diceRoll(1, 20);
+
+				cout << "\n";
+
+				// If the dice roll doesn't equal the target roll.
+				if (!hit)
+				{
+					cout << "Missed!\n";
+				}
+
+				switch (inputs)
+				{
+					case 's':
+					case 'S':
+						// If the dice roll matches the target roll or is higher than it.
+						if (hit)
+						{
+							// Set the damage pre-roll
+							int dice = getAtts().strength + getWeapon() + getMasteries();
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 3) - dice;
+							if (debug) // For now output the damage.
+							{
+								cout << "\n";
+								cout << "Basic Attack (F): " << damage << "\n";
+							}
+						}
+						break;
+					case 'm':
+					case 'M':
+						// If the dice roll matches the target roll or is higher than it and the player's mana is greater than or equal to one.
+						if (hit && getMana() >= 1)
+						{
+							// Set the damage pre-roll and since it is a higher damage attack then double the attack.
+							int dice = 2 * (getAtts().strength + getWeapon() + getMasteries());
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 3) - dice;
+							if (debug) // For now output the damage.
+							{
+								cout << "\n";
+								cout << "Frenzy Attack (F): " << damage << "\n";
+							}
+							// Since this is a special attack then remove some mana points.
+							subMana(1);
+						}
+						break;
+					case 'a':
+					case 'A':
+						// If the dice roll matches the target roll or is higher than it and the player's mana is greater than or equal to five.
+						if (hit && getMana() >= 5)
+						{
+							// Set the damage pre-roll and since this is a deadly attack
+							int dice = 100 * (getAtts().strength + getWeapon() + getMasteries());
+							// Roll the damage from the pre-roll.
+							damage = diceRoll(dice, 6) - dice;
+							if (debug) // If debug then output the damage.
+							{
+								cout << "\n";
+								cout << "Deadly Strike Attack (F): " << damage << "\n";
+							}
+							subMana(5);
+							// Since this is a special attack then remove some mana points.
+						}
+						break;
+					default:
+						reroll = true; // If the input is not valid restart the loop.
+				}
+			}
+
+			if (damage > 0)
+			{
+				damage = monster1->mitigate(damage);
+			}
 		}
 };
 
