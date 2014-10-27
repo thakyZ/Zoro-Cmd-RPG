@@ -34,7 +34,7 @@ enum RACE { HUMAN, ELF, DARKELF, ANGEL, MONGREL, SHAMANI, NIBELUNG, UNDEAD };
 enum OCC { FIGHTER, CLERIC, THEIF, BARD, ROUGE, TINKER, MAGE };
 
 // Loations types.
-enum LOCATION { QUIT, TOWN, FOREST, VIEWSTATS, MONSTER, SAVE, ARMORSMITH, BUYARMOR, SELLARMOR, TAVERN, WEAPONSMITH, BUYWEAPON, SELLWEAPON, CHAPEL, BANK, ALCHIMEST };
+enum LOCATION { QUIT, TOWN, FOREST, VIEWSTATS, MONSTER, SAVE, ARMORSMITH, BUYARMOR, SELLARMOR, TAVERN, WEAPONSMITH, BUYWEAPON, SELLWEAPON, CHAPEL, BANK, PUTMONEY, TAKEMONEY, ALCHIMEST, BUYPOTION, SELLPOTION };
 
 // Armors types.
 enum ARMOR { LOINCLOTH, CLOTH, LEATHER, CHAIN, PLATE, ANCIENTPLATE, MAGICPLATE, ARCHANEPLATE, IMPERVIUMPLATE };
@@ -43,7 +43,7 @@ enum ARMOR { LOINCLOTH, CLOTH, LEATHER, CHAIN, PLATE, ANCIENTPLATE, MAGICPLATE, 
 enum WEAPON { FISTS, DAGGER, STAFF, SWORD, ANCIENTBLADE, MAGICBLADE, ARCHANEBLADE, VOIDEXCALIBUR };
 
 // Potions.
-enum Potions { HEALTH, MANA, EXP, CHEAT };
+enum POTION { NONE, HEALTH, MANA, EXP, CHEAT };
 
 // Stats Tree.
 struct ATTRIBUTES
@@ -581,6 +581,8 @@ class character
 		ARMOR armor; // The armor the character has.
 		int masteries; // The skills level of the player.
 		bool cheated; // If the player cheated.
+		POTION potion; // The potion the player currently has.
+		int bankCopper; // The copper the player has in the bank.
 
 	public:
 		// Constructors
@@ -592,6 +594,12 @@ class character
 
 			// Set the default location of the menu.
 			location = VIEWSTATS;
+
+			// Set the default potion var.
+			potion = NONE;
+
+			// Set the bank copper.
+			bankCopper = 0;
 		}
 
 		// Accessors
@@ -673,6 +681,18 @@ class character
 		bool getCheated()
 		{
 			return cheated;
+		}
+
+		// Get the player's current potion.
+		POTION getPotion()
+		{
+			return potion;
+		}
+
+		// Get the player's copper in the bank.
+		int getBankCopper()
+		{
+			return bankCopper;
 		}
 
 		// Set arguments.
@@ -764,9 +784,22 @@ class character
 			location = tmpLoc;
 		}
 
+		// Set if the player cheated.
 		void setCheat(bool tmpCheated)
 		{
 			cheated = tmpCheated;
+		}
+
+		// Set the player's current potion.
+		void setPotion(POTION tmpPotion)
+		{
+			potion = tmpPotion;
+		}
+
+		// Set the player's copper in the bank.
+		void setBankCopper(int tmpCopper)
+		{
+			bankCopper = tmpCopper;
 		}
 
 		// Computing Functions
@@ -824,6 +857,18 @@ class character
 		void addMana(int tmpMp)
 		{
 			mp = tmpMp;
+		}
+
+		// Add bank copper.
+		void addBankCopper(int tmpCopper)
+		{
+			bankCopper += tmpCopper;
+		}
+
+		// Subtract Copper.
+		void subBankCopper(int tmpCopper)
+		{
+			bankCopper -= tmpCopper;
 		}
 
 		// Attack functions
@@ -1371,6 +1416,7 @@ class character
 			setLoc(ARMORSMITH);
 		}
 
+		// Display weapon smith code.
 		void locWeaponSmith()
 		{
 			bool reroll = true; // Check the loop
@@ -1410,6 +1456,7 @@ class character
 			}
 		}
 
+		// Display buy the weapons code.
 		void locBuyWeapon()
 		{
 			bool reroll = true; // Check the loop
@@ -1560,6 +1607,7 @@ class character
 			setLoc(WEAPONSMITH);
 		}
 
+		// Display sell the weapons code.
 		void locSellWeapon()
 		{
 			bool reroll = true; // Check the loop
@@ -1591,6 +1639,297 @@ class character
 			}
 
 			setLoc(WEAPONSMITH);
+		}
+
+		// Display the tavern code.
+		void locTavern()
+		{
+			bool reroll = true; // Check the loop
+			char menuItem; // The var for the menus.
+
+			// Repeat the menu
+			while (reroll)
+			{
+				// End the reroll.
+				reroll = false;
+
+				cout << "There is nothing to see here...\n";
+				cout << "[G]o back to town";
+
+				cin >> menuItem;
+
+				switch (menuItem)
+				{
+					case 'g':
+					case 'G':
+						setLoc(TOWN);
+						break;
+					default:
+						cout << "please enter a correct input.";
+						reroll = true;
+						break;
+				}
+			}
+		}
+
+		// Display the chapel code.
+		void locChapel()
+		{
+			bool reroll = true; // Check the loop
+			char menuItem; // The var for the menus.
+
+			// Repeat the menu
+			while (reroll)
+			{
+				// End the reroll.
+				reroll = false;
+
+				cout << "There is nothing to see here...\n";
+				cout << "[G]o back to town";
+
+				cin >> menuItem;
+
+				switch (menuItem)
+				{
+					case 'g':
+					case 'G':
+						setLoc(TOWN);
+						break;
+					default:
+						cout << "please enter a correct input.";
+						reroll = true;
+						break;
+				}
+			}
+		}
+
+		// Display the bank code.
+		void locBank()
+		{
+			bool reroll = true; // Check the loop
+			char menuItem; // The var for the menus.
+
+			// Repeat the menu
+			while (reroll)
+			{
+				// End the reroll.
+				reroll = false;
+
+				cout << "There is nothing to see here...\n";
+				cout << "[1] Deposit Money\t[3] Go back to town\n";
+				cout << "[2] Withdraw Money\n";
+
+				cin >> menuItem;
+
+				switch (menuItem)
+				{
+					case '1':
+						setLoc(PUTMONEY);
+						break;
+					case '2':
+						setLoc(TAKEMONEY);
+					default:
+					case '3':
+						setLoc(TOWN);
+						break;
+				}
+			}
+		}
+
+		// Display the withdraw money code.
+		void locWithdrawMoney()
+		{
+			int tmpCopper;
+
+			cout << "\n";
+			cout << "The banker says, \"How much money do you want to withdraw?\"\n";
+			cin >> tmpCopper;
+
+			addBankCopper(tmpCopper);
+
+			setLoc(BANK);
+		}
+
+		// Display the deposit money code.
+		void locDepositMoney()
+		{
+			int tmpCopper;
+
+			cout << "\n";
+			cout << "The banker says, \"How much money do you want to desposit?\"\n";
+			cin >> tmpCopper;
+
+			subBankCopper(tmpCopper);
+
+			setLoc(BANK);
+		}
+
+		// Display the alchimest code.
+		void locAlchimest()
+		{
+			bool reroll = true; // Check the loop
+			char menuItem; // The var for the menus.
+
+			// Repeat the menu
+			while (reroll)
+			{
+				// End the reroll.
+				reroll = false;
+
+				cout << "There is nothing to see here...\n";
+				cout << "[1] Buy potions\t[3] Go back to torest\n";
+				cout << "[2] Sell potions\n";
+
+				cin >> menuItem;
+
+				switch (menuItem)
+				{
+					case '1':
+						setLoc(BUYPOTION);
+						break;
+					case '2':
+						setLoc(SELLPOTION);
+						break;
+					default:
+					case '3':
+						setLoc(FOREST);
+						break;
+				}
+			}
+		}
+
+		// Display buy a potion code.
+		void locBuyPotion()
+		{
+			bool reroll = true; // Check the loop
+			int menuItem; // The var for the menus.
+			bool nosale = false;
+
+			// Repeat the menu
+			while (reroll)
+			{
+				// End the reroll.
+				reroll = false;
+
+				cout << "\n";
+				cout << "The room smells of brews, there are potions everywhere. Which do you wish to buy?\n";
+
+				cout << "\n";
+
+				cout << "[1] Health Potion\t100 copper\n";
+				cout << "[2] Mana Potion\t200 copper\n";
+				cout << "[3] Exp Potion\t400 copper\n";
+				cout << "[4] Back to Shop\n";
+
+				cin >> menuItem;
+
+				cout << "\n";
+
+				switch (menuItem)
+				{
+					case 1:
+						if (copper >= 100)
+						{
+							cout << "You buy the health potion for 100 copper\n";
+
+							if (getPotion() != NONE)
+							{
+								cout << "You recive " << pawnItem(getPotion(), 1) << " copper, for selling your old potion.\n";
+							}
+
+							subCopper(100);
+							setPotion(HEALTH);
+						}
+						else
+						{
+							nosale = true;
+						}
+						break;
+					case 2:
+						if (copper >= 200)
+						{
+							cout << "You buy the mana potion for 200 copper\n";
+
+							if (getPotion() != NONE)
+							{
+								cout << "You recive " << pawnItem(getPotion(), 1) << " copper, for selling your old potion.\n";
+							}
+
+							subCopper(100);
+							setPotion(MANA);
+						}
+						else
+						{
+							nosale = true;
+						}
+						break;
+					case 3:
+						if (copper >= 400)
+						{
+							cout << "You buy the health potion for 400 copper\n";
+
+							if (getPotion() != NONE)
+							{
+								cout << "You recive " << pawnItem(getPotion(), 1) << " copper, for selling your old potion.\n";
+							}
+
+							subCopper(100);
+							setPotion(EXP);
+						}
+						else
+						{
+							nosale = true;
+						}
+						break;
+					case 4:
+						setLoc(ALCHIMEST);
+						break;
+					default:
+						break;
+				}
+			}
+
+			if (nosale)
+			{
+				cout << "\n";
+				cout << "You cannot afford this...";
+			}
+
+			setLoc(ALCHIMEST);
+		}
+
+		// Display sell a potion code.
+		void locSellPotion()
+		{
+			bool reroll = true; // Check the loop
+			char menuItem; // The var for the menus.
+
+			// Repeat the menu
+			while (reroll)
+			{
+				// End the reroll.
+				reroll = false;
+
+				cout << "\n";
+				cout << "The armor smith looks over your potion, \"I'll give ya " << pawnItem(getWeapon(), 0) << " copper for it! Would you like to buy it?\" [Y]es [N]o\n";
+
+				cin >> menuItem;
+
+				switch (menuItem)
+				{
+					case 'y':
+					case 'Y':
+						cout << "You sell your potion for " << pawnItem(getWeapon(), 1) << "copper\n";
+						setWeapon(FISTS);
+						break;
+					case 'n':
+					case 'N':
+					default:
+						break;
+				}
+			}
+
+			setLoc(ALCHIMEST);
 		}
 };
 
@@ -1686,12 +2025,10 @@ class fighter : public character
 						break;
 					case 'f':
 					case 'F':
-						// If the dice roll matches the target roll or is higher than it
-						// and the player's mana is greater than or equal to one.
+						// If the dice roll matches the target roll or is higher than it and the player's mana is greater than or equal to one.
 						if (hit && getMana() >= 1)
 						{
-							// Set the damage pre-roll and since it is a higher damage attack
-							// then double the attack.
+							// Set the damage pre-roll and since it is a higher damage attack then double the attack.
 							int dice = 2 * (getAtts().strength + getWeapon() + getMasteries());
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 3) - dice;
@@ -1706,8 +2043,7 @@ class fighter : public character
 						break;
 					case 'd':
 					case 'D':
-						// If the dice roll matches the target roll or is higher than it
-						// and the player's mana is greater than or equal to five.
+						// If the dice roll matches the target roll or is higher than it and the player's mana is greater than or equal to five.
 						if (hit && getMana() >= 5)
 						{
 							// Set the damage pre-roll and since this is a deadly attack
@@ -1851,6 +2187,8 @@ class saveFileData
 		ARMOR armor; // The armor the character has.
 		int masteries; // The skills level of the player.
 		bool cheated; // If the player has cheated.
+		POTION potion; // The current potion the player has.
+		int bankCopper; // The amount of copper the player has in his bank.
 
 		saveFileData()
 		{
@@ -1875,7 +2213,9 @@ class saveFileData
 			weapon = tmpChar->getWeapon(); // Set the weapon.
 			armor = tmpChar->getArmor(); // Set the armor.
 			masteries = tmpChar->getMasteries(); // Set the masteries.
-			cheated = tmpChar->getCheated();
+			cheated = tmpChar->getCheated(); // Set if the player cheated.
+			potion = tmpChar->getPotion(); // Set the player's current potion.
+			bankCopper = tmpChar->getBankCopper(); // Set the player's money in the bank.
 		}
 };
 
@@ -1902,25 +2242,25 @@ void debugSave(saveFileData tmpSaveFile)
 	switch (tmpSaveFile.charClass)
 	{
 		case FIGHTER:
-			cout << "Class:            Fighter\n";
+			cout << "Class:            FIGHTER\n";
 			break;
 		case CLERIC:
-			cout << "Class:            Cleric\n";
+			cout << "Class:            CLERIC\n";
 			break;
 		case ROUGE:
-			cout << "Class:            Rouge\n";
+			cout << "Class:            ROUGE\n";
 			break;
 		case BARD:
-			cout << "Class:            Bard\n";
+			cout << "Class:            BARD\n";
 			break;
 		case THEIF:
-			cout << "Class:            Theif\n";
+			cout << "Class:            THEIF\n";
 			break;
 		case TINKER:
-			cout << "Class:            Tinker\n";
+			cout << "Class:            TINKER\n";
 			break;
 		case MAGE:
-			cout << "Class:            Mage\n";
+			cout << "Class:            MAGE\n";
 			break;
 		default:
 			cout << "Class:            BROKEN\n";
@@ -1930,28 +2270,28 @@ void debugSave(saveFileData tmpSaveFile)
 	switch (tmpSaveFile.charRace)
 	{
 		case HUMAN:
-			cout << "Race:             Human\n";
+			cout << "Race:             HUMAN\n";
 			break;
 		case ELF:
-			cout << "Race:             Elf\n";
+			cout << "Race:             ELF\n";
 			break;
 		case DARKELF:
-			cout << "Race:             Dark Elf\n";
+			cout << "Race:             DARKELF\n";
 			break;
 		case ANGEL:
-			cout << "Race:             Angel\n";
+			cout << "Race:             ANGEL\n";
 			break;
 		case MONGREL:
-			cout << "Race:             Mongrel\n";
+			cout << "Race:             MONGREL\n";
 			break;
 		case SHAMANI:
-			cout << "Race:             Shamani\n";
+			cout << "Race:             SHAMANI\n";
 			break;
 		case NIBELUNG:
-			cout << "Race:             Nibelung\n";
+			cout << "Race:             NIBELUNG\n";
 			break;
 		case UNDEAD:
-			cout << "Race:             Undead\n";
+			cout << "Race:             UNDEAD\n";
 			break;
 		default:
 			cout << "Race:             BROKEN\n";
@@ -1966,46 +2306,46 @@ void debugSave(saveFileData tmpSaveFile)
 	switch (tmpSaveFile.location)
 	{
 		case QUIT:
-			cout << "Location:         Quit\n";
+			cout << "Location:         QUIT\n";
 			break;
 		case VIEWSTATS:
-			cout << "Location:         View Stats\n";
+			cout << "Location:         VIEWSTATS\n";
 			break;
 		case TOWN:
-			cout << "Location:         Town\n";
+			cout << "Location:         TOWN\n";
 			break;
 		case FOREST:
-			cout << "Location:         Forest\n";
+			cout << "Location:         FOREST\n";
 			break;
 		case MONSTER:
-			cout << "Location:         Monster\n";
+			cout << "Location:         MONSTER\n";
 			break;
 		case SAVE:
-			cout << "Location:         Save\n";
+			cout << "Location:         SAVE\n";
 			break;
 		case ARMORSMITH:
-			cout << "Location:         Armor Smith\n";
+			cout << "Location:         ARMORSMITH\n";
 			break;
 		case BUYARMOR:
-			cout << "Location:         Buy Armor\n";
+			cout << "Location:         BUYARMOR\n";
 			break;
 		case SELLARMOR:
-			cout << "Location:         Sell Armor\n";
+			cout << "Location:         SELLARMOR\n";
 			break;
 		case TAVERN:
-			cout << "Location:         Tavern\n";
+			cout << "Location:         TAVERN\n";
 			break;
 		case WEAPONSMITH:
-			cout << "Location:         Weapon Smith\n";
+			cout << "Location:         WEAPONSMITH\n";
 			break;
 		case CHAPEL:
-			cout << "Location:         Chapel\n";
+			cout << "Location:         CHAPEL\n";
 			break;
 		case BANK:
-			cout << "Location:         Bank\n";
+			cout << "Location:         BANK\n";
 			break;
 		case ALCHIMEST:
-			cout << "Location:         Alchimest\n";
+			cout << "Location:         ALCHIMEST\n";
 			break;
 		default:
 			cout << "Location:         BROKEN\n";
@@ -2014,31 +2354,31 @@ void debugSave(saveFileData tmpSaveFile)
 	switch (tmpSaveFile.weapon)
 	{
 		case FISTS:
-			cout << "Weapon:           Fists\n";
+			cout << "Weapon:           FISTS\n";
 			break;
 		case DAGGER:
-			cout << "Weapon:           Dagger\n";
+			cout << "Weapon:           DAGGER\n";
 			break;
 		case SWORD:
-			cout << "Weapon:           Sword\n";
+			cout << "Weapon:           SWORD\n";
 			break;
 		case STAFF:
-			cout << "Weapon:           Staff\n";
+			cout << "Weapon:           STAFF\n";
 			break;
 		case ANCIENTBLADE:
-			cout << "Weapon:           Ancient Blade\n";
+			cout << "Weapon:           ANCIENTBLADE\n";
 			break;
 		case MAGICBLADE:
-			cout << "Weapon:           Magic blade\n";
+			cout << "Weapon:           MAGICBLADE\n";
 			break;
 		case ARCHANEBLADE:
-			cout << "Weapon:           Archane blade\n";
+			cout << "Weapon:           ARCHANEBLADE\n";
 			break;
 		case VOIDEXCALIBUR:
-			cout << "Weapon:           Void Excalibur\n";
+			cout << "Weapon:           VOIDEXCALIBUR\n";
 			break;
 		default:
-			cout << "Weapon:           Broken\n";
+			cout << "Weapon:           BROKEN\n";
 	}
 
 	cout << "Weapon set name:  " << displayWeaponName(tmpSaveFile.weapon, tmpSaveFile.charClass) << "\n";
@@ -2046,34 +2386,34 @@ void debugSave(saveFileData tmpSaveFile)
 	switch (tmpSaveFile.armor)
 	{
 		case LOINCLOTH:
-			cout << "Armor:            Loincloth\n";
+			cout << "Armor:            LOINCLOTH\n";
 			break;
 		case CLOTH:
-			cout << "Armor:            Cloth Armor\n";
+			cout << "Armor:            CLOTH\n";
 			break;
 		case LEATHER:
-			cout << "Armor:            Leather Armor\n";
+			cout << "Armor:            LEATHER\n";
 			break;
 		case CHAIN:
-			cout << "Armor:            Chain Armor\n";
+			cout << "Armor:            CHAIN\n";
 			break;
 		case PLATE:
-			cout << "Armor:            Plate Armor\n";
+			cout << "Armor:            PLATE\n";
 			break;
 		case ANCIENTPLATE:
-			cout << "Armor:            Ancient Plate\n";
+			cout << "Armor:            ANCIENTPLATE\n";
 			break;
 		case MAGICPLATE:
-			cout << "Armor:            Magic Plate\n";
+			cout << "Armor:            MAGICPLATE\n";
 			break;
 		case ARCHANEPLATE:
-			cout << "Armor:            Archane Plate\n";
+			cout << "Armor:            ARCHANEPLATE\n";
 			break;
 		case IMPERVIUMPLATE:
-			cout << "Armor:            Impervium Plate\n";
+			cout << "Armor:            IMPERVIUMPLATE\n";
 			break;
 		default:
-			cout << "Armor:            Broken\n";
+			cout << "Armor:            BROKEN\n";
 	}
 
 	cout << "Armor set name:   " << displayArmorName(tmpSaveFile.armor, tmpSaveFile.charClass) << "\n";
@@ -2083,10 +2423,31 @@ void debugSave(saveFileData tmpSaveFile)
 	switch (tmpSaveFile.cheated)
 	{
 		case true:
-			cout << "Cheated:         True\n";
+			cout << "Cheated:          TRUE\n";
 			break;
 		case false:
-			cout << "Cheated:         False\n";
+			cout << "Cheated:          FALSE\n";
+			break;
+	}
+
+	cout << "Bank Copper:      " << tmpSaveFile.bankCopper << "\n";
+
+	switch (tmpSaveFile.potion)
+	{
+		case NONE:
+			cout << "Potion:           NONE\n";
+			break;
+		case HEALTH:
+			cout << "Potion:           HEALTH\n";
+			break;
+		case MANA:
+			cout << "Potion:           MANA\n";
+			break;
+		case EXP:
+			cout << "Potion:           EXP\n";
+			break;
+		case CHEAT:
+			cout << "Potion:           CHEAT\n";
 			break;
 	}
 
@@ -2116,25 +2477,32 @@ void writeToFile(character *tmpChar)
 	}
 
 	// Open the save file.
-	myfile.open("./save1.sav",'w');
+	myfile.open("./save1.sav", ios::binary);
 
-	// Write to the save file.
-	myfile.write((char *)&playerSave, sizeof(playerSave));
-
-	// If debug is enabled.
-	if (debug)
+	if (myfile.is_open())
 	{
-		debugSave(playerSave);
+		// Write to the save file.
+		myfile.write((char *)&playerSave, sizeof(playerSave));
+
+		// If debug is enabled.
+		if (debug)
+		{
+			debugSave(playerSave);
+		}
+
+		cout << "File saved.\n";
+
+		// Close the file after we are done with it.
+		myfile.close();
 	}
-
-	// Close the file after we are done with it.
-	myfile.close();
-
-	cout << "File saved.\n";
+	else
+	{
+		cout << "Error saving file.\n";
+	}
 }
 
 // To load a game.
-character getFromFile()
+character *getFromFile()
 {
 	// The character var for the loaded file.
 	saveFileData playerSave;
@@ -2143,68 +2511,83 @@ character getFromFile()
 	character tmpChar;
 
 	// Load the save file.
-	ifstream myfile("./save1.sav", ios::binary);
+	ifstream myfile;
 
-	// Read the save file.
-	myfile.read((char *)&playerSave, sizeof(playerSave));
+	myfile.open("./save1.sav", ios::binary);
 
-	LOCATION location = playerSave.location;
-	int strength = playerSave.strength; // The strength stat of the class.
-	int faith = playerSave.faith; // The faith stat of the class.
-	int dexterity = playerSave.dexterity; // The dexterity stat of the class.
-	int insperation =  playerSave.insperation; // The insperation stat of the class.
-	int cleverness = playerSave.cleverness; // The cleverness stat of the class.
-	int focus = playerSave.focus; // The focus stat of the class.
-	int copper = playerSave.copper; // The amount of money the player has.
-	OCC charClass = playerSave.charClass; // The characters class.
-	RACE charRace = playerSave.charRace; // The characters race.
-	int hp = playerSave.hp; // The hitpoints for the character.
-	int hpMax = playerSave.hpMax; // The max hitpoints for the character.
-	int mp = playerSave.mp; // The mana or stamina for the character.
-	int mpMax = playerSave.mpMax; // The max mana or stamina for the character.
-	WEAPON weapon = playerSave.weapon; // The weapon the character has.
-	ARMOR armor = playerSave.armor; // The armor the character has.
-	int masteries = playerSave.masteries; // The skills level of the player.
-	bool cheated = playerSave.cheated;
-
-	tmpChar.setLoc(location);
-	tmpChar.setAttsTest(strength, cleverness, dexterity, faith, focus, insperation);
-	tmpChar.setClass(charClass);
-	tmpChar.setCopper(copper);
-	tmpChar.setHealth(hp);
-	tmpChar.setMana(mp);
-	tmpChar.setMasteries(masteries);
-	tmpChar.setMaxHealth(hpMax);
-	tmpChar.setMaxMana(mpMax);
-	tmpChar.setRace(charRace);
-
-	// If the player has cheated.
-	if (cheated && !debug)
+	if (myfile.is_open())
 	{
-		cout << "Player has cheated, setting copper to default!\n";
-		// Reset the player's copper.
-		tmpChar.setCopper(100);
-		// Set the cheat variable to false;
-		tmpChar.setCheat(false);
+		// Read the save file.
+		myfile.read((char *)&playerSave, sizeof(playerSave));
+
+		LOCATION location = playerSave.location;
+		int strength = playerSave.strength; // The strength stat of the class.
+		int faith = playerSave.faith; // The faith stat of the class.
+		int dexterity = playerSave.dexterity; // The dexterity stat of the class.
+		int insperation =  playerSave.insperation; // The insperation stat of the class.
+		int cleverness = playerSave.cleverness; // The cleverness stat of the class.
+		int focus = playerSave.focus; // The focus stat of the class.
+		int copper = playerSave.copper; // The amount of money the player has.
+		OCC charClass = playerSave.charClass; // The characters class.
+		RACE charRace = playerSave.charRace; // The characters race.
+		int hp = playerSave.hp; // The hitpoints for the character.
+		int hpMax = playerSave.hpMax; // The max hitpoints for the character.
+		int mp = playerSave.mp; // The mana or stamina for the character.
+		int mpMax = playerSave.mpMax; // The max mana or stamina for the character.
+		WEAPON weapon = playerSave.weapon; // The weapon the character has.
+		ARMOR armor = playerSave.armor; // The armor the character has.
+		int masteries = playerSave.masteries; // The skills level of the player.
+		bool cheated = playerSave.cheated; // The fact if the player cheated.
+		POTION potion = playerSave.potion; // The current potion of the player.
+		int bankCopper = playerSave.bankCopper; // The amount of copper the player has in the bank.
+
+		tmpChar.setLoc(location);
+		tmpChar.setAttsTest(strength, cleverness, dexterity, faith, focus, insperation);
+		tmpChar.setClass(charClass);
+		tmpChar.setCopper(copper);
+		tmpChar.setHealth(hp);
+		tmpChar.setMana(mp);
+		tmpChar.setMasteries(masteries);
+		tmpChar.setMaxHealth(hpMax);
+		tmpChar.setMaxMana(mpMax);
+		tmpChar.setRace(charRace);
+		tmpChar.setPotion(potion);
+		tmpChar.setBankCopper(bankCopper);
+
+		// If the player has cheated.
+		if (cheated)
+		{
+			cout << "Player has cheated, setting copper to default!\n";
+			// Reset the player's copper.
+			tmpChar.setCopper(100);
+			// Set the cheat variable to false;
+			tmpChar.setCheat(false);
+		}
+		else if (cheated && debug)
+		{
+			tmpChar.setCheat(false);
+		}
+
+		// Debug the class.
+		if (debug)
+		{
+			debugSave(playerSave);
+		}
+
+		// Close the file when we are done with it.
+		myfile.close();
+
+		cout << "Save loaded.\n";
+
+		// Return the character to return the char.
+		return &tmpChar;
 	}
-	else if (cheated && debug)
+	else
 	{
-		tmpChar.setCheat(false);
+		cout << "Error loading save.\n";
+
+		return NULL;
 	}
-
-	// Debug the class.
-	if (debug)
-	{
-		debugSave(playerSave);
-	}
-
-	// Close the file when we are done with it.
-	myfile.close();
-
-	cout << "Save loaded.\n";
-
-	// Return the character to return the char.
-	return tmpChar;
 }
 
 // Startup
@@ -2220,6 +2603,7 @@ int _tmain (int argc, _TCHAR* argv[])
 	bool retry = true; // The fix for the race chooser.
 	bool iQuit = false; // To tell if the player want to quit the game.
 	bool newGame = true; // If the player wants a new game.
+	bool rerollNewGame = true; // If the player save file doesn't load.
 
 	// Set the character to pointer var.
 	character *player1 = NULL;
@@ -2227,7 +2611,9 @@ int _tmain (int argc, _TCHAR* argv[])
 	// Clear the console.
 	system("cls");
 
-	cout << "Welcome to Zoro\n";
+	cout << "Welcome to the land of Zoro!\n";
+	cout << "Created by Nire Inicana";
+	cout << "\n\n";
 
 	// Ask if the player wants a new game or to load a game...
 	cout << "[N]ew game?\t\t[L]oad Game?\n";
@@ -2253,8 +2639,8 @@ int _tmain (int argc, _TCHAR* argv[])
 				newGame = false; // Don't create a new game and instead load game.
 				break;
 			default:
-				reroll = true; // The player didn't type in a correct choice so restart
-				break;		   // the loop.
+				reroll = true; // The player didn't type in a correct choice so restart the loop.
+				break;
 		}
 
 		if (inputs == ('1', '2', '3'))
@@ -2269,268 +2655,287 @@ int _tmain (int argc, _TCHAR* argv[])
 		}
 	}
 
-	// Start a new game.
-	if (newGame == true)
+	// Start the loop.
+	while (rerollNewGame)
 	{
-		// Reset the loop varible.
-		reroll = true;
+		// End the loop.
+		rerollNewGame = false;
 
-		// Check for the reroll
-		while (reroll == true)
+		// Start a new game.
+		if (newGame == true)
 		{
-			// End the reroll;
-			reroll = false;
+			// Reset the loop varible.
+			reroll = true;
 
-			cout << "\n";
-			cout << "Please Select a Race:\n";
-			// Ask the player to choose a race.
-			cout << "[H]uman [E]lf [D]ark elf [A]ngel [M]ongrel [S]hamani [N]ibelung [U]ndead\n";
-
-			retry = true;
-
-			// Check for the retry
-			while (retry == true)
+			// Check for the reroll
+			while (reroll == true)
 			{
-				// The input for the chosen race.
-				cin >> inputs;
-
-				// End the retry.
-				retry = false;
+				// End the reroll;
+				reroll = false;
 
 				cout << "\n";
+				cout << "Please Select a Race:\n";
+				// Ask the player to choose a race.
+				cout << "[H]uman [E]lf [D]ark elf [A]ngel [M]ongrel [S]hamani [N]ibelung [U]ndead\n";
 
-				// Choose from the input.
-				switch (inputs)
+				retry = true;
+
+				// Check for the retry
+				while (retry == true)
 				{
-					case 'h':
-					case 'H':
-						cout << "Human!\n";
-						inputRace = HUMAN;
-						tmpStats.strength = diceRoll(3, 6);
-						tmpStats.faith = diceRoll(3, 6);
-						tmpStats.dexterity = diceRoll(3, 6);
-						tmpStats.insperation = diceRoll(3, 6);
-						tmpStats.cleverness = diceRoll(3, 6);
-						tmpStats.focus = diceRoll(3, 6);
-						retry = false; // End the retry.
-						break;
-					case 'e':
-					case 'E':
-						cout << "Elf!\n";
-						inputRace = ELF;
-						tmpStats.strength = diceRoll(3, 6);
-						tmpStats.faith = diceRoll(3, 6);
-						tmpStats.dexterity = diceRoll(3, 6);
-						tmpStats.insperation = diceRoll(3, 6);
-						tmpStats.cleverness = diceRoll(2, 6);
-						tmpStats.focus = diceRoll(4, 6);
-						break;
-					case 'd':
-					case 'D':
-						cout << "Dark Elf!\n";
-						inputRace = DARKELF;
-						tmpStats.strength = diceRoll(3, 6);
-						tmpStats.faith = diceRoll(3, 6);
-						tmpStats.dexterity = diceRoll(4, 6);
-						tmpStats.insperation = diceRoll(2, 6);
-						tmpStats.cleverness = diceRoll(3, 6);
-						tmpStats.focus = diceRoll(3, 6);
-						break;
-					case 'a':
-					case 'A':
-						cout << "Angel!\n";
-						inputRace = ANGEL;
-						tmpStats.strength = diceRoll(3, 6);
-						tmpStats.faith = diceRoll(4, 6);
-						tmpStats.dexterity = diceRoll(3, 6);
-						tmpStats.insperation = diceRoll(3, 6);
-						tmpStats.cleverness = diceRoll(3, 6);
-						tmpStats.focus = diceRoll(3, 6);
-						break;
-					case 'm':
-					case 'M':
-						cout << "Mongrel!\n";
-						inputRace = MONGREL;
-						tmpStats.strength = diceRoll(4, 6);
-						tmpStats.faith = diceRoll(3, 6);
-						tmpStats.dexterity = diceRoll(3, 6);
-						tmpStats.insperation = diceRoll(3, 6);
-						tmpStats.cleverness = diceRoll(3, 6);
-						tmpStats.focus = diceRoll(2, 6);
-						break;
-					case 's':
-					case 'S':
-						cout << "Shamani!\n";
-						inputRace = SHAMANI;
-						tmpStats.strength = diceRoll(2, 6);
-						tmpStats.faith = diceRoll(4, 6);
-						tmpStats.dexterity = diceRoll(3, 6);
-						tmpStats.insperation = diceRoll(3, 6);
-						tmpStats.cleverness = diceRoll(3, 6);
-						tmpStats.focus = diceRoll(3, 6);
-						break;
-					case 'n':
-					case 'N':
-						cout << "Nibelung!\n";
-						inputRace = NIBELUNG;
-						tmpStats.strength = diceRoll(3, 6);
-						tmpStats.faith = diceRoll(3, 6);
-						tmpStats.dexterity = diceRoll(2, 6);
-						tmpStats.insperation = diceRoll(3, 6);
-						tmpStats.cleverness = diceRoll(4, 6);
-						tmpStats.focus = diceRoll(3, 6);
-						break;
-					case 'u':
-					case 'U':
-						cout << "Undead!\n";
-						inputRace = UNDEAD;
-						tmpStats.strength = diceRoll(3, 6);
-						tmpStats.faith = diceRoll(3, 6);
-						tmpStats.dexterity = diceRoll(3, 6);
-						tmpStats.insperation = diceRoll(3, 6);
-						tmpStats.cleverness = diceRoll(2, 6);
-						tmpStats.focus = diceRoll(3, 6);
-						break;
-					default:
-						cout << "Please input a vaild race.\n";
-						retry = true; // Set the retry to default because the player didn't
-						break;				// input a correct input.
+					// The input for the chosen race.
+					cin >> inputs;
+
+					// End the retry.
+					retry = false;
+
+					cout << "\n";
+
+					// Choose from the input.
+					switch (inputs)
+					{
+						case 'h':
+						case 'H':
+							cout << "Human!\n";
+							inputRace = HUMAN;
+							tmpStats.strength = diceRoll(3, 6);
+							tmpStats.faith = diceRoll(3, 6);
+							tmpStats.dexterity = diceRoll(3, 6);
+							tmpStats.insperation = diceRoll(3, 6);
+							tmpStats.cleverness = diceRoll(3, 6);
+							tmpStats.focus = diceRoll(3, 6);
+							retry = false; // End the retry.
+							break;
+						case 'e':
+						case 'E':
+							cout << "Elf!\n";
+							inputRace = ELF;
+							tmpStats.strength = diceRoll(3, 6);
+							tmpStats.faith = diceRoll(3, 6);
+							tmpStats.dexterity = diceRoll(3, 6);
+							tmpStats.insperation = diceRoll(3, 6);
+							tmpStats.cleverness = diceRoll(2, 6);
+							tmpStats.focus = diceRoll(4, 6);
+							break;
+						case 'd':
+						case 'D':
+							cout << "Dark Elf!\n";
+							inputRace = DARKELF;
+							tmpStats.strength = diceRoll(3, 6);
+							tmpStats.faith = diceRoll(3, 6);
+							tmpStats.dexterity = diceRoll(4, 6);
+							tmpStats.insperation = diceRoll(2, 6);
+							tmpStats.cleverness = diceRoll(3, 6);
+							tmpStats.focus = diceRoll(3, 6);
+							break;
+						case 'a':
+						case 'A':
+							cout << "Angel!\n";
+							inputRace = ANGEL;
+							tmpStats.strength = diceRoll(3, 6);
+							tmpStats.faith = diceRoll(4, 6);
+							tmpStats.dexterity = diceRoll(3, 6);
+							tmpStats.insperation = diceRoll(3, 6);
+							tmpStats.cleverness = diceRoll(3, 6);
+							tmpStats.focus = diceRoll(3, 6);
+							break;
+						case 'm':
+						case 'M':
+							cout << "Mongrel!\n";
+							inputRace = MONGREL;
+							tmpStats.strength = diceRoll(4, 6);
+							tmpStats.faith = diceRoll(3, 6);
+							tmpStats.dexterity = diceRoll(3, 6);
+							tmpStats.insperation = diceRoll(3, 6);
+							tmpStats.cleverness = diceRoll(3, 6);
+							tmpStats.focus = diceRoll(2, 6);
+							break;
+						case 's':
+						case 'S':
+							cout << "Shamani!\n";
+							inputRace = SHAMANI;
+							tmpStats.strength = diceRoll(2, 6);
+							tmpStats.faith = diceRoll(4, 6);
+							tmpStats.dexterity = diceRoll(3, 6);
+							tmpStats.insperation = diceRoll(3, 6);
+							tmpStats.cleverness = diceRoll(3, 6);
+							tmpStats.focus = diceRoll(3, 6);
+							break;
+						case 'n':
+						case 'N':
+							cout << "Nibelung!\n";
+							inputRace = NIBELUNG;
+							tmpStats.strength = diceRoll(3, 6);
+							tmpStats.faith = diceRoll(3, 6);
+							tmpStats.dexterity = diceRoll(2, 6);
+							tmpStats.insperation = diceRoll(3, 6);
+							tmpStats.cleverness = diceRoll(4, 6);
+							tmpStats.focus = diceRoll(3, 6);
+							break;
+						case 'u':
+						case 'U':
+							cout << "Undead!\n";
+							inputRace = UNDEAD;
+							tmpStats.strength = diceRoll(3, 6);
+							tmpStats.faith = diceRoll(3, 6);
+							tmpStats.dexterity = diceRoll(3, 6);
+							tmpStats.insperation = diceRoll(3, 6);
+							tmpStats.cleverness = diceRoll(2, 6);
+							tmpStats.focus = diceRoll(3, 6);
+							break;
+						default:
+							cout << "Please input a vaild race.\n";
+							retry = true; // Set the retry to default because the player didn't input a correct input.
+							break;
+					}
+				}
+
+				// Display the stats
+				displayStats(tmpStats);
+
+				// Ask the player if they want to reroll.
+				cout << "Reroll? [Y]es [N]o\n";
+
+				// Input for the reroll.
+				cin >> inputs;
+
+				// End the reroll
+				reroll = false;
+
+				if (inputs == 'y' || inputs == 'Y')
+				{
+					cout << inputs; //Get the input of the player.
+
+					reroll = true; // Reset the reroll to default.
 				}
 			}
 
-			// Display the stats
-			displayStats(tmpStats);
+			// Reset the reroll to default for the second reroll.
+			reroll = true;
 
-			// Ask the player if they want to reroll.
-			cout << "Reroll? [Y]es [N]o\n";
-
-			// Input for the reroll.
-			cin >> inputs;
-
-			// End the reroll
-			reroll = false;
-
-			if (inputs == 'y' || inputs == 'Y')
+			while (reroll) // While reroll == true
 			{
-				cout << inputs; //Get the input of the player.
+				// End the reroll for now
+				reroll = false;
 
-				reroll = true; // Reset the reroll to default.
+				cout << "\n";
+				cout << "Please select a class\n\n";
+				// Ask the player what class they want their character to be.
+				cout << "[F]ighter [C]leric [T]heif [B]ard [R]ouge [M]age\n\n";
+
+				// Check for inputs of which class.
+				cin >> inputs;
+
+				cout << "\n";
+
+				// Check for which class.
+				switch (inputs)
+				{
+					case 'f':
+					case 'F':
+						inputClass = FIGHTER; // The player chose the fighter class.
+						cout << "Fighter!\n";
+						player1 = new fighter; // Create a new fighter class.
+						break;
+					case 'c':
+					case 'C':
+						inputClass = CLERIC; // The player chose the cleric class.
+						cout << "Cleric!\n";
+						player1 = new cleric; // Create a new cleric class
+						break;
+					case 't':
+					case 'T':
+						inputClass = THEIF; // The player chose the theif class.
+						cout << "Theif!\n";
+						player1 = new theif; // Create a new rouge class.
+						break;
+					case 'b':
+					case 'B':
+						inputClass = BARD; // The player chose the bard class.
+						cout << "Bard!\n";
+						player1 = new bard; // Create a new bard class.
+						break;
+					case 'r':
+					case 'R':
+						inputClass = ROUGE; // The player chose the rouge class.
+						cout << "Rouge!\n";
+						player1 = new rouge; // Create a new rouge class.
+						break;
+					case 'm':
+					case 'M':
+						inputClass = MAGE; // The player chose the mage class.
+						cout << "Mage!\n";
+						player1 = new mage; // Create a new mage class.
+						break;
+					default:
+						cout << "Please input a valid class.\n";
+						reroll = true; // The player didn't input a correct choice so restart the loop.
+						break;
+				}
+			}
+
+			// Set the attributes as they are at this point.
+			player1->setAtts(tmpStats);
+			// Set the race as it is at this point.
+			player1->setRace(inputRace);
+			// Set the class as it is at this point.
+			player1->setClass(inputClass);
+		}
+		else if (newGame == false) // The player chose to load a game.
+		{
+			// Load the saved game.
+			player1 = getFromFile();
+
+			// If the player save file didn't load correctly.
+			if (player1 == NULL)
+			{
+				// Restart the loop.
+				rerollNewGame = true;
+
+				// Make it so the game is started a new.
+				newGame = true;
+			}
+			else
+			{
+				// Create the class's class of the class.
+				switch(player1->getClass())
+				{
+					case FIGHTER:
+						player1 = new fighter;
+						break;
+					case CLERIC:
+						player1 = new cleric;
+						break;
+					case THEIF:
+						player1 = new theif;
+						break;
+					case BARD:
+						player1 = new bard;
+						break;
+					case ROUGE:
+						player1 = new rouge;
+						break;
+					case TINKER:
+						player1 = new tinker;
+						break;
+					case MAGE:
+						player1 = new mage;
+						break;
+				}
+
+				player1->setLoc(TOWN);
 			}
 		}
-
-		// Reset the reroll to default for the second reroll.
-		reroll = true;
-
-		while (reroll) // While reroll == true
-		{
-			// End the reroll for now
-			reroll = false;
-
-			cout << "\n";
-			cout << "Please select a class\n\n";
-			// Ask the player what class they want their character to be.
-			cout << "[F]ighter [C]leric [T]heif [B]ard [R]ouge [M]age\n\n";
-
-			// Check for inputs of which class.
-			cin >> inputs;
-
-			cout << "\n";
-
-			// Check for which class.
-			switch (inputs)
-			{
-				case 'f':
-				case 'F':
-					inputClass = FIGHTER; // The player chose the fighter class.
-					cout << "Fighter!\n";
-					player1 = new fighter; // Create a new fighter class.
-					break;
-				case 'c':
-				case 'C':
-					inputClass = CLERIC; // The player chose the cleric class.
-					cout << "Cleric!\n";
-					player1 = new cleric; // Create a new cleric class
-					break;
-				case 't':
-				case 'T':
-					inputClass = THEIF; // The player chose the theif class.
-					cout << "Theif!\n";
-					player1 = new theif; // Create a new rouge class.
-					break;
-				case 'b':
-				case 'B':
-					inputClass = BARD; // The player chose the bard class.
-					cout << "Bard!\n";
-					player1 = new bard; // Create a new bard class.
-					break;
-				case 'r':
-				case 'R':
-					inputClass = ROUGE; // The player chose the rouge class.
-					cout << "Rouge!\n";
-					player1 = new rouge; // Create a new rouge class.
-					break;
-				case 'm':
-				case 'M':
-					inputClass = MAGE; // The player chose the mage class.
-					cout << "Mage!\n";
-					player1 = new mage; // Create a new mage class.
-					break;
-				default:
-					cout << "Please input a valid class.\n";
-					reroll = true; // The player didn't input a correct choice so
-					break; 				 // restart the loop.
-			}
-		}
-
-		// Set the attributes as they are at this point.
-		player1->setAtts(tmpStats);
-		// Set the race as it is at this point.
-		player1->setRace(inputRace);
-		// Set the class as it is at this point.
-		player1->setClass(inputClass);
 	}
 
-	if (newGame == false) // The player chose to load a game.
-	{
-		// Load the saved game.
-		player1 = &getFromFile();
-
-
-		// 0 = FIGHTER, 1 = CLERIC, 2 = THEIF, 3 = BARD, 4 = ROUGE, 5 = TINKER, 6 = MAGE
-		switch(player1->getClass())
-		{
-			case FIGHTER:
-				player1 = new fighter;
-				break;
-			case CLERIC:
-				player1 = new cleric;
-				break;
-			case THEIF:
-				player1 = new theif;
-				break;
-			case BARD:
-				player1 = new bard;
-				break;
-			case ROUGE:
-				player1 = new rouge;
-				break;
-			case TINKER:
-				player1 = new tinker;
-				break;
-			case MAGE:
-				player1 = new mage;
-				break;
-		}
-
-		player1->setLoc(TOWN);
-	}
-
+	// If the player has the Void Excalibur.
 	if (player1->getWeapon() == VOIDEXCALIBUR)
 	{
 		cout << "\n";
 		cout << "You have been equiped with the " << displayWeaponName(VOIDEXCALIBUR, player1->getClass()) << "!\n";
 		cout << "DO NOT SELL THIS WEAPON!!!\n";
 	}
+	// If the player has Impervium Plate Armor.
 	if (player1->getArmor() == IMPERVIUMPLATE)
 	{
 		cout << "\n";
@@ -2538,6 +2943,7 @@ int _tmain (int argc, _TCHAR* argv[])
 		cout << "DO NOT SELL THIS ARMOR!!!\n";
 	}
 
+	// If the user enabled debug.
 	if (debug == true)
 	{
 		player1->addCopper(50000);
@@ -2566,16 +2972,14 @@ int _tmain (int argc, _TCHAR* argv[])
 				player1->locMonster(); // The player wants to find a monster.
 				break;
 			case SAVE:
-				retry = true;
-				// The player wants to save.
+				retry = true; // The player wants to save.
 				while (retry) // Create a loop.
 				{
 					retry = false; // End the loop.
 
 					cout << "\n";
 
-					cout << "Are you sure you want to save? [Y]es [N]o\n"; // Ask the
-								   // player if they are sure that they want to save.
+					cout << "Are you sure you want to save? [Y]es [N]o\n"; // Ask the player if they are sure that they want to save.
 
 					cin >> inputs; // Get the player's choice.
 
@@ -2583,45 +2987,59 @@ int _tmain (int argc, _TCHAR* argv[])
 					{
 						case 'y':
 						case 'Y':
-							player1->setLoc(TOWN); // Set the location town so when they load
-												   // the save they start back to the town.
+							player1->setLoc(TOWN); // Set the location town so when they load the save they start back to the town.
 							writeToFile(player1); // Write to file.
 							break;
 						case 'n':
 						case 'N':
-							player1->setLoc(TOWN); // Set the location back to town so they
-							break; // can go back to playing.
+							player1->setLoc(TOWN); // Set the location back to town so they can go back to playing.
+							break;
 						default:
-							retry = true; // The player didn't input anything that matched the
-														// Choices so restart.
+							retry = true; // The player didn't input anything that matched the Choices so restart.
 					}
 				}
 				break;
 			case ARMORSMITH:
-				player1->locArmorSmith();
+				player1->locArmorSmith(); // The player wants to go to the armor smith.
 				break;
 			case BUYARMOR:
-				player1->locBuyArmor();
+				player1->locBuyArmor(); // The player wants to buy armor.
 				break;
 			case SELLARMOR:
-				player1->locSellArmor();
+				player1->locSellArmor(); // The player wants to sell armor.
 				break;
 			case TAVERN:
+				player1->locTavern(); // The player wants to go to the tavern.
 				break;
 			case WEAPONSMITH:
-				player1->locWeaponSmith();
+				player1->locWeaponSmith(); // The player wants to go to the weapon smith.
 				break;
 			case BUYWEAPON:
-				player1->locBuyWeapon();
+				player1->locBuyWeapon(); // The player wants to buy weapons.
 				break;
 			case SELLWEAPON:
-				player1->locSellWeapon();
+				player1->locSellWeapon(); // The player wants to sell weapons.
 				break;
 			case CHAPEL:
+				player1->locChapel(); // The player wants to go to the chapel.
 				break;
 			case BANK:
+				player1->locBank(); // The player wants to go to the bank.
+				break;
+			case TAKEMONEY:
+				player1->locWithdrawMoney(); // The player wants to take money.
+				break;
+			case PUTMONEY:
+				player1->locDepositMoney(); // The player wants to put money.
 				break;
 			case ALCHIMEST:
+				player1->locAlchimest(); // The player wants to go to the alchimest.
+				break;
+			case BUYPOTION:
+				player1->locBuyPotion(); // The player wants to buy potions.
+				break;
+			case SELLPOTION:
+				player1->locSellPotion(); // The player wants to sell potions.
 				break;
 		}
 	}
