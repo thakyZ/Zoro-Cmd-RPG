@@ -3204,11 +3204,11 @@ void writeToFile(character *tmpChar)
 	// Initlize the player save.
 	playerSave.init(tmpChar);
 
-	if (tmpChar->getCopper() >= 50000 && !debug)
+	if (tmpChar->getCopper() >= 25000 && !debug)
 	{
 		playerSave.cheated = true;
 	}
-	if (debug)
+	if (debug && tmpChar->getCopper() >= 50000)
 	{
 		playerSave.copper -= 50000;
 	}
