@@ -857,11 +857,21 @@ class character
 			{
 				int tmpCopper2;
 
-			  tmpCopper2 = (copper - 25000)
+			  tmpCopper2 = (copper - 25000);
 
 				addBankCopper(tmpCopper2);
 
-				copper = 25000;
+				setCopper(25000);
+			}
+			if (copper > 50000 && debug)
+			{
+				int tmpCopper2;
+
+				tmpCopper = (copper - 50000)
+
+				addBankCopper(tmpCopper2);
+
+				setCopper(50000);
 			}
 		}
 
@@ -2183,7 +2193,7 @@ class cleric : public character
 							if (debug) // For now output the damage.
 							{
 								cout << "\n";
-								cout << "Frenzy Attack (F): " << damage << "\n";
+								cout << "Jab Attack (F): " << damage << "\n";
 							}
 							// Since this is a special attack then remove some mana points.
 							subMana(1);
@@ -2201,7 +2211,7 @@ class cleric : public character
 							if (debug) // If debug then output the damage.
 							{
 								cout << "\n";
-								cout << "Deadly Strike Attack (F): " << damage << "\n";
+								cout << "Pound Attack (F): " << damage << "\n";
 							}
 							subMana(5);
 							// Since this is a special attack then remove some mana points.
@@ -2321,7 +2331,7 @@ class rouge : public character
 							if (debug) // For now output the damage.
 							{
 								cout << "\n";
-								cout << "Frenzy Attack (F): " << damage << "\n";
+								cout << "Jab Attack (F): " << damage << "\n";
 							}
 							// Since this is a special attack then remove some mana points.
 							subMana(1);
@@ -2339,7 +2349,7 @@ class rouge : public character
 							if (debug) // If debug then output the damage.
 							{
 								cout << "\n";
-								cout << "Deadly Strike Attack (F): " << damage << "\n";
+								cout << "Spin Attack (F): " << damage << "\n";
 							}
 							subMana(5);
 							// Since this is a special attack then remove some mana points.
@@ -2477,7 +2487,7 @@ class bard : public character
 							if (debug) // If debug then output the damage.
 							{
 								cout << "\n";
-								cout << "Deadly Strike Attack (F): " << damage << "\n";
+								cout << "Pound Attack (F): " << damage << "\n";
 							}
 							subMana(5);
 							// Since this is a special attack then remove some mana points.
@@ -2536,7 +2546,7 @@ class theif : public character
 				}
 				if (getMana() >= 5)
 				{
-					cout << "\n[M]asicre";
+					cout << "\n[Ma]ssacure";
 				}
 
 				// Get the input of what attack to use.
@@ -2581,7 +2591,7 @@ class theif : public character
 							if (debug) // For now output the damage.
 							{
 								cout << "\n";
-								cout << "Basic Attack (F): " << damage << "\n";
+								cout << "Swipe Attack (F): " << damage << "\n";
 							}
 						}
 						break;
@@ -2597,7 +2607,7 @@ class theif : public character
 							if (debug) // For now output the damage.
 							{
 								cout << "\n";
-								cout << "Frenzy Attack (F): " << damage << "\n";
+								cout << "Massacure Attack (F): " << damage << "\n";
 							}
 							// Since this is a special attack then remove some mana points.
 							subMana(1);
@@ -2735,7 +2745,7 @@ class tinker : public character
 							if (debug) // For now output the damage.
 							{
 								cout << "\n";
-								cout << "Frenzy Attack (F): " << damage << "\n";
+								cout << "Wrench Attack (F): " << damage << "\n";
 							}
 							// Since this is a special attack then remove some mana points.
 							subMana(1);
@@ -2753,7 +2763,7 @@ class tinker : public character
 							if (debug) // If debug then output the damage.
 							{
 								cout << "\n";
-								cout << "Deadly Strike Attack (F): " << damage << "\n";
+								cout << "Energy Pound Attack (F): " << damage << "\n";
 							}
 							subMana(5);
 							// Since this is a special attack then remove some mana points.
@@ -2857,7 +2867,7 @@ class mage : public character
 							if (debug) // For now output the damage.
 							{
 								cout << "\n";
-								cout << "Basic Attack (F): " << damage << "\n";
+								cout << "Spell Attack (F): " << damage << "\n";
 							}
 						}
 						break;
@@ -2873,7 +2883,7 @@ class mage : public character
 							if (debug) // For now output the damage.
 							{
 								cout << "\n";
-								cout << "Frenzy Attack (F): " << damage << "\n";
+								cout << "Magic Frenzy Attack (F): " << damage << "\n";
 							}
 							// Since this is a special attack then remove some mana points.
 							subMana(1);
@@ -2891,7 +2901,7 @@ class mage : public character
 							if (debug) // If debug then output the damage.
 							{
 								cout << "\n";
-								cout << "Deadly Strike Attack (F): " << damage << "\n";
+								cout << "Asteroid Beam Attack (F): " << damage << "\n";
 							}
 							subMana(5);
 							// Since this is a special attack then remove some mana points.
@@ -3323,6 +3333,22 @@ character *getFromFile()
 		{
 			tmpChar.setCopper(0);
 		}
+		if (tmpChar.getCopper() > 25000 && !debug)
+		{
+			int tmpCopper = tmpChar.getCopper();
+
+			tmpChar.setCopper(0);
+
+			tmpChar.addCopper(tmpCopper);
+		}
+		if (tmpChar.getCopper() > 50000 && debug)
+		{
+			int tmpCopper = tmpChar.getCopper();
+
+			tmpChar.setCopper(0);
+
+			tmpChar.addCopper(tmpCopper);
+		}
 
 		// Debug the class.
 		if (debug)
@@ -3367,6 +3393,15 @@ int _tmain (int argc, _TCHAR* argv[])
 	// Clear the console.
 	system("cls");
 
+	if (debug)
+	{
+		cout << "\n";
+		cout << "+=================================+\n";
+		cout << "   Debug -> ENABLED\n";
+		cout << "+=================================+\n";
+		cout << "\n";
+	}
+
 	cout << "Welcome to the land of Zoro!\n";
 	cout << "Created by Nire Inicana";
 	cout << "\n\n";
@@ -3397,17 +3432,6 @@ int _tmain (int argc, _TCHAR* argv[])
 			default:
 				reroll = true; // The player didn't type in a correct choice so restart the loop.
 				break;
-		}
-
-		if (inputs == ('1', '2', '3'))
-		{
-			debug = true;
-
-			cout << "+=================================+\n";
-			cout << "   Debug -> ENABLED\n";
-			cout << "+=================================+\n";
-
-			reroll = true;
 		}
 	}
 
