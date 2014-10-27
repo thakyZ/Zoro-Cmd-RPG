@@ -869,6 +869,11 @@ class character
 		void subBankCopper(int tmpCopper)
 		{
 			bankCopper -= tmpCopper;
+
+			if (bankCopper < 0)
+			{
+				bankCopper = 0;
+			}
 		}
 
 		// Attack functions
