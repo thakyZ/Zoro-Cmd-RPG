@@ -820,6 +820,23 @@ class character
 			hp += tmpHp;
 		}
 
+		// Add bank copper.
+		void addBankCopper(int tmpCopper)
+		{
+			bankCopper += tmpCopper;
+		}
+
+		// Subtract Copper.
+		void subBankCopper(int tmpCopper)
+		{
+			bankCopper -= tmpCopper;
+
+			if (bankCopper < 0)
+			{
+				bankCopper = 0;
+			}
+		}
+
 		// Subtract Copper
 		void subCopper(int tmpCopper)
 		{
@@ -836,9 +853,15 @@ class character
 		{
 			copper += tmpCopper;
 
-			if (copper >= 25000 && !debug)
+			if (copper > 25000 && !debug)
 			{
-				copper = 24999;
+				int tmpCopper2;
+
+			  tmpCopper2 = (copper - 25000)
+
+				addBankCopper(tmpCopper2);
+
+				copper = 25000;
 			}
 		}
 
@@ -857,23 +880,6 @@ class character
 		void addMana(int tmpMp)
 		{
 			mp = tmpMp;
-		}
-
-		// Add bank copper.
-		void addBankCopper(int tmpCopper)
-		{
-			bankCopper += tmpCopper;
-		}
-
-		// Subtract Copper.
-		void subBankCopper(int tmpCopper)
-		{
-			bankCopper -= tmpCopper;
-
-			if (bankCopper < 0)
-			{
-				bankCopper = 0;
-			}
 		}
 
 		// Attack functions
@@ -3204,13 +3210,18 @@ void writeToFile(character *tmpChar)
 	// Initlize the player save.
 	playerSave.init(tmpChar);
 
-	if (tmpChar->getCopper() >= 25000 && !debug)
+	if (tmpChar->getCopper() > 25000 && !debug)
 	{
 		playerSave.cheated = true;
 	}
-	if (debug && tmpChar->getCopper() >= 50000)
+	if ((debug && tmpChar->getCopper() >= 50000) || debug)
 	{
 		playerSave.copper -= 50000;
+
+		if (playerSave.copper < 0)
+		{
+			playerSave.copper = 0;
+		}
 	}
 
 	// Open the save file.
@@ -3303,6 +3314,14 @@ character *getFromFile()
 		else if (cheated && debug)
 		{
 			tmpChar.setCheat(false);
+		}
+		if (tmpChar.getBankCopper() < 0)
+		{
+			tmpChar.setBankCopper(0);
+		}
+		if (tmpChar.getCopper() < 0)
+		{
+			tmpChar.setCopper(0);
 		}
 
 		// Debug the class.
@@ -3678,6 +3697,13 @@ int _tmain (int argc, _TCHAR* argv[])
 		cout << "\n";
 		cout << "You have been equiped with " << displayArmorName(IMPERVIUMPLATE, player1->getClass()) << "!\n";
 		cout << "DO NOT SELL THIS ARMOR!!!\n";
+	}
+	// If the player has the Cheat Potion.
+	if (player1->getPotion() == CHEAT)
+	{
+		cout << "\n";
+		cout << "You have been equiped with the Cheat Potion!\n";
+		cout << "DO NOT SELL THIS POTION!!!\n";
 	}
 
 	// If the user enabled debug.
