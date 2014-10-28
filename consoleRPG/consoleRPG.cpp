@@ -9,7 +9,7 @@
 #include <fstream>
 using namespace std;
 
-bool debug = false;
+bool debug = true;
 
 // Roll the dice.
 int diceRoll(int qty, int sides)
@@ -583,6 +583,7 @@ class character
 		bool cheated; // If the player cheated.
 		POTION potion; // The potion the player currently has.
 		int bankCopper; // The copper the player has in the bank.
+		bool null;
 
 	public:
 		// Constructors
@@ -695,6 +696,12 @@ class character
 			return bankCopper;
 		}
 
+		// Get if the player file doesn't load.
+		bool getNull()
+		{
+			return null;
+		}
+
 		// Set arguments.
 		// Set the player's hitpoints.
 		void setHealth(int tmpHp)
@@ -761,6 +768,11 @@ class character
 		{
 			// Set the attributes to the character.
 			atts = tmpAtts;
+
+			cout << tmpAtts.cleverness << "\n";
+			cout << atts.cleverness << "\n";
+
+			cout << getAtts().cleverness << "\n";
 		}
 
 		// Set the attributes outside of this class in parts.
@@ -800,6 +812,12 @@ class character
 		void setBankCopper(int tmpCopper)
 		{
 			bankCopper = tmpCopper;
+		}
+
+		// Set if the player save file doesn't load
+		void setNull(bool tmpNull)
+		{
+			null = tmpNull;
 		}
 
 		// Computing Functions
@@ -867,7 +885,7 @@ class character
 			{
 				int tmpCopper2;
 
-				tmpCopper = (copper - 50000)
+				tmpCopper = (copper - 50000);
 
 				addBankCopper(tmpCopper2);
 
@@ -1025,11 +1043,24 @@ class character
 				cout << "\n";
 
 				// Display the stats.
-				displayStats(getAtts());
+				cout << "Stats:\n";
+				cout << "   Strength:      " << getAtts().strength << "\n";
+				cout << "   Faith:         " << getAtts().faith << "\n";
+				cout << "   Dexterity:     " << getAtts().dexterity << "\n";
+				cout << "   Insperation:   " << getAtts().insperation << "\n";
+				cout << "   Cleverness:    " << getAtts().cleverness << "\n";
+				cout << "   Focus:         " << getAtts().focus << "\n";
+
+				cout << "\n";
 
 				cout << "   Hitpoints:     " << getHealth() << "/" << getMaxHealth() << "\n";
 				cout << "   Mana:          " << getMana() << "/" << getMaxMana() << "\n";
+
+				cout << "\n";
+
 				cout << "   Copper:        " << getCopper() << "\n";
+
+				cout << "\n";
 
 				cout << "   Armor:         " << displayArmorName(getArmor(), getClass()) << "\n";
 
@@ -1222,6 +1253,8 @@ class character
 				// Input for the menu.
 				cin >> menuItem;
 
+				cout << "\n";
+
 				// Choose from the locations in the armor smith shop.
 				switch (menuItem)
 				{
@@ -1266,13 +1299,13 @@ class character
 					case CLOTH:
 						cout << "[2] " << displayArmorName(LEATHER, getClass()) << "\t200 copper\n";
 					case LEATHER:
-						cout << "[3] " << displayArmorName(CHAIN, getClass()) << "\t400 copper\n";
+						cout << "[3] " << displayArmorName(CHAIN, getClass()) << "\t\t400 copper\n";
 					case CHAIN:
-						cout << "[4] " << displayArmorName(PLATE, getClass()) << "\t800 copper\n";
+						cout << "[4] " << displayArmorName(PLATE, getClass()) << "\t\t800 copper\n";
 					case PLATE:
 						cout << "[5] " << displayArmorName(ANCIENTPLATE, getClass()) << "\t1600 copper\n";
 					case ANCIENTPLATE:
-						cout << "[6] " << displayArmorName(MAGICPLATE, getClass()) << "\t3200 copper\n";
+						cout << "[6] " << displayArmorName(MAGICPLATE, getClass()) << "\t\t3200 copper\n";
 					case MAGICPLATE:
 						cout << "[7] " << displayArmorName(ARCHANEPLATE, getClass()) << "\t6400 copper\n";
 					default:
@@ -1280,6 +1313,8 @@ class character
 				}
 
 				int lowMenu = getArmor() + 1;
+
+				cout << "\n";
 
 				cin >> menuItem;
 
@@ -1452,11 +1487,13 @@ class character
 				cout << "\n\n";
 
 				cout << "You enter a shop filled with a variaty of armor. Some are made of metal and some are not. Some are enchanted with magic runes. The shop owner asks what is your bussiness:\n";
-				cout << "[1] Buy Armor\t [3] Return to town\n";
-				cout << "[2] Sell Armor\n";
+				cout << "[1] Buy Weapons\t [3] Return to town\n";
+				cout << "[2] Sell Weapons\n";
 
 				// Input for the menu.
 				cin >> menuItem;
+
+				cout << "\n";
 
 				// Choose from the locations in the weapon smith shop.
 				switch (menuItem)
@@ -1491,11 +1528,11 @@ class character
 				reroll = false;
 
 				cout << "\n";
-				cout << "There are many suits of armor on display. Which do you wish to buy?\n";
+				cout << "There are many weapons on display. Which do you wish to buy?\n";
 
 				cout << "\n";
 
-				switch (getArmor())
+				switch (getWeapon())
 				{
 					case FISTS:
 						cout << "[1] " << displayArmorName(DAGGER, getClass()) << "\t100 copper\n";
@@ -1510,12 +1547,14 @@ class character
 					case MAGICBLADE:
 						cout << "[6] " << displayArmorName(ARCHANEBLADE, getClass()) << "\t3200 copper\n";
 					default:
-						cout << "[7] Back to Shop";
+						cout << "[7] Back to Shop\n";
 				}
 
 				int lowMenu = getWeapon() + 1;
 
 				cin >> menuItem;
+
+				cout << "\n";
 
 				if (menuItem < lowMenu)
 				{
@@ -1528,7 +1567,7 @@ class character
 						if (copper >= 100)
 						{
 							cout << "\n";
-							cout << "You buy " << displayArmorName(DAGGER, getClass()) << " for 100 copper\n";
+							cout << "You buy " << displayWeaponName(DAGGER, getClass()) << " for 100 copper\n";
 							cout << "You recive " << pawnItem(getWeapon(), 1) << "copper, for selling your old weapon.\n";
 							subCopper(100);
 							setWeapon(DAGGER);
@@ -1542,7 +1581,7 @@ class character
 						if (copper >= 200)
 						{
 							cout << "\n";
-							cout << "You buy " << displayArmorName(STAFF, getClass()) << " for 200 copper\n";
+							cout << "You buy " << displayWeaponName(STAFF, getClass()) << " for 200 copper\n";
 							cout << "You recive " << pawnItem(getWeapon(), 1) << "copper, for selling your old weapon.\n";
 							subCopper(200);
 							setWeapon(STAFF);
@@ -1556,7 +1595,7 @@ class character
 						if (copper >= 400)
 						{
 							cout << "\n";
-							cout << "You buy " << displayArmorName(SWORD, getClass()) << " for 400 copper\n";
+							cout << "You buy " << displayWeaponName(SWORD, getClass()) << " for 400 copper\n";
 							cout << "You recive " << pawnItem(getWeapon(), 1) << "copper, for selling your old weapon.\n";
 							subCopper(400);
 							setWeapon(SWORD);
@@ -1570,7 +1609,7 @@ class character
 						if (copper >= 800)
 						{
 							cout << "\n";
-							cout << "You buy " << displayArmorName(ANCIENTBLADE, getClass()) << " for 800 copper\n";
+							cout << "You buy " << displayWeaponName(ANCIENTBLADE, getClass()) << " for 800 copper\n";
 							cout << "You recive " << pawnItem(getWeapon(), 1) << "copper, for selling your old weapon.\n";
 							subCopper(800);
 							setWeapon(ANCIENTBLADE);
@@ -1584,7 +1623,7 @@ class character
 						if (copper >= 1600)
 						{
 							cout << "\n";
-							cout << "You buy " << displayArmorName(MAGICBLADE, getClass()) << " for 1600 copper\n";
+							cout << "You buy " << displayWeaponName(MAGICBLADE, getClass()) << " for 1600 copper\n";
 							cout << "You recive " << pawnItem(getWeapon(), 1) << "copper, for selling your old weapon.\n";
 							subCopper(1600);
 							setWeapon(MAGICBLADE);
@@ -1598,7 +1637,7 @@ class character
 						if (copper >= 3200)
 						{
 							cout << "\n";
-							cout << "You buy " << displayArmorName(ARCHANEBLADE, getClass()) << " for 3200 copper\n";
+							cout << "You buy " << displayWeaponName(ARCHANEBLADE, getClass()) << " for 3200 copper\n";
 							cout << "You recive " << pawnItem(getWeapon(), 1) << "copper, for selling your old weapon.\n";
 							subCopper(3200);
 							setWeapon(ARCHANEBLADE);
@@ -1641,7 +1680,7 @@ class character
 				reroll = false;
 
 				cout << "\n";
-				cout << "The armor smith looks over your armor, \"I'll give ya " << pawnItem(getWeapon(), 0) << " copper for it! Would you like to buy it?\" [Y]es [N]o\n";
+				cout << "The armor smith looks over your weapon, \"I'll give ya " << pawnItem(getWeapon(), 0) << " copper for it! Would you like to buy it?\" [Y]es [N]o\n";
 
 				cin >> menuItem;
 
@@ -1649,7 +1688,7 @@ class character
 				{
 					case 'y':
 					case 'Y':
-						cout << "You sell your armor for " << pawnItem(getWeapon(), 1) << "copper\n";
+						cout << "You sell your weapon for " << pawnItem(getWeapon(), 1) << " copper\n";
 						setWeapon(FISTS);
 						break;
 					case 'n':
@@ -1679,15 +1718,14 @@ class character
 
 				cin >> menuItem;
 
+				cout << "\n";
+
 				switch (menuItem)
 				{
+					default:
 					case 'g':
 					case 'G':
 						setLoc(TOWN);
-						break;
-					default:
-						cout << "please enter a correct input.";
-						reroll = true;
 						break;
 				}
 			}
@@ -1710,15 +1748,14 @@ class character
 
 				cin >> menuItem;
 
+				cout << "\n";
+
 				switch (menuItem)
 				{
+					default:
 					case 'g':
 					case 'G':
 						setLoc(TOWN);
-						break;
-					default:
-						cout << "please enter a correct input.";
-						reroll = true;
 						break;
 				}
 			}
@@ -1742,6 +1779,8 @@ class character
 
 				cin >> menuItem;
 
+				cout << "\n";
+
 				switch (menuItem)
 				{
 					case '1':
@@ -1764,7 +1803,12 @@ class character
 
 			cout << "\n";
 			cout << "The banker says, \"How much money do you want to withdraw?\"\n";
+			cout << "Bank Money: " << getBankCopper() << " copper\n";
+			cout << "Money       " << getCopper() << " copper\n";
+
 			cin >> tmpCopper;
+
+			cout << "\n";
 
 			addBankCopper(tmpCopper);
 
@@ -1778,7 +1822,11 @@ class character
 
 			cout << "\n";
 			cout << "The banker says, \"How much money do you want to desposit?\"\n";
+			cout << "Money        " << getCopper() << " copper\n";
+			cout << "Bank Copper: " << getBankCopper() << " copper\n";
 			cin >> tmpCopper;
+
+			cout << "\n";
 
 			subBankCopper(tmpCopper);
 
@@ -1802,6 +1850,8 @@ class character
 				cout << "[2] Sell potions\n";
 
 				cin >> menuItem;
+
+				cout << "\n";
 
 				switch (menuItem)
 				{
@@ -1935,6 +1985,8 @@ class character
 				cout << "The armor smith looks over your potion, \"I'll give ya " << pawnItem(getWeapon(), 0) << " copper for it! Would you like to buy it?\" [Y]es [N]o\n";
 
 				cin >> menuItem;
+
+				cout << "\n";
 
 				switch (menuItem)
 				{
@@ -3260,7 +3312,7 @@ void writeToFile(character *tmpChar)
 }
 
 // To load a game.
-character *getFromFile()
+character getFromFile()
 {
 	// The character var for the loaded file.
 	saveFileData playerSave;
@@ -3300,7 +3352,17 @@ character *getFromFile()
 		int bankCopper = playerSave.bankCopper; // The amount of copper the player has in the bank.
 
 		tmpChar.setLoc(location);
-		tmpChar.setAttsTest(strength, cleverness, dexterity, faith, focus, insperation);
+
+		ATTRIBUTES tmpAtts;
+
+		tmpAtts.cleverness = cleverness;
+		tmpAtts.dexterity = dexterity;
+		tmpAtts.faith = faith;
+		tmpAtts.focus = focus;
+		tmpAtts.insperation = insperation;
+		tmpAtts.strength = strength;
+
+		tmpChar.setAtts(tmpAtts);
 		tmpChar.setClass(charClass);
 		tmpChar.setCopper(copper);
 		tmpChar.setHealth(hp);
@@ -3361,14 +3423,18 @@ character *getFromFile()
 
 		cout << "Save loaded.\n";
 
+		tmpChar.setNull(false);
+
 		// Return the character to return the char.
-		return &tmpChar;
+		return tmpChar;
 	}
 	else
 	{
 		cout << "Error loading save.\n";
 
-		return NULL;
+		tmpChar.setNull(true);
+
+		return tmpChar;
 	}
 }
 
@@ -3417,6 +3483,8 @@ int _tmain (int argc, _TCHAR* argv[])
 
 		// Get the choice of the player.
 		cin >> inputs;
+
+		cout << "\n";
 
 		// Choose from the input.
 		switch (inputs)
@@ -3579,6 +3647,8 @@ int _tmain (int argc, _TCHAR* argv[])
 				// Input for the reroll.
 				cin >> inputs;
 
+				cout << "\n";
+
 				// End the reroll
 				reroll = false;
 
@@ -3664,10 +3734,12 @@ int _tmain (int argc, _TCHAR* argv[])
 		else if (newGame == false) // The player chose to load a game.
 		{
 			// Load the saved game.
-			player1 = getFromFile();
+			player1 = &getFromFile();
+
+			tmpStats = player1->getAtts();
 
 			// If the player save file didn't load correctly.
-			if (player1 == NULL)
+			if (player1->getNull() == true)
 			{
 				// Restart the loop.
 				rerollNewGame = true;
@@ -3675,7 +3747,7 @@ int _tmain (int argc, _TCHAR* argv[])
 				// Make it so the game is started a new.
 				newGame = true;
 			}
-			else
+			else if (player1->getNull() == false)
 			{
 				// Create the class's class of the class.
 				switch(player1->getClass())
@@ -3702,6 +3774,8 @@ int _tmain (int argc, _TCHAR* argv[])
 						player1 = new mage;
 						break;
 				}
+
+				player1->setAtts(tmpStats);
 
 				player1->setLoc(TOWN);
 			}
