@@ -389,6 +389,35 @@ char *displayArmorName(int tmpArmor, int tmpCharClass)
 	return "";
 }
 
+int clacLevel(int tmpExp)
+{
+
+	int tmpExpSub;
+
+	if (tmpExp <= 37 && tmpExp > 0)
+	{
+		tmpExpSub = (tmpExp + 7) / 2;
+	}
+	else if (tmpExp <= 112 && tmpExp > 37)
+	{
+		tmpExpSub = (tmpExp + 38) / 5;
+	}
+	else if (tmpExp > 112)
+	{
+		tmpExpSub = (tmpExp + 158) / 9;
+	}
+	else if (tmpExp <= 0)
+	{
+		tmpExpSub = 0;
+	}
+	else
+	{
+		tmpExpSub = 0;
+	}
+
+	return tmpExpSub;
+}
+
 class monster
 {
 	public:
@@ -583,7 +612,9 @@ class character
 		bool cheated; // If the player cheated.
 		POTION potion; // The potion the player currently has.
 		int bankCopper; // The copper the player has in the bank.
-		bool null;
+		int charExp; // The experience that the player has.
+		int charLvl; // The level that the player is at.
+		bool null; // If the player's save file returns null.
 
 	public:
 		// Constructors
@@ -696,6 +727,12 @@ class character
 			return bankCopper;
 		}
 
+		// Set the player's total exp.
+		int getExp()
+		{
+			return charExp;
+		}
+
 		// Get if the player file doesn't load.
 		bool getNull()
 		{
@@ -768,11 +805,6 @@ class character
 		{
 			// Set the attributes to the character.
 			atts = tmpAtts;
-
-			cout << tmpAtts.cleverness << "\n";
-			cout << atts.cleverness << "\n";
-
-			cout << getAtts().cleverness << "\n";
 		}
 
 		// Set the attributes outside of this class in parts.
@@ -814,6 +846,12 @@ class character
 			bankCopper = tmpCopper;
 		}
 
+		// Set the player's exp total
+		void setExp(int tmpExp)
+		{
+			charExp = tmpExp;
+		}
+
 		// Set if the player save file doesn't load
 		void setNull(bool tmpNull)
 		{
@@ -832,10 +870,21 @@ class character
 			}
 		}
 
+		// Add Max Health
+		void addMaxHealth(int tmpHpMax)
+		{
+			hpMax += tmpHpMax;
+		}
+
 		// Add Health
 		void addHealth(int tmpHp)
 		{
 			hp += tmpHp;
+
+			if (hp > hpMax)
+			{
+				hp = hpMax;
+			}
 		}
 
 		// Add bank copper.
@@ -904,10 +953,76 @@ class character
 			}
 		}
 
+		// Add Max Mana
+		void addMaxMana(int tmpMpMax)
+		{
+			mpMax += tmpMpMax;
+		}
+
 		// Add Mana
 		void addMana(int tmpMp)
 		{
 			mp = tmpMp;
+
+			if (mp > mpMax)
+			{
+				mp = mpMax;
+			}
+		}
+
+		// Add Exp
+		void addExp(int tmpExp)
+		{
+			charExp += tmpExp;
+		}
+
+		// Subtract Exp
+		void subExp(int tmpExp)
+		{
+			charExp -= tmpExp;
+
+			if (charExp < 0)
+			{
+				charExp = 0;
+			}
+		}
+
+		// Add Masteries
+		void addMasteries(int tmpMasteries)
+		{
+			masteries += tmpMasteries;
+		}
+
+		// Experiance/Skill calculations
+		void upgradeStats(int mod)
+		{
+			ATTRIBUTES tmpAtts;
+
+			tmpAtts.strength += diceRoll(1, 6) * mod;
+			tmpAtts.cleverness += diceRoll(1, 6) * mod;
+			tmpAtts.dexterity += diceRoll(1, 6) * mod;
+			tmpAtts.faith += diceRoll(1, 6) * mod;
+			tmpAtts.focus += diceRoll(1, 6) * mod;
+			tmpAtts.insperation += diceRoll(1, 6) * mod;
+
+			setAtts(tmpAtts);
+
+			addMaxHealth(diceRoll(1, 6) * mod);
+			addHealth(diceRoll(1, 6) * mod);
+			addMaxMana(diceRoll(1, 6) * mod);
+			addMana(diceRoll(1, 6) * mod);
+
+			addMasteries(1);
+		}
+
+		void levelUp()
+		{
+			if (getMasteries() >= 0 && getMasteries() < 20 && calcLevel(getExp()) > charLvl)
+			{
+				upgradeStats(calcLevel(getExp()));
+
+				charLvl = calcLevel(getExp());
+			}
 		}
 
 		// Attack functions
@@ -1055,6 +1170,8 @@ class character
 
 				cout << "   Hitpoints:     " << getHealth() << "/" << getMaxHealth() << "\n";
 				cout << "   Mana:          " << getMana() << "/" << getMaxMana() << "\n";
+				cout << "   Exp:           " << getExp() << "\n";
+				cout << "   Levels:        " << calcLevel() << "\n";
 
 				cout << "\n";
 
@@ -1222,6 +1339,8 @@ class character
 				cout << "You collect " << monster1.getCopper() << " copper from teh corpse.";
 				// Collect copper.
 				copper += monster1.getCopper();
+
+				levelUp();
 			}
 			if (hp <= 0) // You die and quit.
 			{
@@ -2047,8 +2166,14 @@ class fighter : public character
 				}
 				if (getMana() >= 5)
 				{
-					cout << "\n[D]eadly Strike\n";
+					cout << "\n[D]eadly Strike";
 				}
+				if (getPotion() != NONE)
+				{
+					cout << "\nDrink [P]otion";
+				}
+
+				cout << "\n";
 
 				// Get the input of what attack to use.
 				cin >> inputs;
@@ -2132,6 +2257,25 @@ class fighter : public character
 							// Since this is a special attack then remove some mana points.
 						}
 						break;
+					case 'p':
+					case 'P':
+						switch (getPotion())
+						{
+							case HEALTH:
+								addHealth(30);
+								break;
+							case MANA:
+								addMana(20);
+								break;
+							case EXP:
+								addExp(10);
+								break;
+							case CHEAT:
+								addHealth(1000);
+								addMana(1000);
+								addExp(1000);
+								break;
+						}
 					default:
 						reroll = true; // If the input is not valid restart the loop.
 				}
@@ -2994,6 +3138,7 @@ class saveFileData
 		bool cheated; // If the player has cheated.
 		POTION potion; // The current potion the player has.
 		int bankCopper; // The amount of copper the player has in his bank.
+		int charExp; // The total amount of exp the player has.
 
 		saveFileData()
 		{
@@ -3255,6 +3400,10 @@ void debugSave(saveFileData tmpSaveFile)
 			cout << "Potion:           CHEAT\n";
 			break;
 	}
+
+	cout << "Exp:             " << tmpSaveFile.charExp << "\n";
+
+	cout << "   Levels:       " << calcLevel(tmpSaveFile.charExp) << "\n";
 
 	cout << "+=================================+\n";
 	cout << "   Debug -> ENDED\n";
