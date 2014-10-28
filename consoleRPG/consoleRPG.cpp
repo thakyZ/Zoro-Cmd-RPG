@@ -3405,6 +3405,8 @@ void debugSave(saveFileData tmpSaveFile)
 
 	cout << "   Levels:       " << calcLevel(tmpSaveFile.charExp) << "\n";
 
+	cout << "Check Levels:    " << tmpSaveFile.charLvl << "\n";
+
 	cout << "+=================================+\n";
 	cout << "   Debug -> ENDED\n";
 	cout << "+=================================+\n";
