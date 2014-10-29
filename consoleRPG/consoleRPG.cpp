@@ -34,7 +34,7 @@ enum RACE { HUMAN, ELF, DARKELF, ANGEL, MONGREL, SHAMANI, NIBELUNG, UNDEAD };
 enum OCC { FIGHTER, CLERIC, THEIF, BARD, ROUGE, TINKER, MAGE };
 
 // Loations types.
-enum LOCATION { QUIT, TOWN, FOREST, VIEWSTATS, MONSTER, SAVE, ARMORSMITH, BUYARMOR, SELLARMOR, TAVERN, WEAPONSMITH, BUYWEAPON, SELLWEAPON, CHAPEL, BANK, PUTMONEY, TAKEMONEY, ALCHIMEST, BUYPOTION, SELLPOTION };
+enum LOCATION { QUIT, TOWN, FOREST, VIEWSTATS, MONSTER, SAVE, ARMORSMITH, BUYARMOR, SELLARMOR, TAVERN, WEAPONSMITH, BUYWEAPON, SELLWEAPON, CHAPEL, BANK, PUTMONEY, TAKEMONEY, ALCHIMEST, BUYPOTION, SELLPOTION, DEBUG };
 
 // Armors types.
 enum ARMOR { LOINCLOTH, CLOTH, LEATHER, CHAIN, PLATE, ANCIENTPLATE, MAGICPLATE, ARCHANEPLATE, IMPERVIUMPLATE };
@@ -54,6 +54,12 @@ struct ATTRIBUTES
 	unsigned int insperation; // The insperation stat of the class.
 	unsigned int cleverness; // The cleverness stat of the class.
 	unsigned int focus; // The focus stat of the class.
+};
+
+struct LEVELS
+{
+	int charLvl;
+	int charExp;
 };
 
 // Display the stats of the roll.
@@ -389,33 +395,36 @@ char *displayArmorName(int tmpArmor, int tmpCharClass)
 	return "";
 }
 
-int clacLevel(int tmpExp)
+int calcLevel(int tmpExp, int check)
 {
+	int tmpExp1;
 
-	int tmpExpSub;
-
-	if (tmpExp <= 37 && tmpExp > 0)
+	if (tmpExp > 0)
 	{
-		tmpExpSub = (tmpExp + 7) / 2;
-	}
-	else if (tmpExp <= 112 && tmpExp > 37)
-	{
-		tmpExpSub = (tmpExp + 38) / 5;
-	}
-	else if (tmpExp > 112)
-	{
-		tmpExpSub = (tmpExp + 158) / 9;
+		tmpExp1 = (tmpExp + 158) / 9;
 	}
 	else if (tmpExp <= 0)
 	{
-		tmpExpSub = 0;
+		tmpExp1 = 1;
 	}
 	else
 	{
-		tmpExpSub = 0;
+		tmpExp1 = 1;
 	}
 
-	return tmpExpSub;
+	if (check == 0)
+	{
+		return tmpExp1;
+	}
+	else if (check == 1)
+	{
+		// Need to figure out what to do here... (I forgot :P)
+		return tmpExp1;
+	}
+	else
+	{
+		return tmpExp1;
+	}
 }
 
 class monster
@@ -435,10 +444,26 @@ class monster
 		// Create the monster class.
 		monster()
 		{
+		}
+
+		void genMonster(int charLvl)
+		{
 			masteries = 0; // Declare this for now to 0.
 
+			int tmpLvl = 0;
+
 			// Switch to figure out what monster the player will face.
-			switch (diceRoll(1, 2))
+
+			if (charLvl >= 0 && charLvl < 15)
+			{
+				tmpLvl = 2;
+			}
+			else if (charLvl >= 15 && charLvl < 35)
+			{
+				tmpLvl = 5;
+			}
+
+			switch (diceRoll(1, tmpLvl))
 			{
 				case 1:
 					mName = "A Small Goblin";
@@ -471,6 +496,54 @@ class monster
 					attackText = "Sharp Pointy Teeth";
 					deathText = "the Rat goes squee and keels over dead.";
 					winText = "the Rat starts eating your dead carcus.";
+					break;
+				case 3:
+					mName = "A Troll";
+					hp = hpMax = diceRoll(3, 6);
+					atts.strength = diceRoll(3, 6);
+					atts.focus = diceRoll(3, 6);
+					atts.cleverness = diceRoll(3, 6);
+					atts.dexterity = diceRoll(3, 6);
+					atts.faith = diceRoll(3, 6);
+					atts.insperation = diceRoll(3, 6);
+					copper = diceRoll(15, 5);
+					armor = CLOTH;
+					weapon = STAFF;
+					attackText = "A Club";
+					deathText = "the Troll goes \"MOMMY!\" and keels over dead.";
+					winText = "the Troll starts looting your body.";
+					break;
+				case 4:
+					mName = "A Venomous Snake";
+					hp = hpMax = diceRoll(3, 6);
+					atts.strength = diceRoll(3, 6);
+					atts.focus = diceRoll(3, 6);
+					atts.cleverness = diceRoll(3, 6);
+					atts.dexterity = diceRoll(3, 6);
+					atts.faith = diceRoll(3, 6);
+					atts.insperation = diceRoll(3, 6);
+					copper = diceRoll(15, 5);
+					armor = CLOTH;
+					weapon = STAFF;
+					attackText = "Sharp Pointy Phangs";
+					deathText = "the Snake goes \"HISSS!\" and curls up dead.";
+					winText = "the Snake devours your body.";
+					break;
+				case 5:
+					mName = "A Mini Knight";
+					hp = hpMax = diceRoll(3, 6);
+					atts.strength = diceRoll(3, 6);
+					atts.focus = diceRoll(3, 6);
+					atts.cleverness = diceRoll(3, 6);
+					atts.dexterity = diceRoll(3, 6);
+					atts.faith = diceRoll(3, 6);
+					atts.insperation = diceRoll(3, 6);
+					copper = diceRoll(15, 5);
+					armor = CLOTH;
+					weapon = STAFF;
+					attackText = "A Mini Sword";
+					deathText = "the Mini Knight says \"I have fought bravely!\" and dies.";
+					winText = "the Mini Knight starts to loot your body.";
 					break;
 			}
 		}
@@ -600,6 +673,7 @@ class character
 {
 	protected:
 		ATTRIBUTES atts; // The stats that the player has.
+		LEVELS levels; // The leveling stuff the player has.
 		int copper; // The amount of money the player has.
 		OCC charClass; // The characters class.
 		RACE charRace; // The characters race.
@@ -608,12 +682,9 @@ class character
 		LOCATION location; // The location the player is at.
 		WEAPON weapon; // The weapon the character has.
 		ARMOR armor; // The armor the character has.
-		int masteries; // The skills level of the player.
 		bool cheated; // If the player cheated.
 		POTION potion; // The potion the player currently has.
 		int bankCopper; // The copper the player has in the bank.
-		int charExp; // The experience that the player has.
-		int charLvl; // The level that the player is at.
 		bool null; // If the player's save file returns null.
 
 	public:
@@ -677,10 +748,10 @@ class character
 			return charRace;
 		}
 
-		// Get the player's skill level.
-		int getMasteries()
+		// Get the player's level stuff.
+		LEVELS getLevels()
 		{
-			return masteries;
+			return levels;
 		}
 
 		// Get the player's weapon.
@@ -725,12 +796,6 @@ class character
 		int getBankCopper()
 		{
 			return bankCopper;
-		}
-
-		// Set the player's total exp.
-		int getExp()
-		{
-			return charExp;
 		}
 
 		// Get if the player file doesn't load.
@@ -782,10 +847,10 @@ class character
 			charRace = tmpCharRace;
 		}
 
-		// Set the player's skill level.
-		void setMasteries(int tmpMasteries)
+		// Set the player's level stuff.
+		void setLevels(LEVELS tmpLevels)
 		{
-			masteries = tmpMasteries;
+			levels = tmpLevels;
 		}
 
 		// Set the player's armor.
@@ -847,9 +912,19 @@ class character
 		}
 
 		// Set the player's exp total
-		void setExp(int tmpExp)
+		void setLevel(LEVELS tmpLevels)
 		{
-			charExp = tmpExp;
+			LEVELS tmpLevels2;
+			tmpLevels2.charExp = tmpLevels.charExp;
+			tmpLevels2.charLvl = tmpLevels.charLvl;
+
+			levels = tmpLevels2;
+		}
+
+		// Set the player's Level for checks
+		void setLvl(int tmpLvl)
+		{
+			levels.charLvl = tmpLvl;
 		}
 
 		// Set if the player save file doesn't load
@@ -922,21 +997,13 @@ class character
 
 			if (copper > 25000 && !debug)
 			{
-				int tmpCopper2;
-
-			  tmpCopper2 = (copper - 25000);
-
-				addBankCopper(tmpCopper2);
+				addBankCopper(copper - 25000);
 
 				setCopper(25000);
 			}
 			if (copper > 50000 && debug)
 			{
-				int tmpCopper2;
-
-				tmpCopper = (copper - 50000);
-
-				addBankCopper(tmpCopper2);
+				addBankCopper(copper - 50000);
 
 				setCopper(50000);
 			}
@@ -973,24 +1040,18 @@ class character
 		// Add Exp
 		void addExp(int tmpExp)
 		{
-			charExp += tmpExp;
+			levels.charExp += tmpExp;
 		}
 
 		// Subtract Exp
 		void subExp(int tmpExp)
 		{
-			charExp -= tmpExp;
+			levels.charExp -= tmpExp;
 
-			if (charExp < 0)
+			if (levels.charExp < 0)
 			{
-				charExp = 0;
+				levels.charExp = 0;
 			}
-		}
-
-		// Add Masteries
-		void addMasteries(int tmpMasteries)
-		{
-			masteries += tmpMasteries;
 		}
 
 		// Experiance/Skill calculations
@@ -998,30 +1059,30 @@ class character
 		{
 			ATTRIBUTES tmpAtts;
 
-			tmpAtts.strength += diceRoll(1, 6) * mod;
-			tmpAtts.cleverness += diceRoll(1, 6) * mod;
-			tmpAtts.dexterity += diceRoll(1, 6) * mod;
-			tmpAtts.faith += diceRoll(1, 6) * mod;
-			tmpAtts.focus += diceRoll(1, 6) * mod;
-			tmpAtts.insperation += diceRoll(1, 6) * mod;
+			tmpAtts = getAtts();
+
+			tmpAtts.strength += diceRoll(1, 3) * mod;
+			tmpAtts.cleverness += diceRoll(1, 3) * mod;
+			tmpAtts.dexterity += diceRoll(1, 3) * mod;
+			tmpAtts.faith += diceRoll(1, 3) * mod;
+			tmpAtts.focus += diceRoll(1, 3) * mod;
+			tmpAtts.insperation += diceRoll(1, 3) * mod;
 
 			setAtts(tmpAtts);
 
-			addMaxHealth(diceRoll(1, 6) * mod);
-			addHealth(diceRoll(1, 6) * mod);
-			addMaxMana(diceRoll(1, 6) * mod);
-			addMana(diceRoll(1, 6) * mod);
-
-			addMasteries(1);
+			addMaxHealth(diceRoll(1, 3) * mod);
+			addHealth(diceRoll(1, 3) * mod);
+			addMaxMana(diceRoll(1, 3) * mod);
+			addMana(diceRoll(1, 3) * mod);
 		}
 
 		void levelUp()
 		{
-			if (getMasteries() >= 0 && getMasteries() < 20 && calcLevel(getExp()) > charLvl)
+			if (getLevels().charLvl >= 0 && getLevels().charLvl < 100 && calcLevel(getLevels().charExp, 0) > getLevels().charLvl)
 			{
-				upgradeStats(calcLevel(getExp()));
+				upgradeStats(calcLevel(getLevels().charExp, 0));
 
-				charLvl = calcLevel(getExp());
+				setLvl(calcLevel(getLevels().charExp, 0));
 			}
 		}
 
@@ -1170,8 +1231,8 @@ class character
 
 				cout << "   Hitpoints:     " << getHealth() << "/" << getMaxHealth() << "\n";
 				cout << "   Mana:          " << getMana() << "/" << getMaxMana() << "\n";
-				cout << "   Exp:           " << getExp() << "\n";
-				cout << "   Levels:        " << calcLevel() << "\n";
+				cout << "   Exp:           " << getLevels().charExp << "\n";
+				cout << "   Levels:        " << calcLevel(getLevels().charExp, 0) << "\n";
 
 				cout << "\n";
 
@@ -1222,7 +1283,14 @@ class character
 				cout << "[2] The Armorsmith\t [7] Chapel of the Void\n";
 				cout << "[3] The Tavern\t\t [8] The Money Lender\n";
 				cout << "[4] View your Stats\t [9] Quit\n";
-				cout << "[5] Save game\n";
+				cout << "[5] Save game\t";
+
+				if (debug)
+				{
+					cout << "[D] Debug";
+				}
+
+				cout << "\n";
 
 				// Get the menuItem.
 				cin >> menuItem;
@@ -1256,6 +1324,17 @@ class character
 						break;
 					case '9':
 						setLoc(QUIT); // Quit the game.
+						break;
+					case 'd':
+					case 'D':
+						if (!debug)
+						{
+							reroll = true;
+						}
+						else
+						{
+							setLoc(DEBUG); // Debug the game.
+						}
 						break;
 					default:
 						reroll = true; // If you do not type in a correct input then loop.
@@ -1309,6 +1388,8 @@ class character
 		{
 			monster monster1; // Monster variable.
 
+			monster1.genMonster(calcLevel(getLevels().charExp, 0));
+
 			cout << "\n";
 			cout << "You hear a rustel in the bushes. " << monster1.getName() << " jumps out at you\n";
 
@@ -1336,9 +1417,12 @@ class character
 				cout << "As it dies, " << monster1.getDeathText() << "\n";
 				// Set the location back to forest.
 				setLoc(FOREST);
-				cout << "You collect " << monster1.getCopper() << " copper from teh corpse.";
+				cout << "You collect " << monster1.getCopper() << " copper from the corpse.\n";
 				// Collect copper.
 				copper += monster1.getCopper();
+				int tmpExp = diceRoll(2, 5);
+				addExp(tmpExp);
+				cout << "You gain " << tmpExp << " exp from killing " << monster1.getName() << "\n";
 
 				levelUp();
 			}
@@ -2139,7 +2223,11 @@ class fighter : public character
 			setMaxMana(20);
 			setMana(20); // Set the default fighter's mana.
 
-			setMasteries(1); // Set the default fighter's skill level.
+			LEVELS tmpLevel;
+			tmpLevel.charExp = 0; // Set the default fighter's skill level.
+			tmpLevel.charLvl = 1;
+
+			setLevel(tmpLevel);
 
 			setArmor(LEATHER); // Set the default fighter's armor.
 
@@ -2211,7 +2299,7 @@ class fighter : public character
 						if (hit)
 						{
 							// Set the damage pre-roll
-							int dice = getAtts().strength + getWeapon() + getMasteries();
+							int dice = getAtts().strength + getWeapon() + getLevels().charLvl;
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 3) - dice;
 							if (debug) // For now output the damage.
@@ -2227,7 +2315,7 @@ class fighter : public character
 						if (hit && getMana() >= 1)
 						{
 							// Set the damage pre-roll and since it is a higher damage attack then double the attack.
-							int dice = 2 * (getAtts().strength + getWeapon() + getMasteries());
+							int dice = 2 * (getAtts().strength + getWeapon() + getLevels().charLvl);
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 3) - dice;
 							if (debug) // For now output the damage.
@@ -2245,7 +2333,7 @@ class fighter : public character
 						if (hit && getMana() >= 5)
 						{
 							// Set the damage pre-roll and since this is a deadly attack
-							int dice = 100 * (getAtts().strength + getWeapon() + getMasteries());
+							int dice = 100 * (getAtts().strength + getWeapon() + getLevels().charLvl);
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 6) - dice;
 							if (debug) // If debug then output the damage.
@@ -2301,7 +2389,11 @@ class cleric : public character
 			setMaxMana(50);
 			setMana(50); // Set the default stamina for the cleric.
 
-			setMasteries(1); // Set the default fighter's skill level.
+			LEVELS tmpLevel;
+			tmpLevel.charExp = 0; // Set the default fighter's skill level.
+			tmpLevel.charLvl = 1;
+
+			setLevel(tmpLevel);
 
 			setArmor(CLOTH); // Set the default fighter's armor.
 
@@ -2367,7 +2459,7 @@ class cleric : public character
 						if (hit)
 						{
 							// Set the damage pre-roll
-							int dice = getAtts().strength + getWeapon() + getMasteries();
+							int dice = getAtts().strength + getWeapon() + getLevels().charLvl;
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 3) - dice;
 							if (debug) // For now output the damage.
@@ -2383,7 +2475,7 @@ class cleric : public character
 						if (hit && getMana() >= 1)
 						{
 							// Set the damage pre-roll and since it is a higher damage attack then double the attack.
-							int dice = 2 * (getAtts().strength + getWeapon() + getMasteries());
+							int dice = 2 * (getAtts().strength + getWeapon() + getLevels().charLvl);
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 3) - dice;
 							if (debug) // For now output the damage.
@@ -2401,7 +2493,7 @@ class cleric : public character
 						if (hit && getMana() >= 5)
 						{
 							// Set the damage pre-roll and since this is a deadly attack
-							int dice = 100 * (getAtts().strength + getWeapon() + getMasteries());
+							int dice = 100 * (getAtts().strength + getWeapon() + getLevels().charLvl);
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 6) - dice;
 							if (debug) // If debug then output the damage.
@@ -2439,7 +2531,11 @@ class rouge : public character
 			setMaxMana(20);
 			setMana(20); // Set the default stamina for the rouge.
 
-			setMasteries(1); // Set the default fighter's skill level.
+			LEVELS tmpLevel;
+			tmpLevel.charExp = 0; // Set the default fighter's skill level.
+			tmpLevel.charLvl = 0;
+
+			setLevel(tmpLevel);
 
 			setArmor(LEATHER); // Set the default fighter's armor.
 
@@ -2505,7 +2601,7 @@ class rouge : public character
 						if (hit)
 						{
 							// Set the damage pre-roll
-							int dice = getAtts().strength + getWeapon() + getMasteries();
+							int dice = getAtts().strength + getWeapon() + getLevels().charLvl;
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 3) - dice;
 							if (debug) // For now output the damage.
@@ -2521,7 +2617,7 @@ class rouge : public character
 						if (hit && getMana() >= 1)
 						{
 							// Set the damage pre-roll and since it is a higher damage attack then double the attack.
-							int dice = 2 * (getAtts().strength + getWeapon() + getMasteries());
+							int dice = 2 * (getAtts().strength + getWeapon() + getLevels().charLvl);
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 3) - dice;
 							if (debug) // For now output the damage.
@@ -2539,7 +2635,7 @@ class rouge : public character
 						if (hit && getMana() >= 5)
 						{
 							// Set the damage pre-roll and since this is a deadly attack
-							int dice = 100 * (getAtts().strength + getWeapon() + getMasteries());
+							int dice = 100 * (getAtts().strength + getWeapon() + getLevels().charLvl);
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 6) - dice;
 							if (debug) // If debug then output the damage.
@@ -2577,7 +2673,11 @@ class bard : public character
 			setMaxMana(50);
 			setMana(50); // Set the default stamina for the bard.
 
-			setMasteries(1); // Set the default fighter's skill level.
+			LEVELS tmpLevel;
+			tmpLevel.charExp = 0; // Set the default fighter's skill level.
+			tmpLevel.charLvl = 0;
+
+			setLevel(tmpLevel);
 
 			setArmor(LEATHER); // Set the default fighter's armor.
 
@@ -2643,7 +2743,7 @@ class bard : public character
 						if (hit)
 						{
 							// Set the damage pre-roll
-							int dice = getAtts().strength + getWeapon() + getMasteries();
+							int dice = getAtts().strength + getWeapon() + getLevels().charLvl;
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 3) - dice;
 							if (debug) // For now output the damage.
@@ -2659,7 +2759,7 @@ class bard : public character
 						if (hit && getMana() >= 1)
 						{
 							// Set the damage pre-roll and since it is a higher damage attack then double the attack.
-							int dice = 2 * (getAtts().strength + getWeapon() + getMasteries());
+							int dice = 2 * (getAtts().strength + getWeapon() + getLevels().charLvl);
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 3) - dice;
 							if (debug) // For now output the damage.
@@ -2677,7 +2777,7 @@ class bard : public character
 						if (hit && getMana() >= 5)
 						{
 							// Set the damage pre-roll and since this is a deadly attack
-							int dice = 100 * (getAtts().strength + getWeapon() + getMasteries());
+							int dice = 100 * (getAtts().strength + getWeapon() + getLevels().charLvl);
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 6) - dice;
 							if (debug) // If debug then output the damage.
@@ -2715,7 +2815,11 @@ class theif : public character
 			setMaxMana(20);
 			setMana(20); // Set the default stamina for the rouge.
 
-			setMasteries(1); // Set the default fighter's skill level.
+			LEVELS tmpLevel;
+			tmpLevel.charExp = 0; // Set the default fighter's skill level.
+			tmpLevel.charLvl = 0;
+
+			setLevel(tmpLevel);
 
 			setArmor(CLOTH); // Set the default fighter's armor.
 
@@ -2781,7 +2885,7 @@ class theif : public character
 						if (hit)
 						{
 							// Set the damage pre-roll
-							int dice = getAtts().strength + getWeapon() + getMasteries();
+							int dice = getAtts().strength + getWeapon() + getLevels().charLvl;
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 3) - dice;
 							if (debug) // For now output the damage.
@@ -2797,7 +2901,7 @@ class theif : public character
 						if (hit && getMana() >= 1)
 						{
 							// Set the damage pre-roll and since it is a higher damage attack then double the attack.
-							int dice = 2 * (getAtts().strength + getWeapon() + getMasteries());
+							int dice = 2 * (getAtts().strength + getWeapon() + getLevels().charLvl);
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 3) - dice;
 							if (debug) // For now output the damage.
@@ -2815,7 +2919,7 @@ class theif : public character
 						if (hit && getMana() >= 5)
 						{
 							// Set the damage pre-roll and since this is a deadly attack
-							int dice = 100 * (getAtts().strength + getWeapon() + getMasteries());
+							int dice = 100 * (getAtts().strength + getWeapon() + getLevels().charLvl);
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 6) - dice;
 							if (debug) // If debug then output the damage.
@@ -2853,7 +2957,11 @@ class tinker : public character
 			setMaxMana(20);
 			setMana(20); // Set the default stamina for the tinker.
 
-			setMasteries(1); // Set the default fighter's skill level.
+			LEVELS tmpLevel;
+			tmpLevel.charExp = 0; // Set the default fighter's skill level.
+			tmpLevel.charLvl = 0;
+
+			setLevel(tmpLevel);
 
 			setArmor(LEATHER); // Set the default fighter's armor.
 
@@ -2919,7 +3027,7 @@ class tinker : public character
 						if (hit)
 						{
 							// Set the damage pre-roll
-							int dice = getAtts().strength + getWeapon() + getMasteries();
+							int dice = getAtts().strength + getWeapon() + getLevels().charLvl;
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 3) - dice;
 							if (debug) // For now output the damage.
@@ -2935,7 +3043,7 @@ class tinker : public character
 						if (hit && getMana() >= 1)
 						{
 							// Set the damage pre-roll and since it is a higher damage attack then double the attack.
-							int dice = 2 * (getAtts().strength + getWeapon() + getMasteries());
+							int dice = 2 * (getAtts().strength + getWeapon() + getLevels().charLvl);
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 3) - dice;
 							if (debug) // For now output the damage.
@@ -2953,7 +3061,7 @@ class tinker : public character
 						if (hit && getMana() >= 5)
 						{
 							// Set the damage pre-roll and since this is a deadly attack
-							int dice = 100 * (getAtts().strength + getWeapon() + getMasteries());
+							int dice = 100 * (getAtts().strength + getWeapon() + getLevels().charLvl);
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 6) - dice;
 							if (debug) // If debug then output the damage.
@@ -2991,7 +3099,11 @@ class mage : public character
 			setMaxMana(50);
 			setMana(50); // Set the default mana for the mage.
 
-			setMasteries(1); // Set the default fighter's skill level.
+			LEVELS tmpLevel;
+			tmpLevel.charExp = 0; // Set the default fighter's skill level.
+			tmpLevel.charLvl = 0;
+
+			setLevel(tmpLevel);
 
 			setArmor(CLOTH); // Set the default fighter's armor.
 
@@ -3057,7 +3169,7 @@ class mage : public character
 						if (hit)
 						{
 							// Set the damage pre-roll
-							int dice = getAtts().strength + getWeapon() + getMasteries();
+							int dice = getAtts().strength + getWeapon() + getLevels().charLvl;
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 3) - dice;
 							if (debug) // For now output the damage.
@@ -3073,7 +3185,7 @@ class mage : public character
 						if (hit && getMana() >= 1)
 						{
 							// Set the damage pre-roll and since it is a higher damage attack then double the attack.
-							int dice = 2 * (getAtts().strength + getWeapon() + getMasteries());
+							int dice = 2 * (getAtts().strength + getWeapon() + getLevels().charLvl);
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 3) - dice;
 							if (debug) // For now output the damage.
@@ -3091,7 +3203,7 @@ class mage : public character
 						if (hit && getMana() >= 5)
 						{
 							// Set the damage pre-roll and since this is a deadly attack
-							int dice = 100 * (getAtts().strength + getWeapon() + getMasteries());
+							int dice = 100 * (getAtts().strength + getWeapon() + getLevels().charLvl);
 							// Roll the damage from the pre-roll.
 							damage = diceRoll(dice, 6) - dice;
 							if (debug) // If debug then output the damage.
@@ -3134,11 +3246,11 @@ class saveFileData
 		LOCATION location; // The location the player is at.
 		WEAPON weapon; // The weapon the character has.
 		ARMOR armor; // The armor the character has.
-		int masteries; // The skills level of the player.
 		bool cheated; // If the player has cheated.
 		POTION potion; // The current potion the player has.
 		int bankCopper; // The amount of copper the player has in his bank.
 		int charExp; // The total amount of exp the player has.
+		int charLvl; // The level the player's level is for checks.
 
 		saveFileData()
 		{
@@ -3162,10 +3274,11 @@ class saveFileData
 			location = tmpChar->getLoc(); // Set the location.
 			weapon = tmpChar->getWeapon(); // Set the weapon.
 			armor = tmpChar->getArmor(); // Set the armor.
-			masteries = tmpChar->getMasteries(); // Set the masteries.
 			cheated = tmpChar->getCheated(); // Set if the player cheated.
 			potion = tmpChar->getPotion(); // Set the player's current potion.
 			bankCopper = tmpChar->getBankCopper(); // Set the player's money in the bank.
+			charExp = tmpChar->getLevels().charExp;
+			charLvl = tmpChar->getLevels().charLvl;
 		}
 };
 
@@ -3368,8 +3481,6 @@ void debugSave(saveFileData tmpSaveFile)
 
 	cout << "Armor set name:   " << displayArmorName(tmpSaveFile.armor, tmpSaveFile.charClass) << "\n";
 
-	cout << "Masteries:        " << tmpSaveFile.masteries << "\n";
-
 	switch (tmpSaveFile.cheated)
 	{
 		case true:
@@ -3403,9 +3514,262 @@ void debugSave(saveFileData tmpSaveFile)
 
 	cout << "Exp:             " << tmpSaveFile.charExp << "\n";
 
-	cout << "   Levels:       " << calcLevel(tmpSaveFile.charExp) << "\n";
+	cout << "   Levels:       " << calcLevel(tmpSaveFile.charExp, 0) << "\n";
 
 	cout << "Check Levels:    " << tmpSaveFile.charLvl << "\n";
+
+	cout << "+=================================+\n";
+	cout << "   Debug -> ENDED\n";
+	cout << "+=================================+\n";
+}
+
+void debugSave(character tmpSaveFile)
+{
+	cout << "+=================================+\n";
+	cout << "   Debug -> STARTING\n";
+	cout << "+=================================+\n";
+	cout << "Player Save Data: " << ((char *)&tmpSaveFile) << "\n";
+	cout << "Player Save Size: " << (sizeof(tmpSaveFile)) << "\n";
+	cout << "+=================================+\n";
+	cout << "   Save Class Debug\n";
+	cout << "+=================================+\n";
+
+	cout << "Stats:\n";
+	cout << "   Strength:      " << tmpSaveFile.getAtts().strength << "\n";
+	cout << "   Faith:         " << tmpSaveFile.getAtts().faith << "\n";
+	cout << "   Dexterity:     " << tmpSaveFile.getAtts().dexterity << "\n";
+	cout << "   Insperation:   " << tmpSaveFile.getAtts().insperation << "\n";
+	cout << "   Cleverness:    " << tmpSaveFile.getAtts().cleverness << "\n";
+	cout << "   Focus:         " << tmpSaveFile.getAtts().focus << "\n";
+	cout << "Copper:           " << tmpSaveFile.getCopper() << "\n";
+
+	switch (tmpSaveFile.getClass())
+	{
+		case FIGHTER:
+			cout << "Class:            FIGHTER\n";
+			break;
+		case CLERIC:
+			cout << "Class:            CLERIC\n";
+			break;
+		case ROUGE:
+			cout << "Class:            ROUGE\n";
+			break;
+		case BARD:
+			cout << "Class:            BARD\n";
+			break;
+		case THEIF:
+			cout << "Class:            THEIF\n";
+			break;
+		case TINKER:
+			cout << "Class:            TINKER\n";
+			break;
+		case MAGE:
+			cout << "Class:            MAGE\n";
+			break;
+		default:
+			cout << "Class:            BROKEN\n";
+			break;
+	}
+
+	switch (tmpSaveFile.getRace())
+	{
+		case HUMAN:
+			cout << "Race:             HUMAN\n";
+			break;
+		case ELF:
+			cout << "Race:             ELF\n";
+			break;
+		case DARKELF:
+			cout << "Race:             DARKELF\n";
+			break;
+		case ANGEL:
+			cout << "Race:             ANGEL\n";
+			break;
+		case MONGREL:
+			cout << "Race:             MONGREL\n";
+			break;
+		case SHAMANI:
+			cout << "Race:             SHAMANI\n";
+			break;
+		case NIBELUNG:
+			cout << "Race:             NIBELUNG\n";
+			break;
+		case UNDEAD:
+			cout << "Race:             UNDEAD\n";
+			break;
+		default:
+			cout << "Race:             BROKEN\n";
+			break;
+	}
+
+	cout << "Hitpoints:        " << tmpSaveFile.getHealth() << "\n";
+	cout << "Max Hitpoints:    " << tmpSaveFile.getMaxHealth() << "\n";
+	cout << "Mana:             " << tmpSaveFile.getMana() << "\n";
+	cout << "Max Mana:         " << tmpSaveFile.getMaxMana() << "\n";
+
+	switch (tmpSaveFile.getLoc())
+	{
+		case QUIT:
+			cout << "Location:         QUIT\n";
+			break;
+		case VIEWSTATS:
+			cout << "Location:         VIEWSTATS\n";
+			break;
+		case TOWN:
+			cout << "Location:         TOWN\n";
+			break;
+		case FOREST:
+			cout << "Location:         FOREST\n";
+			break;
+		case MONSTER:
+			cout << "Location:         MONSTER\n";
+			break;
+		case SAVE:
+			cout << "Location:         SAVE\n";
+			break;
+		case ARMORSMITH:
+			cout << "Location:         ARMORSMITH\n";
+			break;
+		case BUYARMOR:
+			cout << "Location:         BUYARMOR\n";
+			break;
+		case SELLARMOR:
+			cout << "Location:         SELLARMOR\n";
+			break;
+		case TAVERN:
+			cout << "Location:         TAVERN\n";
+			break;
+		case WEAPONSMITH:
+			cout << "Location:         WEAPONSMITH\n";
+			break;
+		case CHAPEL:
+			cout << "Location:         CHAPEL\n";
+			break;
+		case BANK:
+			cout << "Location:         BANK\n";
+			break;
+		case PUTMONEY:
+			cout << "Location:         PUTMONEY\n";
+			break;
+		case TAKEMONEY:
+			cout << "Location:         TAKEMONEY\n";
+			break;
+		case ALCHIMEST:
+			cout << "Location:         ALCHIMEST\n";
+			break;
+		case BUYPOTION:
+			cout << "Location:         BUYPOTION\n";
+			break;
+		case SELLPOTION:
+			cout << "Location:         SELLPOTION\n";
+			break;
+		default:
+			cout << "Location:         BROKEN\n";
+	}
+
+	switch (tmpSaveFile.getClass())
+	{
+		case FISTS:
+			cout << "Weapon:           FISTS\n";
+			break;
+		case DAGGER:
+			cout << "Weapon:           DAGGER\n";
+			break;
+		case SWORD:
+			cout << "Weapon:           SWORD\n";
+			break;
+		case STAFF:
+			cout << "Weapon:           STAFF\n";
+			break;
+		case ANCIENTBLADE:
+			cout << "Weapon:           ANCIENTBLADE\n";
+			break;
+		case MAGICBLADE:
+			cout << "Weapon:           MAGICBLADE\n";
+			break;
+		case ARCHANEBLADE:
+			cout << "Weapon:           ARCHANEBLADE\n";
+			break;
+		case VOIDEXCALIBUR:
+			cout << "Weapon:           VOIDEXCALIBUR\n";
+			break;
+		default:
+			cout << "Weapon:           BROKEN\n";
+	}
+
+	cout << "Weapon set name:  " << displayWeaponName(tmpSaveFile.getWeapon(), tmpSaveFile.getClass()) << "\n";
+
+	switch (tmpSaveFile.getArmor())
+	{
+		case LOINCLOTH:
+			cout << "Armor:            LOINCLOTH\n";
+			break;
+		case CLOTH:
+			cout << "Armor:            CLOTH\n";
+			break;
+		case LEATHER:
+			cout << "Armor:            LEATHER\n";
+			break;
+		case CHAIN:
+			cout << "Armor:            CHAIN\n";
+			break;
+		case PLATE:
+			cout << "Armor:            PLATE\n";
+			break;
+		case ANCIENTPLATE:
+			cout << "Armor:            ANCIENTPLATE\n";
+			break;
+		case MAGICPLATE:
+			cout << "Armor:            MAGICPLATE\n";
+			break;
+		case ARCHANEPLATE:
+			cout << "Armor:            ARCHANEPLATE\n";
+			break;
+		case IMPERVIUMPLATE:
+			cout << "Armor:            IMPERVIUMPLATE\n";
+			break;
+		default:
+			cout << "Armor:            BROKEN\n";
+	}
+
+	cout << "Armor set name:   " << displayArmorName(tmpSaveFile.getArmor(), tmpSaveFile.getClass()) << "\n";
+
+	switch (tmpSaveFile.getCheated())
+	{
+		case true:
+			cout << "Cheated:          TRUE\n";
+			break;
+		case false:
+			cout << "Cheated:          FALSE\n";
+			break;
+	}
+
+	cout << "Bank Copper:      " << tmpSaveFile.getBankCopper() << "\n";
+
+	switch (tmpSaveFile.getPotion())
+	{
+		case NONE:
+			cout << "Potion:           NONE\n";
+			break;
+		case HEALTH:
+			cout << "Potion:           HEALTH\n";
+			break;
+		case MANA:
+			cout << "Potion:           MANA\n";
+			break;
+		case EXP:
+			cout << "Potion:           EXP\n";
+			break;
+		case CHEAT:
+			cout << "Potion:           CHEAT\n";
+			break;
+	}
+
+	cout << "Exp:             " << tmpSaveFile.getLevels().charExp << "\n";
+
+	cout << "   Levels:       " << calcLevel(tmpSaveFile.getLevels().charExp, 0) << "\n";
+
+	cout << "Check Levels:    " << tmpSaveFile.getLevels().charLvl << "\n";
 
 	cout << "+=================================+\n";
 	cout << "   Debug -> ENDED\n";
@@ -3497,10 +3861,11 @@ character getFromFile()
 		int mpMax = playerSave.mpMax; // The max mana or stamina for the character.
 		WEAPON weapon = playerSave.weapon; // The weapon the character has.
 		ARMOR armor = playerSave.armor; // The armor the character has.
-		int masteries = playerSave.masteries; // The skills level of the player.
 		bool cheated = playerSave.cheated; // The fact if the player cheated.
 		POTION potion = playerSave.potion; // The current potion of the player.
 		int bankCopper = playerSave.bankCopper; // The amount of copper the player has in the bank.
+		int charExp = playerSave.charExp;
+		int charLvl = playerSave.charLvl;
 
 		tmpChar.setLoc(location);
 
@@ -3513,17 +3878,22 @@ character getFromFile()
 		tmpAtts.insperation = insperation;
 		tmpAtts.strength = strength;
 
+		LEVELS tmpLevels;
+
+		tmpLevels.charExp = charExp;
+		tmpLevels.charLvl = charLvl;
+
 		tmpChar.setAtts(tmpAtts);
 		tmpChar.setClass(charClass);
 		tmpChar.setCopper(copper);
 		tmpChar.setHealth(hp);
 		tmpChar.setMana(mp);
-		tmpChar.setMasteries(masteries);
 		tmpChar.setMaxHealth(hpMax);
 		tmpChar.setMaxMana(mpMax);
 		tmpChar.setRace(charRace);
 		tmpChar.setPotion(potion);
 		tmpChar.setBankCopper(bankCopper);
+		tmpChar.setLevels(tmpLevels);
 
 		// If the player has cheated.
 		if (cheated)
@@ -4052,6 +4422,10 @@ int _tmain (int argc, _TCHAR* argv[])
 				break;
 			case SELLPOTION:
 				player1->locSellPotion(); // The player wants to sell potions.
+				break;
+			case DEBUG:
+				debugSave(*player1);
+				player1->setLoc(TOWN);
 				break;
 		}
 	}
