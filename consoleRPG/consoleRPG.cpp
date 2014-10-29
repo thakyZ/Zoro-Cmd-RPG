@@ -3908,14 +3908,6 @@ character getFromFile()
 		{
 			tmpChar.setCheat(false);
 		}
-		if (tmpChar.getBankCopper() < 0)
-		{
-			tmpChar.setBankCopper(0);
-		}
-		if (tmpChar.getCopper() < 0)
-		{
-			tmpChar.setCopper(0);
-		}
 		if (tmpChar.getCopper() > 25000 && !debug)
 		{
 			int tmpCopper = tmpChar.getCopper();
