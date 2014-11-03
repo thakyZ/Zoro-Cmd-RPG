@@ -395,7 +395,7 @@ char *displayArmorName(int tmpArmor, int tmpCharClass)
 	return "";
 }
 
-int calcLevel(int tmpExp, int check)
+int calcLevel(int tmpExp)
 {
 	int tmpExp1;
 
@@ -412,19 +412,7 @@ int calcLevel(int tmpExp, int check)
 		tmpExp1 = 1;
 	}
 
-	if (check == 0)
-	{
-		return tmpExp1;
-	}
-	else if (check == 1)
-	{
-		// Need to figure out what to do here... (I forgot :P)
-		return tmpExp1;
-	}
-	else
-	{
-		return tmpExp1;
-	}
+	return tmpExp1;
 }
 
 class monster
