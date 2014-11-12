@@ -60,6 +60,7 @@ struct LEVELS
 {
 	int charLvl;
 	int charExp;
+	int reqExp;
 };
 
 // Display the stats of the roll.
@@ -395,24 +396,16 @@ char *displayArmorName(int tmpArmor, int tmpCharClass)
 	return "";
 }
 
-int calcLevel(int tmpExp)
+int calcReqExp(int tmpExp)
 {
-	int tmpExp1;
+	int remainder = tmpExp % 5;
 
-	if (tmpExp > 0)
+	if (remainder == 0)
 	{
-		tmpExp1 = (tmpExp + 158) / 9;
-	}
-	else if (tmpExp <= 0)
-	{
-		tmpExp1 = 1;
-	}
-	else
-	{
-		tmpExp1 = 1;
+		return tmpExp;
 	}
 
-	return tmpExp1;
+	return tmpExp + 5 - remainder;
 }
 
 class monster
@@ -899,16 +892,6 @@ class character
 			bankCopper = tmpCopper;
 		}
 
-		// Set the player's exp total
-		void setLevel(LEVELS tmpLevels)
-		{
-			LEVELS tmpLevels2;
-			tmpLevels2.charExp = tmpLevels.charExp;
-			tmpLevels2.charLvl = tmpLevels.charLvl;
-
-			levels = tmpLevels2;
-		}
-
 		// Set the player's Level for checks
 		void setLvl(int tmpLvl)
 		{
@@ -1045,9 +1028,7 @@ class character
 		// Experiance/Skill calculations
 		void upgradeStats(int mod)
 		{
-			ATTRIBUTES tmpAtts;
-
-			tmpAtts = getAtts();
+			ATTRIBUTES tmpAtts = getAtts();
 
 			tmpAtts.strength += diceRoll(1, 3) * mod;
 			tmpAtts.cleverness += diceRoll(1, 3) * mod;
@@ -1066,11 +1047,36 @@ class character
 
 		void levelUp()
 		{
-			if (getLevels().charLvl >= 0 && getLevels().charLvl < 100 && calcLevel(getLevels().charExp, 0) > getLevels().charLvl)
+			if (levels.charExp > levels.reqExp)
 			{
-				upgradeStats(calcLevel(getLevels().charExp, 0));
+				levels.charExp = levels.charExp - levels.reqExp;
+			}
 
-				setLvl(calcLevel(getLevels().charExp, 0));
+			int mod = levels.charLvl % levels.reqExp;
+
+			levels.reqExp += 10 * mod;
+
+			levels.charLvl += 1;
+
+			upgradeStats(levels.charLvl);
+		}
+
+		void checkLvl()
+		{
+			if (levels.charExp >= levels.reqExp)
+			{
+				levelUp();
+			}
+			else if (levels.charExp < levels.reqExp)
+			{
+			}
+			else if (levels.charExp < 0)
+			{
+				levels.charExp = 0;
+			}
+			else
+			{
+				// Do nothing
 			}
 		}
 
@@ -1217,20 +1223,21 @@ class character
 
 				cout << "\n";
 
-				cout << "   Hitpoints:     " << getHealth() << "/" << getMaxHealth() << "\n";
-				cout << "   Mana:          " << getMana() << "/" << getMaxMana() << "\n";
-				cout << "   Exp:           " << getLevels().charExp << "\n";
-				cout << "   Levels:        " << calcLevel(getLevels().charExp, 0) << "\n";
+				cout << "Hitpoints:        " << getHealth() << "/" << getMaxHealth() << "\n";
+				cout << "Mana:             " << getMana() << "/" << getMaxMana() << "\n";
+				cout << "Exp:              " << getLevels().charExp << "\n";
+				cout << "   Levels:        " << getLevels().charLvl << "\n";
+				cout << "   ReqExp:        " << getLevels().reqExp << "\n";
 
 				cout << "\n";
 
-				cout << "   Copper:        " << getCopper() << "\n";
+				cout << "Copper:           " << getCopper() << "\n";
 
 				cout << "\n";
 
-				cout << "   Armor:         " << displayArmorName(getArmor(), getClass()) << "\n";
+				cout << "Armor:            " << displayArmorName(getArmor(), getClass()) << "\n";
 
-				cout << "   Weapon:        " << displayWeaponName(getWeapon(), getClass()) << "\n";
+				cout << "Weapon:           " << displayWeaponName(getWeapon(), getClass()) << "\n";
 
 				cout << "\n";
 				cout << "[G]o back to Town\n";
@@ -1271,7 +1278,7 @@ class character
 				cout << "[2] The Armorsmith\t [7] Chapel of the Void\n";
 				cout << "[3] The Tavern\t\t [8] The Money Lender\n";
 				cout << "[4] View your Stats\t [9] Quit\n";
-				cout << "[5] Save game\t";
+				cout << "[5] Save game\t\t ";
 
 				if (debug)
 				{
@@ -1376,7 +1383,7 @@ class character
 		{
 			monster monster1; // Monster variable.
 
-			monster1.genMonster(calcLevel(getLevels().charExp, 0));
+			monster1.genMonster(getLevels().charLvl);
 
 			cout << "\n";
 			cout << "You hear a rustel in the bushes. " << monster1.getName() << " jumps out at you\n";
@@ -1412,7 +1419,7 @@ class character
 				addExp(tmpExp);
 				cout << "You gain " << tmpExp << " exp from killing " << monster1.getName() << "\n";
 
-				levelUp();
+				checkLvl();
 			}
 			if (hp <= 0) // You die and quit.
 			{
@@ -2211,12 +2218,6 @@ class fighter : public character
 			setMaxMana(20);
 			setMana(20); // Set the default fighter's mana.
 
-			LEVELS tmpLevel;
-			tmpLevel.charExp = 0; // Set the default fighter's skill level.
-			tmpLevel.charLvl = 1;
-
-			setLevel(tmpLevel);
-
 			setArmor(LEATHER); // Set the default fighter's armor.
 
 			setWeapon(SWORD); // Set the default fighter's weapon.
@@ -2377,12 +2378,6 @@ class cleric : public character
 			setMaxMana(50);
 			setMana(50); // Set the default stamina for the cleric.
 
-			LEVELS tmpLevel;
-			tmpLevel.charExp = 0; // Set the default fighter's skill level.
-			tmpLevel.charLvl = 1;
-
-			setLevel(tmpLevel);
-
 			setArmor(CLOTH); // Set the default fighter's armor.
 
 			setWeapon(STAFF); // Set the default fighter's weapon.
@@ -2408,7 +2403,11 @@ class cleric : public character
 				}
 				if (getMana() >= 5)
 				{
-					cout << "\n[P]ound\n";
+					cout << "\nP[o]und\n";
+				}
+				if (getPotion() != NONE)
+				{
+					cout << "\nDrink [P]otion";
 				}
 
 				// Get the input of what attack to use.
@@ -2475,8 +2474,8 @@ class cleric : public character
 							subMana(1);
 						}
 						break;
-					case 'p':
-					case 'P':
+					case 'o':
+					case 'O':
 						// If the dice roll matches the target roll or is higher than it and the player's mana is greater than or equal to five.
 						if (hit && getMana() >= 5)
 						{
@@ -2493,6 +2492,25 @@ class cleric : public character
 							// Since this is a special attack then remove some mana points.
 						}
 						break;
+					case 'p':
+					case 'P':
+						switch (getPotion())
+						{
+							case HEALTH:
+								addHealth(30);
+								break;
+							case MANA:
+								addMana(20);
+								break;
+							case EXP:
+								addExp(10);
+								break;
+							case CHEAT:
+								addHealth(1000);
+								addMana(1000);
+								addExp(1000);
+								break;
+						}
 					default:
 						reroll = true; // If the input is not valid restart the loop.
 				}
@@ -2518,12 +2536,6 @@ class rouge : public character
 			setHealth(diceRoll(7, 6)); // Set the default hitpoints for the rouge.
 			setMaxMana(20);
 			setMana(20); // Set the default stamina for the rouge.
-
-			LEVELS tmpLevel;
-			tmpLevel.charExp = 0; // Set the default fighter's skill level.
-			tmpLevel.charLvl = 0;
-
-			setLevel(tmpLevel);
 
 			setArmor(LEATHER); // Set the default fighter's armor.
 
@@ -2551,6 +2563,10 @@ class rouge : public character
 				if (getMana() >= 5)
 				{
 					cout << "\n[S]pin Attack\n";
+				}
+				if (getPotion() != NONE)
+				{
+					cout << "\nDrink [P]otion";
 				}
 
 				// Get the input of what attack to use.
@@ -2661,12 +2677,6 @@ class bard : public character
 			setMaxMana(50);
 			setMana(50); // Set the default stamina for the bard.
 
-			LEVELS tmpLevel;
-			tmpLevel.charExp = 0; // Set the default fighter's skill level.
-			tmpLevel.charLvl = 0;
-
-			setLevel(tmpLevel);
-
 			setArmor(LEATHER); // Set the default fighter's armor.
 
 			setWeapon(SWORD); // Set the default fighter's weapon.
@@ -2692,7 +2702,11 @@ class bard : public character
 				}
 				if (getMana() >= 5)
 				{
-					cout << "\n[P]ound";
+					cout << "\nP[o]und";
+				}
+				if (getPotion() != NONE)
+				{
+					cout << "\nDrink [P]otion";
 				}
 
 				// Get the input of what attack to use.
@@ -2759,8 +2773,8 @@ class bard : public character
 							subMana(1);
 						}
 						break;
-					case 'p':
-					case 'P':
+					case 'o':
+					case 'O':
 						// If the dice roll matches the target roll or is higher than it and the player's mana is greater than or equal to five.
 						if (hit && getMana() >= 5)
 						{
@@ -2777,6 +2791,25 @@ class bard : public character
 							// Since this is a special attack then remove some mana points.
 						}
 						break;
+					case 'p':
+					case 'P':
+						switch (getPotion())
+						{
+							case HEALTH:
+								addHealth(30);
+								break;
+							case MANA:
+								addMana(20);
+								break;
+							case EXP:
+								addExp(10);
+								break;
+							case CHEAT:
+								addHealth(1000);
+								addMana(1000);
+								addExp(1000);
+								break;
+						}
 					default:
 						reroll = true; // If the input is not valid restart the loop.
 				}
@@ -2803,12 +2836,6 @@ class theif : public character
 			setMaxMana(20);
 			setMana(20); // Set the default stamina for the rouge.
 
-			LEVELS tmpLevel;
-			tmpLevel.charExp = 0; // Set the default fighter's skill level.
-			tmpLevel.charLvl = 0;
-
-			setLevel(tmpLevel);
-
 			setArmor(CLOTH); // Set the default fighter's armor.
 
 			setWeapon(SWORD); // Set the default fighter's weapon.
@@ -2834,7 +2861,11 @@ class theif : public character
 				}
 				if (getMana() >= 5)
 				{
-					cout << "\n[Ma]ssacure";
+					cout << "\n[M]assacure";
+				}
+				if (getPotion() != NONE)
+				{
+					cout << "\nDrink [P]otion";
 				}
 
 				// Get the input of what attack to use.
@@ -2919,6 +2950,25 @@ class theif : public character
 							// Since this is a special attack then remove some mana points.
 						}
 						break;
+					case 'p':
+					case 'P':
+						switch (getPotion())
+						{
+							case HEALTH:
+								addHealth(30);
+								break;
+							case MANA:
+								addMana(20);
+								break;
+							case EXP:
+								addExp(10);
+								break;
+							case CHEAT:
+								addHealth(1000);
+								addMana(1000);
+								addExp(1000);
+								break;
+						}
 					default:
 						reroll = true; // If the input is not valid restart the loop.
 				}
@@ -2944,12 +2994,6 @@ class tinker : public character
 			setHealth(diceRoll(7, 6)); // Set the default hitpoints for the tinker.
 			setMaxMana(20);
 			setMana(20); // Set the default stamina for the tinker.
-
-			LEVELS tmpLevel;
-			tmpLevel.charExp = 0; // Set the default fighter's skill level.
-			tmpLevel.charLvl = 0;
-
-			setLevel(tmpLevel);
 
 			setArmor(LEATHER); // Set the default fighter's armor.
 
@@ -2977,6 +3021,10 @@ class tinker : public character
 				if (getMana() >= 5)
 				{
 					cout << "\n[E]nergy Pound";
+				}
+				if (getPotion() != NONE)
+				{
+					cout << "\nDrink [P]otion";
 				}
 
 				// Get the input of what attack to use.
@@ -3061,6 +3109,25 @@ class tinker : public character
 							// Since this is a special attack then remove some mana points.
 						}
 						break;
+					case 'p':
+					case 'P':
+						switch (getPotion())
+						{
+							case HEALTH:
+								addHealth(30);
+								break;
+							case MANA:
+								addMana(20);
+								break;
+							case EXP:
+								addExp(10);
+								break;
+							case CHEAT:
+								addHealth(1000);
+								addMana(1000);
+								addExp(1000);
+								break;
+						}
 					default:
 						reroll = true; // If the input is not valid restart the loop.
 				}
@@ -3086,12 +3153,6 @@ class mage : public character
 			setHealth(diceRoll(7, 6)); // Set the default hitpoints for the mage.
 			setMaxMana(50);
 			setMana(50); // Set the default mana for the mage.
-
-			LEVELS tmpLevel;
-			tmpLevel.charExp = 0; // Set the default fighter's skill level.
-			tmpLevel.charLvl = 0;
-
-			setLevel(tmpLevel);
 
 			setArmor(CLOTH); // Set the default fighter's armor.
 
@@ -3119,6 +3180,10 @@ class mage : public character
 				if (getMana() >= 5)
 				{
 					cout << "\n[A]steriod Beam";
+				}
+				if (getPotion() != NONE)
+				{
+					cout << "\nDrink [P]otion";
 				}
 
 				// Get the input of what attack to use.
@@ -3203,6 +3268,25 @@ class mage : public character
 							// Since this is a special attack then remove some mana points.
 						}
 						break;
+					case 'p':
+					case 'P':
+						switch (getPotion())
+						{
+							case HEALTH:
+								addHealth(30);
+								break;
+							case MANA:
+								addMana(20);
+								break;
+							case EXP:
+								addExp(10);
+								break;
+							case CHEAT:
+								addHealth(1000);
+								addMana(1000);
+								addExp(1000);
+								break;
+						}
 					default:
 						reroll = true; // If the input is not valid restart the loop.
 				}
@@ -3239,6 +3323,7 @@ class saveFileData
 		int bankCopper; // The amount of copper the player has in his bank.
 		int charExp; // The total amount of exp the player has.
 		int charLvl; // The level the player's level is for checks.
+		int reqExp; // The requires amount of exp to level up.
 
 		saveFileData()
 		{
@@ -3267,6 +3352,7 @@ class saveFileData
 			bankCopper = tmpChar->getBankCopper(); // Set the player's money in the bank.
 			charExp = tmpChar->getLevels().charExp;
 			charLvl = tmpChar->getLevels().charLvl;
+			reqExp = tmpChar->getLevels().reqExp;
 		}
 };
 
@@ -3502,9 +3588,9 @@ void debugSave(saveFileData tmpSaveFile)
 
 	cout << "Exp:             " << tmpSaveFile.charExp << "\n";
 
-	cout << "   Levels:       " << calcLevel(tmpSaveFile.charExp, 0) << "\n";
+	cout << "   Levels:       " << tmpSaveFile.charLvl << "\n";
 
-	cout << "Check Levels:    " << tmpSaveFile.charLvl << "\n";
+	cout << "   ReqExp:       " << tmpSaveFile.reqExp << "\n";
 
 	cout << "+=================================+\n";
 	cout << "   Debug -> ENDED\n";
@@ -3755,9 +3841,9 @@ void debugSave(character tmpSaveFile)
 
 	cout << "Exp:             " << tmpSaveFile.getLevels().charExp << "\n";
 
-	cout << "   Levels:       " << calcLevel(tmpSaveFile.getLevels().charExp, 0) << "\n";
+	cout << "   Levels:       " << tmpSaveFile.getLevels().charLvl << "\n";
 
-	cout << "Check Levels:    " << tmpSaveFile.getLevels().charLvl << "\n";
+	cout << "   ReqExp:       " << tmpSaveFile.getLevels().reqExp << "\n";
 
 	cout << "+=================================+\n";
 	cout << "   Debug -> ENDED\n";
@@ -3854,6 +3940,7 @@ character getFromFile()
 		int bankCopper = playerSave.bankCopper; // The amount of copper the player has in the bank.
 		int charExp = playerSave.charExp;
 		int charLvl = playerSave.charLvl;
+		int reqExp = playerSave.reqExp;
 
 		tmpChar.setLoc(location);
 
@@ -3870,6 +3957,7 @@ character getFromFile()
 
 		tmpLevels.charExp = charExp;
 		tmpLevels.charLvl = charLvl;
+		tmpLevels.reqExp = reqExp;
 
 		tmpChar.setAtts(tmpAtts);
 		tmpChar.setClass(charClass);
@@ -3953,6 +4041,7 @@ int _tmain (int argc, _TCHAR* argv[])
 	bool iQuit = false; // To tell if the player want to quit the game.
 	bool newGame = true; // If the player wants a new game.
 	bool rerollNewGame = true; // If the player save file doesn't load.
+	LEVELS levels;
 
 	// Set the character to pointer var.
 	character *player1 = NULL;
@@ -4231,16 +4320,19 @@ int _tmain (int argc, _TCHAR* argv[])
 			player1->setRace(inputRace);
 			// Set the class as it is at this point.
 			player1->setClass(inputClass);
+			// Set the level system.
+			levels.charExp = 0;
+			levels.charLvl = 1;
+			levels.reqExp = 10;
+			player1->setLevels(levels);
 		}
 		else if (newGame == false) // The player chose to load a game.
 		{
 			// Load the saved game.
-			player1 = &getFromFile();
-
-			tmpStats = player1->getAtts();
+			character playerL = getFromFile();
 
 			// If the player save file didn't load correctly.
-			if (player1->getNull() == true)
+			if (playerL.getNull() == true)
 			{
 				// Restart the loop.
 				rerollNewGame = true;
@@ -4248,10 +4340,10 @@ int _tmain (int argc, _TCHAR* argv[])
 				// Make it so the game is started a new.
 				newGame = true;
 			}
-			else if (player1->getNull() == false)
+			else if (playerL.getNull() == false)
 			{
 				// Create the class's class of the class.
-				switch(player1->getClass())
+				switch(playerL.getClass())
 				{
 					case FIGHTER:
 						player1 = new fighter;
@@ -4276,9 +4368,7 @@ int _tmain (int argc, _TCHAR* argv[])
 						break;
 				}
 
-				player1->setAtts(tmpStats);
-
-				player1->setLoc(TOWN);
+				player1 = &playerL;
 			}
 		}
 	}
